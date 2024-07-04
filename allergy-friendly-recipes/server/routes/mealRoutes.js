@@ -5,5 +5,6 @@ const router = express.Router();
 
 router.get('/', getMeals);
 router.post('/', addMeal);
+router.get('/substitutes', fetchSubstituteOptions);
 
 export default router;

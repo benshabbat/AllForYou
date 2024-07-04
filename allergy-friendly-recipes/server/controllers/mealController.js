@@ -1,4 +1,6 @@
 import Meal from '../models/Meal.js';
+import { getSubstituteOptions } from '../services/externalAPI.js';
+
 
 // פונקציה לקבלת כל התפריטים
 export const getMeals = async (req, res) => {
@@ -31,5 +33,15 @@ export const addMeal = async (req, res) => {
     res.status(201).json(savedMeal);
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+};
+export const fetchSubstituteOptions = async (req, res) => {
+  const { ingredient } = req.query;
+
+  try {
+    const options = await getSubstituteOptions(ingredient);
+    res.status(200).json(options);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
