@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import RecipeList from './components/RecipeList';
 import AddRecipeForm from './components/AddRecipeForm';
 import AllergenFilter from './components/AllergenFilter';
+import './styles/App.css';
 
 function App() {
   const [filter, setFilter] = useState([]);
@@ -16,8 +17,8 @@ function App() {
   };
 
   const handleAddRecipe = (recipe) => {
-    // כאן נוסיף לוגיקה לשמירת המתכון בשרת
-    console.log('מתכון חדש:', recipe);
+    // עדכון הממשק המשתמש לאחר הוספת מתכון
+    console.log('מתכון חדש נוסף:', recipe);
   };
 
   return (
