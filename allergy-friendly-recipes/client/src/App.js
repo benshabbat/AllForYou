@@ -1,44 +1,39 @@
-import React, { useState } from 'react';
-import RecipeList from './components/RecipeList';
-import AddRecipeForm from './components/AddRecipeForm';
+import React, { Suspense, lazy } from 'react';
+import { RecipeProvider } from './context/RecipeContext';
+import ErrorBoundary from './components/ErrorBoundary';
 import AllergenFilter from './components/AllergenFilter';
 import RecipeSearch from './components/RecipeSearch';
 import './styles/App.css';
 
+const RecipeList = lazy(() => import('./components/RecipeList'));
+const AddRecipeForm = lazy(() => import('./components/AddRecipeForm'));
+
 function App() {
-  const [filter, setFilter] = useState([]);
-  const [searchResults, setSearchResults] = useState(null);
+  const [filter, setFilter] = React.useState([]);
   const allergens = ['גלוטן', 'חלב', 'ביצים', 'בוטנים', 'סויה'];
 
   const handleFilterChange = (allergen, isChecked) => {
-    if (isChecked) {
-      setFilter([...filter, allergen]);
-    } else {
-      setFilter(filter.filter(a => a !== allergen));
-    }
-  };
-
-  const handleAddRecipe = (recipe) => {
-    console.log('מתכון חדש נוסף:', recipe);
-    setSearchResults(null); // Reset search results when a new recipe is added
-  };
-
-  const handleSearchResults = (results) => {
-    setSearchResults(results);
+    setFilter(prevFilter => 
+      isChecked 
+        ? [...prevFilter, allergen]
+        : prevFilter.filter(a => a !== allergen)
+    );
   };
 
   return (
-    <div className="App">
-      <h1>מתכונים ידידותיים לאלרגיות</h1>
-      <AllergenFilter allergens={allergens} onFilterChange={handleFilterChange} />
-      <RecipeSearch onSearchResults={handleSearchResults} />
-      {searchResults ? (
-        <RecipeList recipes={searchResults} filter={filter} />
-      ) : (
-        <RecipeList filter={filter} />
-      )}
-      <AddRecipeForm onAddRecipe={handleAddRecipe} />
-    </div>
+    <ErrorBoundary>
+      <RecipeProvider>
+        <div className="App">
+          <h1>מתכונים ידידותיים לאלרגיות</h1>
+          <AllergenFilter allergens={allergens} onFilterChange={handleFilterChange} />
+          <RecipeSearch />
+          <Suspense fallback={<div>Loading...</div>}>
+            <RecipeList filter={filter} />
+            <AddRecipeForm />
+          </Suspense>
+        </div>
+      </RecipeProvider>
+    </ErrorBoundary>
   );
 }
 
