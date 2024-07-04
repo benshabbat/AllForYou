@@ -1,13 +1,15 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useMemo } from 'react';
 import { useRecipeContext } from '../contexts/RecipeContext';
 import RecipeItem from './RecipeItem';
 
 function RecipeList() {
   const { recipes, filter } = useRecipeContext();
 
-  const filteredRecipes = recipes.filter(recipe => 
-    !filter.some(allergen => recipe.allergens.includes(allergen))
+  const filteredRecipes = useMemo(() => 
+    recipes.filter(recipe => 
+      !filter.some(allergen => recipe.allergens.includes(allergen))
+    ),
+    [recipes, filter]
   );
 
   return (
