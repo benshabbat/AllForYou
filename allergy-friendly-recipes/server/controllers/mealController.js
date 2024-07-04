@@ -4,12 +4,25 @@ import { getSubstituteOptions } from '../services/externalAPI.js';
 
 // פונקציה לקבלת כל התפריטים
 export const getMeals = async (req, res) => {
-  const { allergy } = req.query;
+  const { allergy, search, sort } = req.query;
+
   try {
     let meals = await Meal.find();
+    
+    if (search) {
+      meals = meals.filter(meal => meal.name.toLowerCase().includes(search.toLowerCase()));
+    }
+
     if (allergy) {
       meals = meals.filter(meal => !meal.allergies.includes(allergy));
     }
+
+    if (sort === 'asc') {
+      meals = meals.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sort === 'desc') {
+      meals = meals.sort((a, b) => b.name.localeCompare(a.name));
+    }
+
     res.json(meals);
   } catch (error) {
     res.status(500).json({ message: error.message });
