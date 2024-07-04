@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import mealRoutes from "./routes/mealRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import logger from "./config/logger.js";
+import adminRoutes from './routes/adminRoutes.js';
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 
 app.use("/api/meals", mealRoutes);
 app.use("/api/users", userRoutes);
+app.use('/api/admin', adminRoutes);
 app.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`);
 });
