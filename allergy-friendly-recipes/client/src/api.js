@@ -45,3 +45,11 @@ export async function deleteRecipe(id) {
   }
   return response.json();
 }
+
+export async function searchRecipes(ingredients) {
+  const response = await fetch(`${API_URL}/recipes/search?ingredients=${ingredients.join(',')}`);
+  if (!response.ok) {
+    throw new Error('Failed to search recipes');
+  }
+  return response.json();
+}
