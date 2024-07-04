@@ -21,3 +21,5 @@ export const getRecipe = (id) => axios.get(`${API_URL}/recipes/${id}`).catch(han
 export const addRecipe = (recipe) => axios.post(`${API_URL}/recipes/add`, recipe).catch(handleError);
 export const updateRecipe = (id, updatedRecipe) => axios.post(`${API_URL}/recipes/update/${id}`, updatedRecipe).catch(handleError);
 export const deleteRecipe = (id) => axios.delete(`${API_URL}/recipes/${id}`).catch(handleError);
+export const rateRecipe = (id, score) => axios.post(`${API_URL}/recipes/${id}/rate`, { score });
+export const commentOnRecipe = (id, text) => axios.post(`${API_URL}/recipes/${id}/comment`, { text });

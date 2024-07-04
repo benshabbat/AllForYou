@@ -22,24 +22,54 @@
 
 // module.exports = mongoose.model('Recipe', RecipeSchema);
 
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const recipeSchema = new Schema({
-  name: { type: String, required: true },
-  ingredients: [{ type: String, required: true }],
-  instructions: { type: String, required: true },
-  allergens: [{ type: String }],
-  substitutions: [{
-    ingredient: String,
-    alternatives: [String]
-  }],
-  addedBy: { type: String },
-}, {
-  timestamps: true,
-});
+const recipeSchema = new Schema(
+  {
+    name: { type: String, required: true },
+    ingredients: [{ type: String, required: true }],
+    instructions: { type: String, required: true },
+    allergens: [{ type: String }],
+    substitutions: [
+      {
+        ingredient: String,
+        alternatives: [String],
+      },
+    ],
+    addedBy: { type: String },
+  },
+  {
+    timestamps: true,
+    ratings: [
+      {
+        user: { type: Schema.Types.ObjectId, ref: "User" },
+        score: { type: Number, min: 1, max: 5 },
+      },
+    ],
+    comments: [
+      {
+        user: { type: Schema.Types.ObjectId, ref: "User" },
+        text: String,
+        date: { type: Date, default: Date.now },
+      },
+    ],
+    averageRating: { type: Number, default: 0 },
+  }
+);
 
-const Recipe = mongoose.model('Recipe', recipeSchema);
+// מתודה לחישוב הדירוג הממוצע
+recipeSchema.methods.calculateAverageRating = function () {
+  if (this.ratings.length === 0) {
+    this.averageRating = 0;
+  } else {
+    const sum = this.ratings.reduce((total, rating) => total + rating.score, 0);
+    this.averageRating = sum / this.ratings.length;
+  }
+  return this.averageRating;
+};
+
+const Recipe = mongoose.model("Recipe", recipeSchema);
 
 module.exports = Recipe;
