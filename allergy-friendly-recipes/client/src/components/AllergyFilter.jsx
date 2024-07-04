@@ -1,26 +1,27 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { fetchMeals } from '../slices/mealSlice';
+import { fetchMeals } from '../store/slices/mealSlice';
 
 const AllergyFilter = () => {
-  const [allergy, setAllergy] = useState('');
+  const [allergies, setAllergies] = useState([]);
   const dispatch = useDispatch();
 
-  const handleFilter = () => {
-    dispatch(fetchMeals({ allergy }));
+  const handleFilterChange = (e) => {
+    const selectedAllergies = Array.from(e.target.selectedOptions, option => option.value);
+    setAllergies(selectedAllergies);
+    dispatch(fetchMeals({ search: '', sort: 'relevance', allergies: selectedAllergies }));
   };
 
   return (
-    <div>
-      <input
-        type="text"
-        value={allergy}
-        onChange={(e) => setAllergy(e.target.value)}
-        placeholder="Filter by allergy"
-      />
-      <button onClick={handleFilter} className="pure-button pure-button-primary">
-        Filter
-      </button>
+    <div className="allergy-filter">
+      <h2>Filter by Allergy</h2>
+      <select multiple onChange={handleFilterChange}>
+        <option value="gluten">Gluten</option>
+        <option value="nuts">Nuts</option>
+        <option value="dairy">Dairy</option>
+        <option value="shellfish">Shellfish</option>
+        {/* הוסף כאן אפשרויות נוספות לפי הצורך */}
+      </select>
     </div>
   );
 };

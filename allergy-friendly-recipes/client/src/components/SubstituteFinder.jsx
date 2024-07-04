@@ -1,37 +1,35 @@
 import React, { useState } from 'react';
-import api from '../services/api';
+import { useDispatch } from 'react-redux';
+import { fetchMeals } from '../store/slices/mealSlice';
 
 const SubstituteFinder = () => {
   const [ingredient, setIngredient] = useState('');
-  const [substitutes, setSubstitutes] = useState([]);
+  const [substitute, setSubstitute] = useState('');
+  const dispatch = useDispatch();
 
-  const handleFindSubstitutes = async () => {
-    try {
-      const response = await api.get('/meals/substitutes', {
-        params: { ingredient },
-      });
-      setSubstitutes(response.data);
-    } catch (error) {
-      console.error('Error fetching substitutes:', error);
-    }
+  const handleFindSubstitute = () => {
+    dispatch(fetchMeals({ search: ingredient, sort: 'relevance' }));
+    // כאן תוכל להוסיף את הלוגיקה למציאת תחליפים למרכיב
   };
 
   return (
-    <div>
+    <div className="substitute-finder">
+      <h2>Find a Substitute</h2>
       <input
         type="text"
         value={ingredient}
         onChange={(e) => setIngredient(e.target.value)}
-        placeholder="Enter ingredient"
+        placeholder="Ingredient"
       />
-      <button onClick={handleFindSubstitutes} className="pure-button pure-button-primary">
-        Find Substitutes
+      <input
+        type="text"
+        value={substitute}
+        onChange={(e) => setSubstitute(e.target.value)}
+        placeholder="Substitute"
+      />
+      <button onClick={handleFindSubstitute} className="pure-button pure-button-primary">
+        Find Substitute
       </button>
-      <ul>
-        {substitutes.map((sub, index) => (
-          <li key={index}>{sub}</li>
-        ))}
-      </ul>
     </div>
   );
 };
