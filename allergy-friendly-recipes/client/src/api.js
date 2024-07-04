@@ -53,3 +53,17 @@ export async function searchRecipes(ingredients) {
   }
   return response.json();
 }
+
+export async function rateRecipe(id, user, score) {
+  const response = await fetch(`${API_URL}/recipes/${id}/rate`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ user, score }),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to rate recipe');
+  }
+  return response.json();
+}
