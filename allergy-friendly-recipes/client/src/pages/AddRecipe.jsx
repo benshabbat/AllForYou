@@ -1,71 +1,81 @@
-import React, { useState } from 'react';
-
-import { addRecipe } from '../services/api';
+import React, { useState } from "react";
+import { addRecipe } from "../services/api";
 
 function AddRecipe() {
   const [recipe, setRecipe] = useState({
-    name: '',
-    ingredients: [''],
-    instructions: '',
-    allergens: [''],
-    substitutions: [{ ingredient: '', alternatives: [''] }]
+    name: "",
+    ingredients: [""],
+    instructions: "",
+    allergens: [""],
+    substitutions: [{ ingredient: "", alternatives: [""] }],
   });
 
   const handleChange = (e, index, field, subField) => {
     const { name, value } = e.target;
-    if (field === 'ingredients' || field === 'allergens') {
-      const newArray = [...recipe[field]];
-      newArray[index] = value;
-      setRecipe({ ...recipe, [field]: newArray });
-    } else if (field === 'substitutions') {
-      const newSubs = [...recipe.substitutions];
-      newSubs[index][subField] = value;
-      setRecipe({ ...recipe, substitutions: newSubs });
-    } else {
-      setRecipe({ ...recipe, [name]: value });
-    }
-  };
-
-  const addField = (field) => {
-    if (field === 'substitutions') {
-      setRecipe({
-        ...recipe,
-        substitutions: [...recipe.substitutions, { ingredient: '', alternatives: [''] }]
-      });
-    } else {
-      setRecipe({ ...recipe, [field]: [...recipe[field], ''] });
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    addRecipe(recipe).then(() => {
-
+    setRecipe((prevRecipe) => {
+      if (field === "ingredients" || field === "allergens") {
+        const newArray = [...prevRecipe[field]];
+        newArray[index] = value;
+        return { ...prevRecipe, [field]: newArray };
+      } else if (field === "substitutions") {
+        const newSubs = [...prevRecipe.substitutions];
+        newSubs[index][subField] = value;
+        return { ...prevRecipe, substitutions: newSubs };
+      } else {
+        return { ...prevRecipe, [name]: value };
+      }
     });
   };
 
+  const addField = (field) => {
+    setRecipe((prevRecipe) => {
+      if (field === "substitutions") {
+        return {
+          ...prevRecipe,
+          substitutions: [
+            ...prevRecipe.substitutions,
+            { ingredient: "", alternatives: [""] },
+          ],
+        };
+      } else {
+        return { ...prevRecipe, [field]: [...prevRecipe[field], ""] };
+      }
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await addRecipe(recipe);
+      // ניתן להוסיף כאן לוגיקה נוספת לאחר הוספת המתכון בהצלחה
+    } catch (error) {
+      console.error("שגיאה בהוספת המתכון:", error);
+      // ניתן להוסיף כאן טיפול בשגיאה
+    }
+  };
+
+  const renderInputField = (value, onChange, placeholder) => (
+    <input
+      type="text"
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+    />
+  );
+
   return (
     <form onSubmit={handleSubmit} className="add-recipe-form">
-      <input
-        type="text"
-        name="name"
-        value={recipe.name}
-        onChange={handleChange}
-        placeholder="שם המתכון"
-        required
-      />
-      
+      {renderInputField(recipe.name, handleChange, "שם המתכון")}
+
       <h3>מצרכים:</h3>
       {recipe.ingredients.map((ing, index) => (
-        <input
-          key={index}
-          type="text"
-          value={ing}
-          onChange={(e) => handleChange(e, index, 'ingredients')}
-          placeholder="מצרך"
-        />
+        <div key={`ingredient-${index}`}>
+          {renderInputField(ing, (e) => handleChange(e, index, "ingredients"), "מצרך")}
+        </div>
       ))}
-      <button type="button" onClick={() => addField('ingredients')}>הוסף מצרך</button>
+      <button type="button" onClick={() => addField("ingredients")}>
+        הוסף מצרך
+      </button>
 
       <textarea
         name="instructions"
@@ -77,34 +87,32 @@ function AddRecipe() {
 
       <h3>אלרגנים:</h3>
       {recipe.allergens.map((allergen, index) => (
-        <input
-          key={index}
-          type="text"
-          value={allergen}
-          onChange={(e) => handleChange(e, index, 'allergens')}
-          placeholder="אלרגן"
-        />
+        <div key={`allergen-${index}`}>
+          {renderInputField(allergen, (e) => handleChange(e, index, "allergens"), "אלרגן")}
+        </div>
       ))}
-      <button type="button" onClick={() => addField('allergens')}>הוסף אלרגן</button>
+      <button type="button" onClick={() => addField("allergens")}>
+        הוסף אלרגן
+      </button>
 
       <h3>תחליפים:</h3>
       {recipe.substitutions.map((sub, index) => (
-        <div key={index}>
-          <input
-            type="text"
-            value={sub.ingredient}
-            onChange={(e) => handleChange(e, index, 'substitutions', 'ingredient')}
-            placeholder="מצרך לתחליף"
-          />
-          <input
-            type="text"
-            value={sub.alternatives.join(', ')}
-            onChange={(e) => handleChange(e, index, 'substitutions', 'alternatives')}
-            placeholder="תחליפים (מופרדים בפסיקים)"
-          />
+        <div key={`substitution-${index}`}>
+          {renderInputField(
+            sub.ingredient,
+            (e) => handleChange(e, index, "substitutions", "ingredient"),
+            "מצרך לתחליף"
+          )}
+          {renderInputField(
+            sub.alternatives.join(", "),
+            (e) => handleChange(e, index, "substitutions", "alternatives"),
+            "תחליפים (מופרדים בפסיקים)"
+          )}
         </div>
       ))}
-      <button type="button" onClick={() => addField('substitutions')}>הוסף תחליף</button>
+      <button type="button" onClick={() => addField("substitutions")}>
+        הוסף תחליף
+      </button>
 
       <button type="submit">הוסף מתכון</button>
     </form>

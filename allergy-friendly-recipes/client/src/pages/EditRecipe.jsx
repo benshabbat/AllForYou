@@ -12,7 +12,18 @@ function EditRecipe() {
   }, [id]);
 
   const handleChange = (e, index, field, subField) => {
-    // דומה ל-AddRecipe
+    const { name, value } = e.target;
+    if (field === "ingredients" || field === "allergens") {
+      const newArray = [...recipe[field]];
+      newArray[index] = value;
+      setRecipe({ ...recipe, [field]: newArray });
+    } else if (field === "substitutions") {
+      const newSubs = [...recipe.substitutions];
+      newSubs[index][subField] = value;
+      setRecipe({ ...recipe, substitutions: newSubs });
+    } else {
+      setRecipe({ ...recipe, [name]: value });
+    }
   };
 
   const handleSubmit = (e) => {

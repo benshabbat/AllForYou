@@ -1,29 +1,23 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Layout from './components/Layout';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
-import Recipe from './pages/Recipe';
-import AddRecipe from './pages/AddRecipe';
-import EditRecipe from './pages/EditRecipe';
-import ErrorBoundary from './components/ErrorBoundary';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import MealList from './components/MealList';
 
-function App() {
+const App = () => {
   return (
-    <BrowserRouter>
-      <ErrorBoundary>
+    <Router>
+      <div className="container">
         <Routes>
-          {/* הנתיב הראשי משתמש בקומפוננטת Layout */}
-          <Route path="/" element={<Layout />}>
-            {/* נתיבי המשנה יוצגו בתוך ה-Outlet של ה-Layout */}
-            <Route index element={<Home />} />
-            <Route path="recipe/:id" element={<Recipe />} />
-            <Route path="add-recipe" element={<AddRecipe />} />
-            <Route path="edit-recipe/:id" element={<EditRecipe />} />
-          </Route>
+          <Route path="/" exact component={Home} />
+          <Route path="/login" component={Login} />
+          <Route path="/register" component={Register} />
+          <Route path="/meals" component={MealList} />
         </Routes>
-      </ErrorBoundary>
-    </BrowserRouter>
+      </div>
+    </Router>
   );
-}
+};
 
 export default App;
