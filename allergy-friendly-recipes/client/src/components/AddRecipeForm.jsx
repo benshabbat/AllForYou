@@ -1,14 +1,26 @@
 import React, { useState } from 'react';
+import { addRecipe } from '../api';
 
 function AddRecipeForm({ onAddRecipe }) {
   const [name, setName] = useState('');
   const [ingredients, setIngredients] = useState('');
+  const [allergens, setAllergens] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onAddRecipe({ name, ingredients: ingredients.split(',').map(i => i.trim()) });
-    setName('');
-    setIngredients('');
+    try {
+      const newRecipe = await addRecipe({
+        name,
+        ingredients: ingredients.split(',').map(i => i.trim()),
+        allergens: allergens.split(',').map(a => a.trim()),
+      });
+      onAddRecipe(newRecipe);
+      setName('');
+      setIngredients('');
+      setAllergens('');
+    } catch (error) {
+      console.error('Failed to add recipe:', error);
+    }
   };
 
   return (
@@ -31,6 +43,15 @@ function AddRecipeForm({ onAddRecipe }) {
           value={ingredients}
           onChange={(e) => setIngredients(e.target.value)}
           required
+        />
+      </div>
+      <div>
+        <label htmlFor="allergens">אלרגנים (מופרדים בפסיקים):</label>
+        <input
+          type="text"
+          id="allergens"
+          value={allergens}
+          onChange={(e) => setAllergens(e.target.value)}
         />
       </div>
       <button type="submit">הוסף מתכון</button>
