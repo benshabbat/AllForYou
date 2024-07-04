@@ -9,7 +9,7 @@ const RecipeSchema = new mongoose.Schema({
     alternatives: [{ type: String }]
   }],
   ratings: [{
-    user: { type: String },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     score: { type: Number, min: 1, max: 5 }
   }],
   averageRating: { type: Number, default: 0 }
