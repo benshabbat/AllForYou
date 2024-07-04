@@ -2,14 +2,15 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const Recipe = require('./models/Recipe');
-
+const dotenv = require('dotenv');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+dotenv.config();
 
-mongoose.connect('mongodb://localhost/allergy_recipes', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.MONGO_SERVER, { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.get('/api/recipes', async (req, res) => {
   try {
