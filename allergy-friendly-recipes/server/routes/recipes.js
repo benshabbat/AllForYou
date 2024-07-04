@@ -1,47 +1,60 @@
 const router = require('express').Router();
-let Recipe = require('../models/recipe.model');
+const Recipe = require('../models/recipe.model');
 
-router.route('/').get((req, res) => {
-  Recipe.find()
-    .then(recipes => res.json(recipes))
-    .catch(err => res.status(400).json('Error: ' + err));
+// Get all recipes
+router.get('/', async (req, res) => {
+  try {
+    const recipes = await Recipe.find();
+    res.json(recipes);
+  } catch (err) {
+    res.status(400).json('Error: ' + err);
+  }
 });
 
-router.route('/add').post((req, res) => {
-  const newRecipe = new Recipe(req.body);
-
-  newRecipe.save()
-    .then(() => res.json('Recipe added!'))
-    .catch(err => res.status(400).json('Error: ' + err));
+// Add a new recipe
+router.post('/add', async (req, res) => {
+  try {
+    const newRecipe = new Recipe(req.body);
+    await newRecipe.save();
+    res.json('Recipe added!');
+  } catch (err) {
+    res.status(400).json('Error: ' + err);
+  }
 });
 
-router.route('/:id').get((req, res) => {
-  Recipe.findById(req.params.id)
-    .then(recipe => res.json(recipe))
-    .catch(err => res.status(400).json('Error: ' + err));
+// Get a specific recipe
+router.get('/:id', async (req, res) => {
+  try {
+    const recipe = await Recipe.findById(req.params.id);
+    res.json(recipe);
+  } catch (err) {
+    res.status(400).json('Error: ' + err);
+  }
 });
 
-router.route('/:id').delete((req, res) => {
-  Recipe.findByIdAndDelete(req.params.id)
-    .then(() => res.json('Recipe deleted.'))
-    .catch(err => res.status(400).json('Error: ' + err));
+// Delete a recipe
+router.delete('/:id', async (req, res) => {
+  try {
+    await Recipe.findByIdAndDelete(req.params.id);
+    res.json('Recipe deleted.');
+  } catch (err) {
+    res.status(400).json('Error: ' + err);
+  }
 });
 
-router.route('/update/:id').post((req, res) => {
-  Recipe.findById(req.params.id)
-    .then(recipe => {
-      recipe.name = req.body.name;
-      recipe.ingredients = req.body.ingredients;
-      recipe.instructions = req.body.instructions;
-      recipe.allergens = req.body.allergens;
-      recipe.substitutions = req.body.substitutions;
-
-      recipe.save()
-        .then(() => res.json('Recipe updated!'))
-        .catch(err => res.status(400).json('Error: ' + err));
-    })
-    .catch(err => res.status(400).json('Error: ' + err));
+// Update a recipe
+router.post('/update/:id', async (req, res) => {
+  try {
+    const recipe = await Recipe.findById(req.params.id);
+    Object.assign(recipe, req.body);
+    await recipe.save();
+    res.json('Recipe updated!');
+  } catch (err) {
+    res.status(400).json('Error: ' + err);
+  }
 });
+
+// Rate a recipe
 router.post('/:id/rate', async (req, res) => {
   try {
     const recipe = await Recipe.findById(req.params.id);
@@ -58,11 +71,12 @@ router.post('/:id/rate', async (req, res) => {
     await recipe.save();
     
     res.json({ averageRating: recipe.averageRating });
-  } catch (error) {
-    res.status(400).json('Error: ' + error);
+  } catch (err) {
+    res.status(400).json('Error: ' + err);
   }
 });
 
+// Add a comment to a recipe
 router.post('/:id/comment', async (req, res) => {
   try {
     const recipe = await Recipe.findById(req.params.id);
@@ -72,8 +86,8 @@ router.post('/:id/comment', async (req, res) => {
     await recipe.save();
     
     res.json(recipe.comments);
-  } catch (error) {
-    res.status(400).json('Error: ' + error);
+  } catch (err) {
+    res.status(400).json('Error: ' + err);
   }
 });
 
