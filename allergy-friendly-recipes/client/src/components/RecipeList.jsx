@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { fetchRecipes, updateRecipe, deleteRecipe } from '../api';
+import React, { useState, useEffect } from "react";
+import { fetchRecipes, updateRecipe, deleteRecipe } from "../api";
 
 function RecipeList({ filter }) {
   const [recipes, setRecipes] = useState([]);
@@ -15,7 +15,7 @@ function RecipeList({ filter }) {
       const data = await fetchRecipes(filter);
       setRecipes(data);
     } catch (err) {
-      setError('Failed to load recipes');
+      setError("Failed to load recipes");
     }
   }
 
@@ -29,17 +29,17 @@ function RecipeList({ filter }) {
       setEditingId(null);
       loadRecipes();
     } catch (err) {
-      setError('Failed to update recipe');
+      setError("Failed to update recipe");
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this recipe?')) {
+    if (window.confirm("Are you sure you want to delete this recipe?")) {
       try {
         await deleteRecipe(id);
         loadRecipes();
       } catch (err) {
-        setError('Failed to delete recipe');
+        setError("Failed to delete recipe");
       }
     }
   };
@@ -50,7 +50,7 @@ function RecipeList({ filter }) {
 
   return (
     <div className="recipe-list">
-      {recipes.map(recipe => (
+      {recipes.map((recipe) => (
         <div key={recipe._id} className="recipe-card">
           {editingId === recipe._id ? (
             <EditRecipeForm
@@ -61,15 +61,17 @@ function RecipeList({ filter }) {
           ) : (
             <>
               <h3>{recipe.name}</h3>
-              <p>מרכיבים: {recipe.ingredients.join(', ')}</p>
-              {recipe.allergens && <p>אלרגנים: {recipe.allergens.join(', ')}</p>}
+              <p>מרכיבים: {recipe.ingredients.join(", ")}</p>
+              {recipe.allergens && (
+                <p>אלרגנים: {recipe.allergens.join(", ")}</p>
+              )}
               {recipe.substitutes && recipe.substitutes.length > 0 && (
                 <div>
                   <h4>תחליפים:</h4>
                   <ul>
                     {recipe.substitutes.map((sub, index) => (
                       <li key={index}>
-                        {sub.ingredient}: {sub.alternatives.join(', ')}
+                        {sub.ingredient}: {sub.alternatives.join(", ")}
                       </li>
                     ))}
                   </ul>
@@ -86,14 +88,16 @@ function RecipeList({ filter }) {
 }
 function EditRecipeForm({ recipe, onSave, onCancel }) {
   const [name, setName] = useState(recipe.name);
-  const [ingredients, setIngredients] = useState(recipe.ingredients.join(', '));
-  const [allergens, setAllergens] = useState(recipe.allergens ? recipe.allergens.join(', ') : '');
+  const [ingredients, setIngredients] = useState(recipe.ingredients.join(", "));
+  const [allergens, setAllergens] = useState(
+    recipe.allergens ? recipe.allergens.join(", ") : ""
+  );
   const [substitutes, setSubstitutes] = useState(recipe.substitutes || []);
 
   const handleSubstituteChange = (index, field, value) => {
     const newSubstitutes = [...substitutes];
-    if (field === 'alternatives') {
-      newSubstitutes[index][field] = value.split(',').map(a => a.trim());
+    if (field === "alternatives") {
+      newSubstitutes[index][field] = value.split(",").map((a) => a.trim());
     } else {
       newSubstitutes[index][field] = value;
     }
@@ -101,7 +105,7 @@ function EditRecipeForm({ recipe, onSave, onCancel }) {
   };
 
   const addSubstitute = () => {
-    setSubstitutes([...substitutes, { ingredient: '', alternatives: [] }]);
+    setSubstitutes([...substitutes, { ingredient: "", alternatives: [] }]);
   };
 
   const handleSubmit = (e) => {
@@ -109,9 +113,9 @@ function EditRecipeForm({ recipe, onSave, onCancel }) {
     onSave({
       ...recipe,
       name,
-      ingredients: ingredients.split(',').map(i => i.trim()),
-      allergens: allergens.split(',').map(a => a.trim()),
-      substitutes
+      ingredients: ingredients.split(",").map((i) => i.trim()),
+      allergens: allergens.split(",").map((a) => a.trim()),
+      substitutes,
     });
   };
 
@@ -142,20 +146,28 @@ function EditRecipeForm({ recipe, onSave, onCancel }) {
           <input
             type="text"
             value={sub.ingredient}
-            onChange={(e) => handleSubstituteChange(index, 'ingredient', e.target.value)}
+            onChange={(e) =>
+              handleSubstituteChange(index, "ingredient", e.target.value)
+            }
             placeholder="מרכיב"
           />
           <input
             type="text"
-            value={sub.alternatives.join(', ')}
-            onChange={(e) => handleSubstituteChange(index, 'alternatives', e.target.value)}
+            value={sub.alternatives.join(", ")}
+            onChange={(e) =>
+              handleSubstituteChange(index, "alternatives", e.target.value)
+            }
             placeholder="תחליפים (מופרדים בפסיקים)"
           />
         </div>
       ))}
-      <button type="button" onClick={addSubstitute}>הוסף תחליף</button>
+      <button type="button" onClick={addSubstitute}>
+        הוסף תחליף
+      </button>
       <button type="submit">שמור</button>
-      <button type="button" onClick={onCancel}>בטל</button>
+      <button type="button" onClick={onCancel}>
+        בטל
+      </button>
     </form>
   );
 }
