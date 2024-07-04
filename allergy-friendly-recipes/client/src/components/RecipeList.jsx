@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { fetchRecipes, updateRecipe, deleteRecipe } from "../api";
+import React, { useState, useEffect } from 'react';
+import { fetchRecipes, updateRecipe, deleteRecipe } from '../api';
+import SubstituteInput from './SubstituteInput';
 
 function RecipeList({ filter }) {
   const [recipes, setRecipes] = useState([]);
