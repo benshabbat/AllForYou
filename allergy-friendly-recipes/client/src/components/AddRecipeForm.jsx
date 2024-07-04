@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { addRecipe } from '../api';
+import SubstituteInput from './SubstituteInput';
 
 function AddRecipeForm({ onAddRecipe }) {
   const [name, setName] = useState('');
@@ -9,7 +10,11 @@ function AddRecipeForm({ onAddRecipe }) {
 
   const handleSubstituteChange = (index, field, value) => {
     const newSubstitutes = [...substitutes];
-    newSubstitutes[index][field] = value;
+    if (field === 'remove') {
+      newSubstitutes.splice(index, 1);
+    } else {
+      newSubstitutes[index][field] = value;
+    }
     setSubstitutes(newSubstitutes);
   };
 
@@ -40,7 +45,7 @@ function AddRecipeForm({ onAddRecipe }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="add-recipe-form">
       <h2>הוסף מתכון חדש</h2>
       <div>
         <label htmlFor="name">שם המתכון:</label>
@@ -70,27 +75,12 @@ function AddRecipeForm({ onAddRecipe }) {
           onChange={(e) => setAllergens(e.target.value)}
         />
       </div>
-      <div>
-        <h3>תחליפים:</h3>
-        {substitutes.map((sub, index) => (
-          <div key={index}>
-            <input
-              type="text"
-              placeholder="מרכיב"
-              value={sub.ingredient}
-              onChange={(e) => handleSubstituteChange(index, 'ingredient', e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="תחליפים (מופרדים בפסיקים)"
-              value={sub.alternatives}
-              onChange={(e) => handleSubstituteChange(index, 'alternatives', e.target.value)}
-            />
-          </div>
-        ))}
-        <button type="button" onClick={addSubstitute}>הוסף תחליף</button>
-      </div>
-      <button type="submit">הוסף מתכון</button>
+      <SubstituteInput
+        substitutes={substitutes}
+        onChange={handleSubstituteChange}
+        onAdd={addSubstitute}
+      />
+      <button type="submit" className="submit-button">הוסף מתכון</button>
     </form>
   );
 }
