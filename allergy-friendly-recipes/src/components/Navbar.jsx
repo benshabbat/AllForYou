@@ -9,6 +9,7 @@ function Navbar() {
         <li><Link to="/add-recipe">Add Recipe</Link></li>
       </ul>
     </nav>
+    
   );
 }
 

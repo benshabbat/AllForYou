@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+
 import { addRecipe } from '../services/recipeService';
 
 function AddRecipe() {
   const [name, setName] = useState('');
   const [ingredients, setIngredients] = useState('');
   const [instructions, setInstructions] = useState('');
-  const history = useHistory();
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,7 +16,6 @@ function AddRecipe() {
       instructions,
     };
     await addRecipe(newRecipe);
-    history.push('/');
   };
 
   return (

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route,Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Recipe from './pages/Recipe';
@@ -10,11 +10,11 @@ function App() {
     <Router>
       <div>
         <Navbar />
-        <Switch>
+        <Routes>
           <Route exact path="/" component={Home} />
           <Route path="/recipe/:id" component={Recipe} />
           <Route path="/add-recipe" component={AddRecipe} />
-        </Switch>
+        </Routes>
       </div>
     </Router>
   );
