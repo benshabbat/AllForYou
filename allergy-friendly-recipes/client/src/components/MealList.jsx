@@ -1,28 +1,40 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchMeals } from '../slices/mealSlice';
+import AllergyFilter from './AllergyFilter';
+import SubstituteFinder from './SubstituteFinder';
 
 const MealList = () => {
+  const [search, setSearch] = useState('');
+  const [sort, setSort] = useState('');
   const dispatch = useDispatch();
-  const meals = useSelector((state) => state.meal.meals);
-  const mealStatus = useSelector((state) => state.meal.status);
+  const { meals } = useSelector((state) => state.meals);
 
   useEffect(() => {
-    if (mealStatus === 'idle') {
-      dispatch(fetchMeals());
-    }
-  }, [mealStatus, dispatch]);
+    dispatch(fetchMeals({ search, sort }));
+  }, [search, sort, dispatch]);
 
   return (
-    <div className="pure-g">
-      {meals.map((meal) => (
-        <div key={meal._id} className="pure-u-1 pure-u-md-1-3">
-          <div className="meal-card">
-            <h2>{meal.name}</h2>
-            <p>Ingredients: {meal.ingredients.join(', ')}</p>
-          </div>
-        </div>
-      ))}
+    <div>
+      <h2>Meal List</h2>
+      <AllergyFilter />
+      <SubstituteFinder />
+      <input
+        type="text"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Search meals"
+      />
+      <select onChange={(e) => setSort(e.target.value)} value={sort}>
+        <option value="">Sort By</option>
+        <option value="asc">Name Ascending</option>
+        <option value="desc">Name Descending</option>
+      </select>
+      <ul>
+        {meals.map((meal) => (
+          <li key={meal._id}>{meal.name}</li>
+        ))}
+      </ul>
     </div>
   );
 };
