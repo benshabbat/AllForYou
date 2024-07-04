@@ -35,3 +35,13 @@ export async function updateRecipe(id, recipe) {
   }
   return response.json();
 }
+
+export async function deleteRecipe(id) {
+  const response = await fetch(`${API_URL}/recipes/${id}`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to delete recipe');
+  }
+  return response.json();
+}
