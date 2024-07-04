@@ -59,6 +59,18 @@ app.delete('/api/recipes/:id', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+app.get('/api/recipes/search', async (req, res) => {
+  try {
+    const { ingredients } = req.query;
+    const ingredientList = ingredients.split(',');
+    const recipes = await Recipe.find({
+      ingredients: { $in: ingredientList }
+    });
+    res.json(recipes);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
