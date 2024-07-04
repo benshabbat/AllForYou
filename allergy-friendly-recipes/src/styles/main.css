@@ -104,3 +104,21 @@
     list-style-position: inside;
     margin: 10px 0;
   }
+
+  @media (max-width: 768px) {
+    .container {
+      width: 95%;
+    }
+  
+    nav ul {
+      flex-direction: column;
+    }
+  
+    nav ul li {
+      padding: 10px 0;
+    }
+  
+    .recipe-list {
+      grid-template-columns: 1fr;
+    }
+  }
