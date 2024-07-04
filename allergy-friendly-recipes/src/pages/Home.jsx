@@ -15,15 +15,16 @@ function Home() {
   };
 
   return (
-    <div>
-      <h1>Allergy Friendly Recipes</h1>
-      <ul>
+    <div className="container">
+      <h1>מתכונים ידידותיים לאלרגיים</h1>
+      <div className="recipe-list">
         {recipes.map(recipe => (
-          <li key={recipe.id}>
-            <Link to={`/recipe/${recipe.id}`}>{recipe.name}</Link>
-          </li>
+          <div key={recipe.id} className="recipe-card">
+            <h3>{recipe.name}</h3>
+            <Link to={`/recipe/${recipe.id}`}>צפה במתכון</Link>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
