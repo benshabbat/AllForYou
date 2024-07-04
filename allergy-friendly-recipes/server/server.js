@@ -71,31 +71,34 @@ app.get('/api/recipes/search', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
 app.post('/api/recipes/:id/rate', async (req, res) => {
   try {
     const { id } = req.params;
-    const { user, score } = req.body;
-    
+    const { userId, score } = req.body;
+
     const recipe = await Recipe.findById(id);
     if (!recipe) {
       return res.status(404).json({ message: 'Recipe not found' });
     }
 
-    const existingRatingIndex = recipe.ratings.findIndex(r => r.user === user);
+    const existingRatingIndex = recipe.ratings.findIndex(rating => rating.user.toString() === userId);
     if (existingRatingIndex > -1) {
       recipe.ratings[existingRatingIndex].score = score;
     } else {
-      recipe.ratings.push({ user, score });
+      recipe.ratings.push({ user: userId, score });
     }
 
     recipe.updateAverageRating();
     await recipe.save();
 
-    res.json(recipe);
+    res.json({ averageRating: recipe.averageRating });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
+
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
