@@ -1,15 +1,15 @@
 import React from 'react';
 
-function AllergenFilter({ allergens, onFilterChange }) {
+function AllergenFilter({ allergens, allergenFilter, handleAllergenChange }) {
   return (
-    <div>
-      <h2>סנן לפי אלרגנים</h2>
+    <div className="allergen-filter">
+      <h3>סנן לפי אלרגנים:</h3>
       {allergens.map(allergen => (
-        <label key={allergen}>
+        <label key={allergen} className="allergen-checkbox">
           <input
             type="checkbox"
-            value={allergen}
-            onChange={(e) => onFilterChange(allergen, e.target.checked)}
+            checked={allergenFilter.includes(allergen)}
+            onChange={() => handleAllergenChange(allergen)}
           />
           {allergen}
         </label>

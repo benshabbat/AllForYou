@@ -1,20 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { getRecipes } from '../services/api';
+import React from 'react';
 import RecipeItem from './RecipeItem';
 
-function RecipeList() {
-  const [recipes, setRecipes] = useState([]);
-
-  useEffect(() => {
-    getRecipes().then(res => setRecipes(res.data));
-  }, []);
-
+function RecipeList({ recipes }) {
   return (
-    <div>
-      <h2>מתכונים</h2>
-      {recipes.map(recipe => (
-        <RecipeItem key={recipe._id} recipe={recipe} />
-      ))}
+    <div className="recipe-list">
+      {recipes.length === 0 ? (
+        <p>לא נמצאו מתכונים התואמים לחיפוש שלך.</p>
+      ) : (
+        recipes.map(recipe => (
+          <RecipeItem key={recipe._id} recipe={recipe} />
+        ))
+      )}
     </div>
   );
 }

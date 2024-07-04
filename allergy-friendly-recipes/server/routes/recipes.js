@@ -21,6 +21,26 @@ router.route('/:id').get((req, res) => {
     .catch(err => res.status(400).json('Error: ' + err));
 });
 
-// הוסף נתיבים נוספים לעדכון ומחיקה
+router.route('/:id').delete((req, res) => {
+  Recipe.findByIdAndDelete(req.params.id)
+    .then(() => res.json('Recipe deleted.'))
+    .catch(err => res.status(400).json('Error: ' + err));
+});
+
+router.route('/update/:id').post((req, res) => {
+  Recipe.findById(req.params.id)
+    .then(recipe => {
+      recipe.name = req.body.name;
+      recipe.ingredients = req.body.ingredients;
+      recipe.instructions = req.body.instructions;
+      recipe.allergens = req.body.allergens;
+      recipe.substitutions = req.body.substitutions;
+
+      recipe.save()
+        .then(() => res.json('Recipe updated!'))
+        .catch(err => res.status(400).json('Error: ' + err));
+    })
+    .catch(err => res.status(400).json('Error: ' + err));
+});
 
 module.exports = router;
