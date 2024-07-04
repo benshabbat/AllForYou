@@ -4,7 +4,7 @@ import authReducer from './slices/authSlice';
 
 export const store = configureStore({
   reducer: {
-    meal: mealReducer,
+    meals: mealReducer,
     auth: authReducer,
   },
 });
