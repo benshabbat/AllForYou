@@ -1,25 +1,35 @@
 import React, { useState, useEffect } from 'react';
+import { fetchRecipes } from '../api';
 
 function RecipeList({ filter }) {
   const [recipes, setRecipes] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // כאן נוסיף בקשת API לקבלת מתכונים מהשרת
-    // לעת עתה, נשתמש בנתונים לדוגמה
-    setRecipes([
-      { id: 1, name: 'פסטה ללא גלוטן', ingredients: ['פסטה ללא גלוטן', 'רוטב עגבניות', 'ירקות'] },
-      { id: 2, name: 'עוגת שוקולד ללא ביצים', ingredients: ['קמח', 'קקאו', 'חלב סויה'] },
-    ]);
+    async function loadRecipes() {
+      try {
+        const data = await fetchRecipes(filter);
+        setRecipes(data);
+      } catch (err) {
+        setError('Failed to load recipes');
+      }
+    }
+    loadRecipes();
   }, [filter]);
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div>
       <h2>רשימת מתכונים</h2>
       <ul>
         {recipes.map(recipe => (
-          <li key={recipe.id}>
+          <li key={recipe._id}>
             <h3>{recipe.name}</h3>
             <p>מרכיבים: {recipe.ingredients.join(', ')}</p>
+            {recipe.allergens && <p>אלרגנים: {recipe.allergens.join(', ')}</p>}
           </li>
         ))}
       </ul>
