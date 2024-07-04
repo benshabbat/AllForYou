@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useRecipes } from '../context/RecipeContext';
+import RecipeRating from './RecipeRating';
 
 function RecipeList({ filter }) {
   const { recipes, loading, error, deleteExistingRecipe } = useRecipes();
@@ -31,6 +32,7 @@ function RecipeList({ filter }) {
               </ul>
             </div>
           )}
+          <RecipeRating recipeId={recipe._id} currentRating={recipe.averageRating} />
           <button onClick={() => deleteExistingRecipe(recipe._id)}>מחק</button>
         </div>
       ))}
