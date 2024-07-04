@@ -4,13 +4,23 @@
     padding: 0;
     box-sizing: border-box;
   }
-  
-  body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    color: #333;
-    background-color: #f4f4f4;
+  :root {
+    --primary-color: #333;
+    --secondary-color: #f4f4f4;
+    --text-color: #333;
+    --link-color: #1a73e8;
   }
+  
+  /* ואז נשתמש בהם כך: */
+  body {
+    color: var(--text-color);
+    background-color: var(--secondary-color);
+  }
+  
+  a {
+    color: var(--link-color);
+  }
+
   
   .container {
     width: 80%;
