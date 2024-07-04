@@ -1,43 +1,31 @@
-import React, { useState } from 'react';
-import { addRecipe } from '../api';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { useForm } from '../hooks/useForm';
+import { addRecipe } from '../services/api';
 import SubstituteInput from './SubstituteInput';
 
 function AddRecipeForm({ onAddRecipe }) {
-  const [name, setName] = useState('');
-  const [ingredients, setIngredients] = useState('');
-  const [allergens, setAllergens] = useState('');
+  const [formValues, handleChange, reset] = useForm({
+    name: '',
+    ingredients: '',
+    allergens: '',
+  });
   const [substitutes, setSubstitutes] = useState([{ ingredient: '', alternatives: '' }]);
-
-  const handleSubstituteChange = (index, field, value) => {
-    const newSubstitutes = [...substitutes];
-    if (field === 'remove') {
-      newSubstitutes.splice(index, 1);
-    } else {
-      newSubstitutes[index][field] = value;
-    }
-    setSubstitutes(newSubstitutes);
-  };
-
-  const addSubstitute = () => {
-    setSubstitutes([...substitutes, { ingredient: '', alternatives: '' }]);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const newRecipe = await addRecipe({
-        name,
-        ingredients: ingredients.split(',').map(i => i.trim()),
-        allergens: allergens.split(',').map(a => a.trim()),
+        ...formValues,
+        ingredients: formValues.ingredients.split(',').map(i => i.trim()),
+        allergens: formValues.allergens.split(',').map(a => a.trim()),
         substitutes: substitutes.map(s => ({
           ingredient: s.ingredient,
           alternatives: s.alternatives.split(',').map(a => a.trim())
         }))
       });
       onAddRecipe(newRecipe);
-      setName('');
-      setIngredients('');
-      setAllergens('');
+      reset();
       setSubstitutes([{ ingredient: '', alternatives: '' }]);
     } catch (error) {
       console.error('Failed to add recipe:', error);
@@ -52,8 +40,9 @@ function AddRecipeForm({ onAddRecipe }) {
         <input
           type="text"
           id="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          name="name"
+          value={formValues.name}
+          onChange={handleChange}
           required
         />
       </div>
@@ -61,8 +50,9 @@ function AddRecipeForm({ onAddRecipe }) {
         <label htmlFor="ingredients">מרכיבים (מופרדים בפסיקים):</label>
         <textarea
           id="ingredients"
-          value={ingredients}
-          onChange={(e) => setIngredients(e.target.value)}
+          name="ingredients"
+          value={formValues.ingredients}
+          onChange={handleChange}
           required
         />
       </div>
@@ -71,18 +61,22 @@ function AddRecipeForm({ onAddRecipe }) {
         <input
           type="text"
           id="allergens"
-          value={allergens}
-          onChange={(e) => setAllergens(e.target.value)}
+          name="allergens"
+          value={formValues.allergens}
+          onChange={handleChange}
         />
       </div>
       <SubstituteInput
         substitutes={substitutes}
-        onChange={handleSubstituteChange}
-        onAdd={addSubstitute}
+        onChange={setSubstitutes}
       />
       <button type="submit" className="submit-button">הוסף מתכון</button>
     </form>
   );
 }
+
+AddRecipeForm.propTypes = {
+  onAddRecipe: PropTypes.func.isRequired,
+};
 
 export default AddRecipeForm;

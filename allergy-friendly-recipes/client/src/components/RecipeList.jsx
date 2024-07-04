@@ -1,13 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useRecipes } from '../context/RecipeContext';
-import RecipeRating from './RecipeRating';
+import { useRecipeContext } from '../contexts/RecipeContext';
+import RecipeItem from './RecipeItem';
 
-function RecipeList({ filter }) {
-  const { recipes, loading, error, deleteExistingRecipe } = useRecipes();
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+function RecipeList() {
+  const { recipes, filter } = useRecipeContext();
 
   const filteredRecipes = recipes.filter(recipe => 
     !filter.some(allergen => recipe.allergens.includes(allergen))
@@ -16,32 +13,10 @@ function RecipeList({ filter }) {
   return (
     <div className="recipe-list">
       {filteredRecipes.map(recipe => (
-        <div key={recipe._id} className="recipe-card">
-          <h3>{recipe.name}</h3>
-          <p>מרכיבים: {recipe.ingredients.join(', ')}</p>
-          {recipe.allergens && <p>אלרגנים: {recipe.allergens.join(', ')}</p>}
-          {recipe.substitutes && recipe.substitutes.length > 0 && (
-            <div>
-              <h4>תחליפים:</h4>
-              <ul>
-                {recipe.substitutes.map((sub, index) => (
-                  <li key={index}>
-                    {sub.ingredient}: {sub.alternatives.join(', ')}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          <RecipeRating recipeId={recipe._id} currentRating={recipe.averageRating} />
-          <button onClick={() => deleteExistingRecipe(recipe._id)}>מחק</button>
-        </div>
+        <RecipeItem key={recipe._id} recipe={recipe} />
       ))}
     </div>
   );
 }
-
-RecipeList.propTypes = {
-  filter: PropTypes.arrayOf(PropTypes.string).isRequired,
-};
 
 export default RecipeList;
