@@ -16,7 +16,7 @@ class ErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
-      return <h1>משהו השתבש.</h1>;
+      return <h1>משהו השתבש. אנא נסה לרענן את הדף.</h1>;
     }
 
     return this.props.children;

@@ -1,23 +1,30 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { RecipeProvider } from './contexts/RecipeContext';
-import RecipeList from './components/RecipeList';
-import AddRecipeForm from './components/AddRecipeForm';
-import AllergenFilter from './components/AllergenFilter';
-import RecipeSearch from './components/RecipeSearch';
+import ErrorBoundary from './components/ErrorBoundary';
+import LoadingSpinner from './components/LoadingSpinner';
 import { ALLERGENS } from './config';
 import './styles/App.css';
 
+const RecipeList = lazy(() => import('./components/RecipeList'));
+const AddRecipeForm = lazy(() => import('./components/AddRecipeForm'));
+const AllergenFilter = lazy(() => import('./components/AllergenFilter'));
+const RecipeSearch = lazy(() => import('./components/RecipeSearch'));
+
 function App() {
   return (
-    <RecipeProvider>
-      <div className="App">
-        <h1>מתכונים ידידותיים לאלרגיות</h1>
-        <AllergenFilter allergens={ALLERGENS} />
-        <RecipeSearch />
-        <RecipeList />
-        <AddRecipeForm />
-      </div>
-    </RecipeProvider>
+    <ErrorBoundary>
+      <RecipeProvider>
+        <div className="App">
+          <h1>מתכונים ידידותיים לאלרגיות</h1>
+          <Suspense fallback={<LoadingSpinner />}>
+            <AllergenFilter allergens={ALLERGENS} />
+            <RecipeSearch />
+            <RecipeList />
+            <AddRecipeForm />
+          </Suspense>
+        </div>
+      </RecipeProvider>
+    </ErrorBoundary>
   );
 }
 
