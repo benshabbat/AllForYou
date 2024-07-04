@@ -89,16 +89,16 @@ function RecipeList({ filter }) {
 }
 function EditRecipeForm({ recipe, onSave, onCancel }) {
   const [name, setName] = useState(recipe.name);
-  const [ingredients, setIngredients] = useState(recipe.ingredients.join(", "));
-  const [allergens, setAllergens] = useState(
-    recipe.allergens ? recipe.allergens.join(", ") : ""
-  );
+  const [ingredients, setIngredients] = useState(recipe.ingredients.join(', '));
+  const [allergens, setAllergens] = useState(recipe.allergens ? recipe.allergens.join(', ') : '');
   const [substitutes, setSubstitutes] = useState(recipe.substitutes || []);
 
   const handleSubstituteChange = (index, field, value) => {
     const newSubstitutes = [...substitutes];
-    if (field === "alternatives") {
-      newSubstitutes[index][field] = value.split(",").map((a) => a.trim());
+    if (field === 'remove') {
+      newSubstitutes.splice(index, 1);
+    } else if (field === 'alternatives') {
+      newSubstitutes[index][field] = value.split(',').map(a => a.trim());
     } else {
       newSubstitutes[index][field] = value;
     }
@@ -106,7 +106,7 @@ function EditRecipeForm({ recipe, onSave, onCancel }) {
   };
 
   const addSubstitute = () => {
-    setSubstitutes([...substitutes, { ingredient: "", alternatives: [] }]);
+    setSubstitutes([...substitutes, { ingredient: '', alternatives: [] }]);
   };
 
   const handleSubmit = (e) => {
@@ -114,14 +114,14 @@ function EditRecipeForm({ recipe, onSave, onCancel }) {
     onSave({
       ...recipe,
       name,
-      ingredients: ingredients.split(",").map((i) => i.trim()),
-      allergens: allergens.split(",").map((a) => a.trim()),
-      substitutes,
+      ingredients: ingredients.split(',').map(i => i.trim()),
+      allergens: allergens.split(',').map(a => a.trim()),
+      substitutes
     });
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="edit-recipe-form">
       <input
         type="text"
         value={name}
@@ -141,34 +141,13 @@ function EditRecipeForm({ recipe, onSave, onCancel }) {
         onChange={(e) => setAllergens(e.target.value)}
         placeholder="אלרגנים (מופרדים בפסיקים)"
       />
-      <h4>תחליפים:</h4>
-      {substitutes.map((sub, index) => (
-        <div key={index}>
-          <input
-            type="text"
-            value={sub.ingredient}
-            onChange={(e) =>
-              handleSubstituteChange(index, "ingredient", e.target.value)
-            }
-            placeholder="מרכיב"
-          />
-          <input
-            type="text"
-            value={sub.alternatives.join(", ")}
-            onChange={(e) =>
-              handleSubstituteChange(index, "alternatives", e.target.value)
-            }
-            placeholder="תחליפים (מופרדים בפסיקים)"
-          />
-        </div>
-      ))}
-      <button type="button" onClick={addSubstitute}>
-        הוסף תחליף
-      </button>
+      <SubstituteInput
+        substitutes={substitutes}
+        onChange={handleSubstituteChange}
+        onAdd={addSubstitute}
+      />
       <button type="submit">שמור</button>
-      <button type="button" onClick={onCancel}>
-        בטל
-      </button>
+      <button type="button" onClick={onCancel}>בטל</button>
     </form>
   );
 }
