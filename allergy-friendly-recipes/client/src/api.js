@@ -21,3 +21,17 @@ export async function addRecipe(recipe) {
   }
   return response.json();
 }
+
+export async function updateRecipe(id, recipe) {
+  const response = await fetch(`${API_URL}/recipes/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(recipe),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to update recipe');
+  }
+  return response.json();
+}
