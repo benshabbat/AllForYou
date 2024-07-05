@@ -1,0 +1,132 @@
+.home {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  
+  .hero {
+    text-align: center;
+    padding: 60px 0;
+    background-color: #f7f7f7;
+    border-radius: 10px;
+    margin-bottom: 40px;
+  }
+  
+  .hero h1 {
+    font-size: 2.5em;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+  }
+  
+  .hero p {
+    font-size: 1.2em;
+    color: #555;
+    margin-bottom: 30px;
+  }
+  
+  .ctaButton {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  .ctaButton:hover {
+    background-color: #3a7bd5;
+  }
+  
+  .features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+  }
+  
+  .feature {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .feature h2 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+  }
+  
+  .userSection, .callToAction {
+    background-color: #f0f8ff;
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+  }
+  
+  .addRecipeButton, .loginButton, .registerButton {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  .addRecipeButton {
+    background-color: var(--secondary-color);
+    color: white;
+  }
+  
+  .loginButton {
+    background-color: var(--primary-color);
+    color: white;
+    margin-right: 10px;
+  }
+  
+  .registerButton {
+    background-color: white;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+  }
+  
+  .addRecipeButton:hover, .loginButton:hover {
+    background-color: #3a7bd5;
+  }
+  
+  .registerButton:hover {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  
+  @media (max-width: 768px) {
+    .hero {
+      padding: 40px 20px;
+    }
+  
+    .hero h1 {
+      font-size: 2em;
+    }
+  
+    .features {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  /* נגישות */
+  .ctaButton:focus, .addRecipeButton:focus, .loginButton:focus, .registerButton:focus {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+  }
+  
+  /* אנימציות */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .hero, .feature, .userSection, .callToAction {
+    animation: fadeInUp 0.6s ease-out;
+  }
