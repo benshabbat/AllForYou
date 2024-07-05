@@ -89,6 +89,18 @@ export const rateRecipe = createAsyncThunk(
   }
 );
 
+export const toggleFavorite = createAsyncThunk(
+  'recipes/toggleFavorite',
+  async (recipeId, thunkAPI) => {
+    try {
+      const response = await api.post(`/recipes/${recipeId}/favorite`);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 const recipeSlice = createSlice({
   name: 'recipes',
   initialState: {
@@ -162,9 +174,14 @@ const recipeSlice = createSlice({
       .addCase(rateRecipe.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
+      }).addCase(toggleFavorite.fulfilled, (state, action) => {
+        const index = state.recipes.findIndex(recipe => recipe._id === action.payload._id);
+        if (index !== -1) {
+          state.recipes[index] = action.payload;
+        }
       });
-  },
-});
+    },
+  });
 
 export const { setCurrentPage } = recipeSlice.actions;
 export default recipeSlice.reducer;
