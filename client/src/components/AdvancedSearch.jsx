@@ -2,6 +2,14 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchRecipes } from '../store/slices/recipeSlice';
 import styles from './AdvancedSearch.module.css';
+import { FaNut, FaMilk, FaEgg, FaBreadSlice } from 'react-icons/fa'; // נייבא אייקונים מתאימים
+
+const allergenIcons = {
+  'בוטנים': FaNut,
+  'חלב': FaMilk,
+  'ביצים': FaEgg,
+  'גלוטן': FaBreadSlice
+};
 
 function AdvancedSearch() {
   const dispatch = useDispatch();
@@ -53,17 +61,20 @@ function AdvancedSearch() {
         <option value="סלטים">סלטים</option>
       </select>
       <div className={styles.allergens}>
-        <label>אלרגנים:</label>
-        {['בוטנים', 'חלב', 'ביצים', 'גלוטן'].map(allergen => (
-          <label key={allergen} className={styles.allergenLabel}>
-            <input
-              type="checkbox"
-              checked={searchParams.allergens.includes(allergen)}
-              onChange={() => handleAllergenChange(allergen)}
-            />
-            {allergen}
-          </label>
-        ))}
+        <label>סנן אלרגנים:</label>
+        <div className={styles.allergenButtons}>
+          {Object.entries(allergenIcons).map(([allergen, Icon]) => (
+            <button
+              key={allergen}
+              type="button"
+              onClick={() => handleAllergenChange(allergen)}
+              className={`${styles.allergenButton} ${searchParams.allergens.includes(allergen) ? styles.active : ''}`}
+            >
+              <Icon className={styles.allergenIcon} />
+              <span>{allergen}</span>
+            </button>
+          ))}
+        </div>
       </div>
       <select
         name="difficulty"

@@ -1,8 +1,9 @@
-import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { logout } from '../store/slices/authSlice';
-import styles from './Header.module.css';
+import React from "react";
+import { FaLeaf } from "react-icons/fa"; // נשתמש באייקון של עלה לסמל תזונה בריאה
+import styles from "./Header.module.css";
+import { Link, NavLink } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../store/slices/authSlice";
 
 function Header() {
   const dispatch = useDispatch();
@@ -14,30 +15,59 @@ function Header() {
 
   return (
     <header className={styles.header}>
-      <div className={styles.container}>
-        <Link to="/" className={styles.logo}>
+      <div className={styles.logo}>
+        <FaLeaf className={styles.logoIcon} />
+        <Link to="/" className={styles.logoText}>
           מתכונים לאלרגיים
         </Link>
         <nav className={styles.nav}>
-          <NavLink to="/" className={({isActive}) => isActive ? styles.activeLink : styles.link} end>
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              isActive ? styles.activeLink : styles.link
+            }
+            end
+          >
             דף הבית
           </NavLink>
-          <NavLink to="/recipes" className={({isActive}) => isActive ? styles.activeLink : styles.link}>
+          <NavLink
+            to="/recipes"
+            className={({ isActive }) =>
+              isActive ? styles.activeLink : styles.link
+            }
+          >
             מתכונים
           </NavLink>
           {user ? (
             <>
-              <NavLink to="/add-recipe" className={({isActive}) => isActive ? styles.activeLink : styles.link}>
+              <NavLink
+                to="/add-recipe"
+                className={({ isActive }) =>
+                  isActive ? styles.activeLink : styles.link
+                }
+              >
                 הוסף מתכון
               </NavLink>
-              <button onClick={handleLogout} className={styles.logoutButton}>התנתק</button>
+              <button onClick={handleLogout} className={styles.logoutButton}>
+                התנתק
+              </button>
             </>
           ) : (
             <>
-              <NavLink to="/login" className={({isActive}) => isActive ? styles.activeLink : styles.link}>
+              <NavLink
+                to="/login"
+                className={({ isActive }) =>
+                  isActive ? styles.activeLink : styles.link
+                }
+              >
                 התחבר
               </NavLink>
-              <NavLink to="/register" className={({isActive}) => isActive ? styles.activeLink : styles.link}>
+              <NavLink
+                to="/register"
+                className={({ isActive }) =>
+                  isActive ? styles.activeLink : styles.link
+                }
+              >
                 הרשם
               </NavLink>
             </>

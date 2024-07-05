@@ -25,7 +25,7 @@ function RecipeList() {
     <div className={styles.recipeListContainer}>
       <h1 className={styles.title}>מתכונים</h1>
       <div className={styles.recipeGrid}>
-        {recipes.map(recipe => (
+        {recipes?.map(recipe => (
           <RecipeCard key={recipe._id} recipe={recipe} />
         ))}
       </div>
