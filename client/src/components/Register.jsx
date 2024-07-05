@@ -1,53 +1,105 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { register, clearError } from '../store/slices/authSlice';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { register } from '../store/slices/authSlice';
+import styles from './Register.module.css';
 
 function Register() {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { isLoading, error } = useSelector((state) => state.auth);
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await dispatch(register({ username, email, password }));
+    if (formData.password !== formData.confirmPassword) {
+      alert('הסיסמאות אינן תואמות');
+      return;
+    }
+    const result = await dispatch(register(formData));
     if (!result.error) {
       navigate('/');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>הרשמה</h2>
-      {error && <p className="error">{error}</p>}
-      <input
-        type="text"
-        placeholder="שם משתמש"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        required
-      />
-      <input
-        type="email"
-        placeholder="אימייל"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
-      <input
-        type="password"
-        placeholder="סיסמה"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
-      <button type="submit" disabled={isLoading}>
-        {isLoading ? 'מתבצעת הרשמה...' : 'הרשמה'}
-      </button>
-    </form>
+    <div className={styles.registerContainer}>
+      <form onSubmit={handleSubmit} className={styles.form}>
+        <h2 className={styles.title}>הרשמה</h2>
+        
+        <div className={styles.formGroup}>
+          <label htmlFor="username">שם משתמש</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label htmlFor="email">אימייל</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label htmlFor="password">סיסמה</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label htmlFor="confirmPassword">אימות סיסמה</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        {error && <p className={styles.error}>{error}</p>}
+
+        <button type="submit" className={styles.submitButton} disabled={isLoading}>
+          {isLoading ? 'מתבצעת הרשמה...' : 'הירשם'}
+        </button>
+
+        <p className={styles.loginLink}>
+          כבר יש לך חשבון? <Link to="/login">התחבר כאן</Link>
+        </p>
+      </form>
+    </div>
   );
 }
 
