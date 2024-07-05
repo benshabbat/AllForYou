@@ -2,20 +2,22 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
 
-// AsyncThunk לקבלת כל המתכונים
+// פעולה אסינכרונית לקבלת מתכונים עם pagination
 export const fetchRecipes = createAsyncThunk(
-  "recipes/fetchRecipes",
-  async ({ searchTerm = "", allergen = "" }, thunkAPI) => {
+  'recipes/fetchRecipes',
+  async ({ page = 1, limit = 10, searchTerm = '', allergen = '' }, thunkAPI) => {
     try {
-      const response = await api.get("/recipes", {
-        params: { searchTerm, allergen },
+      const response = await api.get('/recipes', {
+        params: { page, limit, searchTerm, allergen }
       });
       return response.data;
     } catch (error) {
+      toast.error('שגיאה בטעינת המתכונים');
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
 );
+
 // יצירת מתכון חדש
 export const addRecipe = createAsyncThunk(
   'recipes/addRecipe',
@@ -74,13 +76,20 @@ export const fetchRecipeById = createAsyncThunk(
 );
 
 const recipeSlice = createSlice({
-  name: "recipes",
+  name: 'recipes',
   initialState: {
     recipes: [],
+    totalRecipes: 0,
+    currentPage: 1,
     isLoading: false,
     error: null,
+    currentRecipe: null,
   },
-  reducers: {},
+  reducers: {
+    setCurrentPage: (state, action) => {
+      state.currentPage = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchRecipes.pending, (state) => {
@@ -88,7 +97,8 @@ const recipeSlice = createSlice({
       })
       .addCase(fetchRecipes.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.recipes = action.payload;
+        state.recipes = action.payload.recipes;
+        state.totalRecipes = action.payload.totalRecipes;
       })
       .addCase(fetchRecipes.rejected, (state, action) => {
         state.isLoading = false;
@@ -124,4 +134,5 @@ const recipeSlice = createSlice({
   },
 });
 
+export const { setCurrentPage } = recipeSlice.actions;
 export default recipeSlice.reducer;

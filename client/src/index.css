@@ -3,6 +3,8 @@
   --secondary-color: #f5a623;
   --background-color: #f4f4f4;
   --text-color: #333;
+  --error-color: #d32f2f;
+  --success-color: #388e3c;
 }
 
 body {
@@ -10,6 +12,8 @@ body {
   background-color: var(--background-color);
   color: var(--text-color);
   line-height: 1.6;
+  margin: 0;
+  padding: 0;
 }
 
 .container {
@@ -19,16 +23,9 @@ body {
 }
 
 button {
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 10px 20px;
   cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-button:hover {
-  background-color: #3a7bd5;
+  font-size: 1rem;
+  transition: all 0.3s ease;
 }
 
 input, textarea {
@@ -37,4 +34,21 @@ input, textarea {
   margin-bottom: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  font-size: 1rem;
+}
+
+/* נגישות משופרת */
+*:focus {
+  outline: 3px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* אנימציות */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
 }
