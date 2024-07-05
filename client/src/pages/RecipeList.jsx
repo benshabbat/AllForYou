@@ -1,35 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchRecipes } from '../store/slices/recipeSlice';
 import RecipeCard from '../components/RecipeCard';
 import RecipeFilter from '../components/RecipeFilter';
 
-// RecipeList component - עמוד רשימת המתכונים
 function RecipeList() {
-  const [recipes, setRecipes] = useState([]);
-  const [filteredRecipes, setFilteredRecipes] = useState([]);
+  const dispatch = useDispatch();
+  const { recipes, isLoading, error } = useSelector((state) => state.recipes);
 
   useEffect(() => {
-    // כאן נוסיף קריאה לשרת לקבלת רשימת המתכונים
-    // לדוגמה:
-    // fetchRecipes().then(data => {
-    //   setRecipes(data);
-    //   setFilteredRecipes(data);
-    // });
-  }, []);
+    dispatch(fetchRecipes());
+  }, [dispatch]);
 
-  const handleFilter = (allergens) => {
-    const filtered = recipes.filter(recipe => 
-      !recipe.allergens.some(allergen => allergens.includes(allergen))
-    );
-    setFilteredRecipes(filtered);
-  };
+  if (isLoading) return <div>טוען מתכונים...</div>;
+  if (error) return <div>שגיאה: {error}</div>;
 
   return (
     <div className="recipe-list">
       <h2>רשימת מתכונים</h2>
-      <RecipeFilter onFilter={handleFilter} />
+      <RecipeFilter />
       <div className="recipes-grid">
-        {filteredRecipes.map(recipe => (
-          <RecipeCard key={recipe.id} recipe={recipe} />
+        {recipes.map(recipe => (
+          <RecipeCard key={recipe._id} recipe={recipe} />
         ))}
       </div>
     </div>

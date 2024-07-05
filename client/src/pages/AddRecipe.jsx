@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import RecipeForm from '../components/RecipeForm';
-import AllergenInput from '../components/AllergenInput';
+import { useDispatch } from 'react-redux';
+import { addRecipe } from '../store/slices/recipeSlice';
+import { useNavigate } from 'react-router-dom';
 
-// AddRecipe component - עמוד הוספת מתכון חדש
 function AddRecipe() {
   const [recipe, setRecipe] = useState({
     name: '',
@@ -11,29 +11,36 @@ function AddRecipe() {
     allergens: [],
     alternatives: ''
   });
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const handleRecipeChange = (updatedRecipe) => {
-    setRecipe(updatedRecipe);
+  const handleChange = (e) => {
+    if (e.target.name === 'allergens') {
+      setRecipe({ ...recipe, allergens: e.target.value.split(',').map(item => item.trim()) });
+    } else {
+      setRecipe({ ...recipe, [e.target.name]: e.target.value });
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // כאן נוסיף את הלוגיקה לשליחת המתכון לשרת
-    console.log('Recipe submitted:', recipe);
+    const result = await dispatch(addRecipe(recipe));
+    if (!result.error) {
+      navigate('/recipes');
+    }
   };
 
   return (
     <div className="add-recipe">
       <h2>הוספת מתכון חדש</h2>
-      <RecipeForm 
-        recipe={recipe} 
-        onRecipeChange={handleRecipeChange}
-        onSubmit={handleSubmit}
-      />
-      <AllergenInput 
-        allergens={recipe.allergens}
-        onAllergensChange={(allergens) => setRecipe({...recipe, allergens})}
-      />
+      <form onSubmit={handleSubmit}>
+        <input type="text" name="name" placeholder="שם המתכון" onChange={handleChange} required />
+        <textarea name="ingredients" placeholder="רכיבים" onChange={handleChange} required></textarea>
+        <textarea name="instructions" placeholder="הוראות הכנה" onChange={handleChange} required></textarea>
+        <input type="text" name="allergens" placeholder="אלרגנים (מופרדים בפסיקים)" onChange={handleChange} />
+        <textarea name="alternatives" placeholder="חלופות אפשריות" onChange={handleChange}></textarea>
+        <button type="submit">הוסף מתכון</button>
+      </form>
     </div>
   );
 }

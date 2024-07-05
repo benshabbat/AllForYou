@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import api from '../../services/api';
 
-// AsyncThunk לרישום משתמש חדש
+// עדכון ה-AsyncThunks להשתמש ב-api במקום axios
 export const register = createAsyncThunk(
   'auth/register',
   async (userData, thunkAPI) => {
     try {
-      const response = await axios.post('/api/users/register', userData);
+      const response = await api.post('/users/register', userData);
       localStorage.setItem('token', response.data.token);
       return response.data;
     } catch (error) {
@@ -15,12 +15,11 @@ export const register = createAsyncThunk(
   }
 );
 
-// AsyncThunk להתחברות משתמש
 export const login = createAsyncThunk(
   'auth/login',
   async (userData, thunkAPI) => {
     try {
-      const response = await axios.post('/api/users/login', userData);
+      const response = await api.post('/users/login', userData);
       localStorage.setItem('token', response.data.token);
       return response.data;
     } catch (error) {
