@@ -38,67 +38,74 @@ function Register() {
 
   return (
     <div className={styles.registerContainer}>
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <h2 className={styles.title}>הרשמה</h2>
-        
-        <div className={styles.formGroup}>
-          <label htmlFor="username">שם משתמש</label>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            required
-          />
-        </div>
+      <div className={styles.formWrapper}>
+        <h2 className={styles.title}>הצטרפו לקהילת המתכונים שלנו</h2>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.formGroup}>
+            <label htmlFor="username">שם משתמש</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+              placeholder="הזן שם משתמש"
+            />
+          </div>
 
-        <div className={styles.formGroup}>
-          <label htmlFor="email">אימייל</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="email">אימייל</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              placeholder="הזן כתובת אימייל"
+            />
+          </div>
 
-        <div className={styles.formGroup}>
-          <label htmlFor="password">סיסמה</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="password">סיסמה</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              placeholder="בחר סיסמה"
+            />
+          </div>
 
-        <div className={styles.formGroup}>
-          <label htmlFor="confirmPassword">אימות סיסמה</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-          />
-        </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="confirmPassword">אימות סיסמה</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+              placeholder="הזן את הסיסמה שנית"
+            />
+          </div>
 
-        {error && <p className={styles.error}>{error}</p>}
+          {error && <p className={styles.error}>{error}</p>}
 
-        <button type="submit" className={styles.submitButton} disabled={isLoading}>
-          {isLoading ? 'מתבצעת הרשמה...' : 'הירשם'}
-        </button>
-
+          <button type="submit" className={styles.submitButton} disabled={isLoading}>
+            {isLoading ? 'מתבצעת הרשמה...' : 'הירשם עכשיו'}
+          </button>
+        </form>
         <p className={styles.loginLink}>
           כבר יש לך חשבון? <Link to="/login">התחבר כאן</Link>
         </p>
-      </form>
+      </div>
+      <div className={styles.imageContainer}>
+        <div className={styles.imageOverlay}></div>
+      </div>
     </div>
   );
 }
