@@ -1,5 +1,5 @@
 import React from "react";
-import { FaLeaf } from "react-icons/fa"; // נשתמש באייקון של עלה לסמל תזונה בריאה
+import { GiCookingPot } from 'react-icons/gi'; // שימוש באייקון של סיר בישול
 import styles from "./Header.module.css";
 import { Link, NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -16,7 +16,7 @@ function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.logo}>
-        <FaLeaf className={styles.logoIcon} />
+        <GiCookingPot className={styles.logoIcon} />
         <Link to="/" className={styles.logoText}>
           מתכונים לאלרגיים
         </Link>

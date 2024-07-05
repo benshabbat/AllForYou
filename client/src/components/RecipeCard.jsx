@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaNut, FaMilk, FaEgg, FaBreadSlice } from 'react-icons/fa';
+import { GiPeanut, GiMilkCarton, GiEgg, GiWheat } from 'react-icons/gi';
 import styles from './RecipeCard.module.css';
 
 const allergenIcons = {
-  'בוטנים': FaNut,
-  'חלב': FaMilk,
-  'ביצים': FaEgg,
-  'גלוטן': FaBreadSlice
+  'בוטנים': GiPeanut,
+  'חלב': GiMilkCarton,
+  'ביצים': GiEgg,
+  'גלוטן': GiWheat
 };
 
 function RecipeCard({ recipe }) {

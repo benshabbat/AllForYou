@@ -2,13 +2,12 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchRecipes } from '../store/slices/recipeSlice';
 import styles from './AdvancedSearch.module.css';
-import { FaNut, FaMilk, FaEgg, FaBreadSlice } from 'react-icons/fa'; // נייבא אייקונים מתאימים
-
+import { GiPeanut, GiMilkCarton, GiEgg, GiWheat } from 'react-icons/gi';
 const allergenIcons = {
-  'בוטנים': FaNut,
-  'חלב': FaMilk,
-  'ביצים': FaEgg,
-  'גלוטן': FaBreadSlice
+  'בוטנים': GiPeanut,
+  'חלב': GiMilkCarton,
+  'ביצים': GiEgg,
+  'גלוטן': GiWheat
 };
 
 function AdvancedSearch() {
