@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { fetchRecipes } from '../store/slices/recipeSlice';
 import RecipeFilter from '../components/RecipeFilter';
 import styles from './RecipeList.module.css';
@@ -27,6 +28,7 @@ function RecipeList() {
             <p className={styles.recipeAllergens}>
               אלרגנים: {recipe.allergens.join(', ')}
             </p>
+            <Link to={`/recipes/${recipe._id}`}>צפה במתכון</Link>
           </div>
         ))}
       </div>
