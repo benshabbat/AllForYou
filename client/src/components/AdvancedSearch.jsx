@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchRecipes } from '../store/slices/recipeSlice';
 import styles from './AdvancedSearch.module.css';
-import { GiPeanut, GiMilkCarton, GiEgg, GiWheat } from 'react-icons/gi';
+import { GiPeanut, GiMilkCarton, GiEggClutch, GiWheat } from 'react-icons/gi';
 const allergenIcons = {
   'בוטנים': GiPeanut,
   'חלב': GiMilkCarton,
-  'ביצים': GiEgg,
+  'ביצים': GiEggClutch,
   'גלוטן': GiWheat
 };
 
