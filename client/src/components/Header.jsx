@@ -1,7 +1,8 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
+import styles from './Header.module.css';
 
 function Header() {
   const dispatch = useDispatch();
@@ -12,22 +13,37 @@ function Header() {
   };
 
   return (
-    <header>
-      <nav>
-        <ul>
-          <li><Link to="/">דף הבית</Link></li>
-          <li><Link to="/recipes">מתכונים</Link></li>
-          <li><Link to="/add-recipe">הוסף מתכון</Link></li>
+    <header className={styles.header}>
+      <div className={styles.container}>
+        <Link to="/" className={styles.logo}>
+          מתכונים לאלרגיים
+        </Link>
+        <nav className={styles.nav}>
+          <NavLink to="/" className={({isActive}) => isActive ? styles.activeLink : styles.link} end>
+            דף הבית
+          </NavLink>
+          <NavLink to="/recipes" className={({isActive}) => isActive ? styles.activeLink : styles.link}>
+            מתכונים
+          </NavLink>
           {user ? (
-            <li><button onClick={handleLogout}>התנתק</button></li>
+            <>
+              <NavLink to="/add-recipe" className={({isActive}) => isActive ? styles.activeLink : styles.link}>
+                הוסף מתכון
+              </NavLink>
+              <button onClick={handleLogout} className={styles.logoutButton}>התנתק</button>
+            </>
           ) : (
             <>
-              <li><Link to="/login">התחבר</Link></li>
-              <li><Link to="/register">הרשם</Link></li>
+              <NavLink to="/login" className={({isActive}) => isActive ? styles.activeLink : styles.link}>
+                התחבר
+              </NavLink>
+              <NavLink to="/register" className={({isActive}) => isActive ? styles.activeLink : styles.link}>
+                הרשם
+              </NavLink>
             </>
           )}
-        </ul>
-      </nav>
+        </nav>
+      </div>
     </header>
   );
 }
