@@ -2,13 +2,12 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
 
-// פעולה אסינכרונית לקבלת מתכונים עם pagination
 export const fetchRecipes = createAsyncThunk(
   'recipes/fetchRecipes',
-  async ({ page = 1, limit = 10, searchTerm = '', allergen = '' }, thunkAPI) => {
+  async ({ page = 1, limit = 10, searchTerm = '', ingredients = [], category = '' }, thunkAPI) => {
     try {
       const response = await api.get('/recipes', {
-        params: { page, limit, searchTerm, allergen }
+        params: { page, limit, searchTerm, ingredients: ingredients.join(','), category }
       });
       return response.data;
     } catch (error) {

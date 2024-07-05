@@ -30,8 +30,34 @@ const RecipeSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  ratings: [{
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    rating: {
+      type: Number,
+      min: 1,
+      max: 5
+    }
+  }],
+  averageRating: {
+    type: Number,
+    default: 0
   }
 });
+
+// מתודה לחישוב דירוג ממוצע
+RecipeSchema.methods.calculateAverageRating = function() {
+  if (this.ratings.length === 0) {
+    this.averageRating = 0;
+  } else {
+    const sum = this.ratings.reduce((acc, item) => acc + item.rating, 0);
+    this.averageRating = sum / this.ratings.length;
+  }
+  return this.averageRating;
+};
 
 const Recipe = mongoose.model('Recipe', RecipeSchema);
 

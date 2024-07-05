@@ -1,15 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchRecipeById, deleteRecipe } from '../store/slices/recipeSlice';
-import EditRecipe from '../components/EditRecipe';
-import styles from './RecipeDetails.module.css';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchRecipeById,
+  deleteRecipe,
+  rateRecipe,
+} from "../store/slices/recipeSlice";
+import EditRecipe from "../components/EditRecipe";
+import RatingStars from "../components/RatingStars";
+import styles from "./RecipeDetails.module.css";
 
 function RecipeDetails() {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { currentRecipe, isLoading, error } = useSelector((state) => state.recipes);
+  const { currentRecipe, isLoading, error } = useSelector(
+    (state) => state.recipes
+  );
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
@@ -18,10 +25,14 @@ function RecipeDetails() {
   }, [dispatch, id]);
 
   const handleDelete = async () => {
-    if (window.confirm('האם אתה בטוח שברצונך למחוק מתכון זה?')) {
+    if (window.confirm("האם אתה בטוח שברצונך למחוק מתכון זה?")) {
       await dispatch(deleteRecipe(id));
-      navigate('/recipes');
+      navigate("/recipes");
     }
+  };
+
+  const handleRate = async (rating) => {
+    await dispatch(rateRecipe({ id: currentRecipe._id, rating }));
   };
 
   if (isLoading) return <div aria-live="polite">טוען...</div>;
@@ -31,10 +42,19 @@ function RecipeDetails() {
   return (
     <div className={styles.recipeDetails}>
       {isEditing ? (
-        <EditRecipe recipe={currentRecipe} onClose={() => setIsEditing(false)} />
+        <EditRecipe
+          recipe={currentRecipe}
+          onClose={() => setIsEditing(false)}
+        />
       ) : (
         <>
           <h2>{currentRecipe.name}</h2>
+          <RatingStars
+            rating={currentRecipe.averageRating}
+            onRating={handleRate}
+          />
+          <p>דירוג ממוצע: {currentRecipe.averageRating.toFixed(1)}</p>
+
           <section aria-labelledby="ingredients-heading">
             <h3 id="ingredients-heading">רכיבים:</h3>
             <p>{currentRecipe.ingredients}</p>
@@ -45,15 +65,19 @@ function RecipeDetails() {
           </section>
           <section aria-labelledby="allergens-heading">
             <h3 id="allergens-heading">אלרגנים:</h3>
-            <p>{currentRecipe.allergens.join(', ')}</p>
+            <p>{currentRecipe.allergens.join(", ")}</p>
           </section>
           <section aria-labelledby="alternatives-heading">
             <h3 id="alternatives-heading">חלופות אפשריות:</h3>
             <p>{currentRecipe.alternatives}</p>
           </section>
           <div className={styles.actionButtons}>
-            <button onClick={() => setIsEditing(true)} aria-label="ערוך מתכון">ערוך מתכון</button>
-            <button onClick={handleDelete} aria-label="מחק מתכון">מחק מתכון</button>
+            <button onClick={() => setIsEditing(true)} aria-label="ערוך מתכון">
+              ערוך מתכון
+            </button>
+            <button onClick={handleDelete} aria-label="מחק מתכון">
+              מחק מתכון
+            </button>
           </div>
         </>
       )}

@@ -55,3 +55,37 @@ export const deleteRecipe = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const rateRecipe = async (req, res) => {
+  try {
+    const recipe = await Recipe.findById(req.params.id);
+    if (!recipe) {
+      return res.status(404).json({ message: 'מתכון לא נמצא' });
+    }
+
+    const { rating } = req.body;
+    if (rating < 1 || rating > 5) {
+      return res.status(400).json({ message: 'דירוג חייב להיות בין 1 ל-5' });
+    }
+
+    // בדיקה אם המשתמש כבר דירג את המתכון
+    const existingRatingIndex = recipe.ratings.findIndex(
+      r => r.user.toString() === req.user._id.toString()
+    );
+
+    if (existingRatingIndex !== -1) {
+      // עדכון דירוג קיים
+      recipe.ratings[existingRatingIndex].rating = rating;
+    } else {
+      // הוספת דירוג חדש
+      recipe.ratings.push({ user: req.user._id, rating });
+    }
+
+    recipe.calculateAverageRating();
+    await recipe.save();
+
+    res.json({ averageRating: recipe.averageRating });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

@@ -30,7 +30,7 @@ function RecipeList() {
       <h2 className={styles.pageTitle}>רשימת מתכונים</h2>
       <RecipeFilter />
       <ul className={styles.recipeList} aria-label="רשימת מתכונים">
-        {recipes.map(recipe => (
+        {recipes?.map(recipe => (
           <li key={recipe._id} className={styles.recipeCard}>
             <h3 className={styles.recipeTitle}>{recipe.name}</h3>
             <p className={styles.recipeDescription}>{recipe.ingredients.slice(0, 100)}...</p>
