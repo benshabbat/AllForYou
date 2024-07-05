@@ -1,5 +1,6 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import api from "../../services/api";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { toast } from 'react-toastify';
+import api from '../../services/api';
 
 // AsyncThunk לקבלת כל המתכונים
 export const fetchRecipes = createAsyncThunk(
@@ -15,38 +16,46 @@ export const fetchRecipes = createAsyncThunk(
     }
   }
 );
-// AsyncThunk להוספת מתכון חדש
+// יצירת מתכון חדש
 export const addRecipe = createAsyncThunk(
-  "recipes/addRecipe",
+  'recipes/addRecipe',
   async (recipeData, thunkAPI) => {
     try {
-      const response = await api.post("/recipes", recipeData);
+      const response = await api.post('/recipes', recipeData);
+      toast.success('המתכון נוסף בהצלחה');
       return response.data;
     } catch (error) {
+      toast.error('שגיאה בהוספת המתכון');
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
 );
 
+// עדכון מתכון קיים
 export const updateRecipe = createAsyncThunk(
-  "recipes/updateRecipe",
+  'recipes/updateRecipe',
   async ({ id, recipeData }, thunkAPI) => {
     try {
       const response = await api.put(`/recipes/${id}`, recipeData);
+      toast.success('המתכון עודכן בהצלחה');
       return response.data;
     } catch (error) {
+      toast.error('שגיאה בעדכון המתכון');
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
 );
 
+// מחיקת מתכון
 export const deleteRecipe = createAsyncThunk(
-  "recipes/deleteRecipe",
+  'recipes/deleteRecipe',
   async (id, thunkAPI) => {
     try {
       await api.delete(`/recipes/${id}`);
+      toast.success('המתכון נמחק בהצלחה');
       return id;
     } catch (error) {
+      toast.error('שגיאה במחיקת המתכון');
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }

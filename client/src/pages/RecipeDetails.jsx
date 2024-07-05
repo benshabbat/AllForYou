@@ -13,6 +13,7 @@ function RecipeDetails() {
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
+    // טעינת פרטי המתכון בעת טעינת הדף
     dispatch(fetchRecipeById(id));
   }, [dispatch, id]);
 
@@ -23,9 +24,9 @@ function RecipeDetails() {
     }
   };
 
-  if (isLoading) return <div>טוען...</div>;
-  if (error) return <div>שגיאה: {error}</div>;
-  if (!currentRecipe) return <div>מתכון לא נמצא</div>;
+  if (isLoading) return <div aria-live="polite">טוען...</div>;
+  if (error) return <div aria-live="assertive">שגיאה: {error}</div>;
+  if (!currentRecipe) return <div aria-live="assertive">מתכון לא נמצא</div>;
 
   return (
     <div className={styles.recipeDetails}>
@@ -34,16 +35,26 @@ function RecipeDetails() {
       ) : (
         <>
           <h2>{currentRecipe.name}</h2>
-          <h3>רכיבים:</h3>
-          <p>{currentRecipe.ingredients}</p>
-          <h3>הוראות הכנה:</h3>
-          <p>{currentRecipe.instructions}</p>
-          <h3>אלרגנים:</h3>
-          <p>{currentRecipe.allergens.join(', ')}</p>
-          <h3>חלופות אפשריות:</h3>
-          <p>{currentRecipe.alternatives}</p>
-          <button onClick={() => setIsEditing(true)}>ערוך מתכון</button>
-          <button onClick={handleDelete}>מחק מתכון</button>
+          <section aria-labelledby="ingredients-heading">
+            <h3 id="ingredients-heading">רכיבים:</h3>
+            <p>{currentRecipe.ingredients}</p>
+          </section>
+          <section aria-labelledby="instructions-heading">
+            <h3 id="instructions-heading">הוראות הכנה:</h3>
+            <p>{currentRecipe.instructions}</p>
+          </section>
+          <section aria-labelledby="allergens-heading">
+            <h3 id="allergens-heading">אלרגנים:</h3>
+            <p>{currentRecipe.allergens.join(', ')}</p>
+          </section>
+          <section aria-labelledby="alternatives-heading">
+            <h3 id="alternatives-heading">חלופות אפשריות:</h3>
+            <p>{currentRecipe.alternatives}</p>
+          </section>
+          <div className={styles.actionButtons}>
+            <button onClick={() => setIsEditing(true)} aria-label="ערוך מתכון">ערוך מתכון</button>
+            <button onClick={handleDelete} aria-label="מחק מתכון">מחק מתכון</button>
+          </div>
         </>
       )}
     </div>

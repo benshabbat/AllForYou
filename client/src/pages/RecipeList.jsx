@@ -10,28 +10,31 @@ function RecipeList() {
   const { recipes, isLoading, error } = useSelector((state) => state.recipes);
 
   useEffect(() => {
+    // טעינת רשימת המתכונים בעת טעינת הדף
     dispatch(fetchRecipes({}));
   }, [dispatch]);
 
-  if (isLoading) return <div>טוען מתכונים...</div>;
-  if (error) return <div>שגיאה: {error}</div>;
+  if (isLoading) return <div aria-live="polite">טוען מתכונים...</div>;
+  if (error) return <div aria-live="assertive">שגיאה: {error}</div>;
 
   return (
     <div className="container">
       <h2>רשימת מתכונים</h2>
       <RecipeFilter />
-      <div className={styles.recipeList}>
+      <ul className={styles.recipeList} aria-label="רשימת מתכונים">
         {recipes.map(recipe => (
-          <div key={recipe._id} className={styles.recipeCard}>
+          <li key={recipe._id} className={styles.recipeCard}>
             <h3 className={styles.recipeTitle}>{recipe.name}</h3>
             <p>{recipe.ingredients.slice(0, 100)}...</p>
             <p className={styles.recipeAllergens}>
               אלרגנים: {recipe.allergens.join(', ')}
             </p>
-            <Link to={`/recipes/${recipe._id}`}>צפה במתכון</Link>
-          </div>
+            <Link to={`/recipes/${recipe._id}`} aria-label={`צפה במתכון ${recipe.name}`}>
+              צפה במתכון
+            </Link>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }
