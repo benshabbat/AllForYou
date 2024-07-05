@@ -74,15 +74,30 @@ export const fetchRecipeById = createAsyncThunk(
   }
 );
 
+// הוספת פעולת דירוג מתכון
+export const rateRecipe = createAsyncThunk(
+  'recipes/rateRecipe',
+  async ({ id, rating }, thunkAPI) => {
+    try {
+      const response = await api.post(`/recipes/${id}/rate`, { rating });
+      toast.success('הדירוג נוסף בהצלחה');
+      return response.data;
+    } catch (error) {
+      toast.error('שגיאה בהוספת הדירוג');
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 const recipeSlice = createSlice({
   name: 'recipes',
   initialState: {
     recipes: [],
-    totalRecipes: 0,
-    currentPage: 1,
+    currentRecipe: null,
     isLoading: false,
     error: null,
-    currentRecipe: null,
+    totalRecipes: 0,
+    currentPage: 1,
   },
   reducers: {
     setCurrentPage: (state, action) => {
@@ -129,6 +144,24 @@ const recipeSlice = createSlice({
       })
       .addCase(fetchRecipeById.fulfilled, (state, action) => {
         state.currentRecipe = action.payload;
+      }).addCase(rateRecipe.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(rateRecipe.fulfilled, (state, action) => {
+        state.isLoading = false;
+        if (state.currentRecipe) {
+          state.currentRecipe.averageRating = action.payload.averageRating;
+          state.currentRecipe.ratings = action.payload.ratings;
+        }
+        // עדכון הדירוג גם ברשימת המתכונים אם קיים
+        const index = state.recipes.findIndex(recipe => recipe._id === action.payload._id);
+        if (index !== -1) {
+          state.recipes[index].averageRating = action.payload.averageRating;
+        }
+      })
+      .addCase(rateRecipe.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
       });
   },
 });

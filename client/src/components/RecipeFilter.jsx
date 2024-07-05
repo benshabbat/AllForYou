@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { fetchRecipes } from '../store/slices/recipeSlice';
 import { useForm } from '../hooks/useForm';
 import { CATEGORIES } from '../constants';
-import styles from '../styles/RecipeFilter.module.css';
+import styles from './RecipeFilter.module.css';
 
 function RecipeFilter() {
   const dispatch = useDispatch();
