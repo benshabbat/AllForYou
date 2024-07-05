@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import RecipeForm from '../components/RecipeForm';
+import AllergenInput from '../components/AllergenInput';
 
-// AddRecipe component - טופס להוספת מתכון חדש
+// AddRecipe component - עמוד הוספת מתכון חדש
 function AddRecipe() {
   const [recipe, setRecipe] = useState({
     name: '',
@@ -10,8 +12,8 @@ function AddRecipe() {
     alternatives: ''
   });
 
-  const handleChange = (e) => {
-    setRecipe({ ...recipe, [e.target.name]: e.target.value });
+  const handleRecipeChange = (updatedRecipe) => {
+    setRecipe(updatedRecipe);
   };
 
   const handleSubmit = (e) => {
@@ -23,14 +25,15 @@ function AddRecipe() {
   return (
     <div className="add-recipe">
       <h2>הוספת מתכון חדש</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="text" name="name" placeholder="שם המתכון" onChange={handleChange} />
-        <textarea name="ingredients" placeholder="רכיבים" onChange={handleChange}></textarea>
-        <textarea name="instructions" placeholder="הוראות הכנה" onChange={handleChange}></textarea>
-        <input type="text" name="allergens" placeholder="אלרגנים (מופרדים בפסיקים)" onChange={handleChange} />
-        <textarea name="alternatives" placeholder="חלופות אפשריות" onChange={handleChange}></textarea>
-        <button type="submit">הוסף מתכון</button>
-      </form>
+      <RecipeForm 
+        recipe={recipe} 
+        onRecipeChange={handleRecipeChange}
+        onSubmit={handleSubmit}
+      />
+      <AllergenInput 
+        allergens={recipe.allergens}
+        onAllergensChange={(allergens) => setRecipe({...recipe, allergens})}
+      />
     </div>
   );
 }
