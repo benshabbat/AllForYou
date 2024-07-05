@@ -1,25 +1,32 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { addRecipe } from '../store/slices/recipeSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { addRecipe } from '../store/slices/recipeSlice';
+import styles from './AddRecipe.module.css';
 
 function AddRecipe() {
   const [recipe, setRecipe] = useState({
     name: '',
+    description: '',
     ingredients: '',
     instructions: '',
+    category: '',
     allergens: [],
-    alternatives: ''
+    prepTime: '',
+    cookTime: '',
+    servings: ''
   });
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { isLoading, error } = useSelector((state) => state.recipes);
 
   const handleChange = (e) => {
-    if (e.target.name === 'allergens') {
-      setRecipe({ ...recipe, allergens: e.target.value.split(',').map(item => item.trim()) });
-    } else {
-      setRecipe({ ...recipe, [e.target.name]: e.target.value });
-    }
+    const { name, value } = e.target;
+    setRecipe(prevRecipe => ({
+      ...prevRecipe,
+      [name]: name === 'allergens' ? value.split(',').map(item => item.trim()) : value
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -31,15 +38,69 @@ function AddRecipe() {
   };
 
   return (
-    <div className="add-recipe">
-      <h2>הוספת מתכון חדש</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="text" name="name" placeholder="שם המתכון" onChange={handleChange} required />
-        <textarea name="ingredients" placeholder="רכיבים" onChange={handleChange} required></textarea>
-        <textarea name="instructions" placeholder="הוראות הכנה" onChange={handleChange} required></textarea>
-        <input type="text" name="allergens" placeholder="אלרגנים (מופרדים בפסיקים)" onChange={handleChange} />
-        <textarea name="alternatives" placeholder="חלופות אפשריות" onChange={handleChange}></textarea>
-        <button type="submit">הוסף מתכון</button>
+    <div className={styles.addRecipeContainer}>
+      <h2 className={styles.title}>הוספת מתכון חדש</h2>
+      <form onSubmit={handleSubmit} className={styles.form}>
+        <div className={styles.formGroup}>
+          <label htmlFor="name">שם המתכון</label>
+          <input type="text" id="name" name="name" value={recipe.name} onChange={handleChange} required />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label htmlFor="description">תיאור קצר</label>
+          <textarea id="description" name="description" value={recipe.description} onChange={handleChange} required />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label htmlFor="ingredients">רכיבים (כל רכיב בשורה חדשה)</label>
+          <textarea id="ingredients" name="ingredients" value={recipe.ingredients} onChange={handleChange} required />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label htmlFor="instructions">הוראות הכנה</label>
+          <textarea id="instructions" name="instructions" value={recipe.instructions} onChange={handleChange} required />
+        </div>
+
+        <div className={styles.formRow}>
+          <div className={styles.formGroup}>
+            <label htmlFor="category">קטגוריה</label>
+            <select id="category" name="category" value={recipe.category} onChange={handleChange} required>
+              <option value="">בחר קטגוריה</option>
+              <option value="עיקריות">עיקריות</option>
+              <option value="קינוחים">קינוחים</option>
+              <option value="סלטים">סלטים</option>
+              <option value="מרקים">מרקים</option>
+            </select>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="allergens">אלרגנים (מופרדים בפסיקים)</label>
+            <input type="text" id="allergens" name="allergens" value={recipe.allergens.join(', ')} onChange={handleChange} />
+          </div>
+        </div>
+
+        <div className={styles.formRow}>
+          <div className={styles.formGroup}>
+            <label htmlFor="prepTime">זמן הכנה (בדקות)</label>
+            <input type="number" id="prepTime" name="prepTime" value={recipe.prepTime} onChange={handleChange} />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="cookTime">זמן בישול (בדקות)</label>
+            <input type="number" id="cookTime" name="cookTime" value={recipe.cookTime} onChange={handleChange} />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="servings">מספר מנות</label>
+            <input type="number" id="servings" name="servings" value={recipe.servings} onChange={handleChange} />
+          </div>
+        </div>
+
+        {error && <p className={styles.error}>{error}</p>}
+
+        <button type="submit" className={styles.submitButton} disabled={isLoading}>
+          {isLoading ? 'מוסיף מתכון...' : 'הוסף מתכון'}
+        </button>
       </form>
     </div>
   );
