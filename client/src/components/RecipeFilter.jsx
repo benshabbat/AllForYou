@@ -1,51 +1,57 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchRecipes } from '../store/slices/recipeSlice';
-import styles from './RecipeFilter.module.css';
+import { useForm } from '../hooks/useForm';
+import { CATEGORIES } from '../constants';
+import styles from '../styles/RecipeFilter.module.css';
 
 function RecipeFilter() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [ingredients, setIngredients] = useState('');
-  const [category, setCategory] = useState('');
   const dispatch = useDispatch();
+  const [formValues, handleChange, reset] = useForm({
+    searchTerm: '',
+    ingredients: '',
+    category: ''
+  });
 
-  const handleSearch = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(fetchRecipes({
-      searchTerm,
-      ingredients: ingredients.split(',').map(i => i.trim()),
-      category
+      ...formValues,
+      ingredients: formValues.ingredients.split(',').map(i => i.trim())
     }));
   };
 
   return (
-    <form onSubmit={handleSearch} className={styles.filterForm}>
+    <form onSubmit={handleSubmit} className={styles.filterForm}>
       <input
         type="text"
+        name="searchTerm"
         placeholder="חפש מתכון..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        value={formValues.searchTerm}
+        onChange={handleChange}
         className={styles.inputField}
       />
       <input
         type="text"
+        name="ingredients"
         placeholder="רכיבים (מופרדים בפסיקים)"
-        value={ingredients}
-        onChange={(e) => setIngredients(e.target.value)}
+        value={formValues.ingredients}
+        onChange={handleChange}
         className={styles.inputField}
       />
       <select
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
+        name="category"
+        value={formValues.category}
+        onChange={handleChange}
         className={styles.selectField}
       >
         <option value="">כל הקטגוריות</option>
-        <option value="עיקריות">עיקריות</option>
-        <option value="קינוחים">קינוחים</option>
-        <option value="סלטים">סלטים</option>
-        <option value="מרקים">מרקים</option>
+        {CATEGORIES.map(category => (
+          <option key={category} value={category}>{category}</option>
+        ))}
       </select>
       <button type="submit" className={styles.searchButton}>חפש</button>
+      <button type="button" onClick={reset} className={styles.resetButton}>איפוס</button>
     </form>
   );
 }
