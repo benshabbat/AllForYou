@@ -1,29 +1,51 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styles from './RatingStars.module.css';
 
-function RatingStars({ rating, onRating }) {
+function RatingStars({ initialRating, onRating }) {
+  const [rating, setRating] = useState(initialRating);
+  const [hover, setHover] = useState(0);
+
+  const handleRating = (currentRating) => {
+    setRating(currentRating);
+    onRating(currentRating);
+  };
+
   return (
     <div className={styles.ratingContainer}>
-      {[1, 2, 3, 4, 5].map((star) => (
-        <span
-          key={star}
-          className={`${styles.star} ${star <= rating ? styles.filled : ''}`}
-          onClick={() => onRating(star)}
-          role="button"
-          tabIndex={0}
-          aria-label={`דרג ${star} מתוך 5 כוכבים`}
-        >
-          ★
-        </span>
-      ))}
+      {[...Array(5)].map((star, index) => {
+        const currentRating = index + 1;
+        return (
+          <label key={index}>
+            <input
+              type="radio"
+              name="rating"
+              value={currentRating}
+              onClick={() => handleRating(currentRating)}
+              style={{ display: 'none' }}
+            />
+            <span
+              className={`${styles.star} ${currentRating <= (hover || rating) ? styles.filled : ''}`}
+              onMouseEnter={() => setHover(currentRating)}
+              onMouseLeave={() => setHover(0)}
+            >
+              ★
+            </span>
+          </label>
+        );
+      })}
+      <div className={styles.rating}>דירוג: {rating}/5</div>
     </div>
   );
 }
 
 RatingStars.propTypes = {
-  rating: PropTypes.number.isRequired,
+  initialRating: PropTypes.number,
   onRating: PropTypes.func.isRequired,
+};
+
+RatingStars.defaultProps = {
+  initialRating: 0,
 };
 
 export default RatingStars;
