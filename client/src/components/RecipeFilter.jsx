@@ -1,23 +1,32 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { fetchRecipes } from '../store/slices/recipeSlice';
 
-// RecipeFilter component - רכיב לסינון מתכונים לפי אלרגנים
-function RecipeFilter({ onFilter }) {
-  const [allergens, setAllergens] = useState('');
+function RecipeFilter() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [allergen, setAllergen] = useState('');
+  const dispatch = useDispatch();
 
-  const handleSubmit = (e) => {
+  const handleSearch = (e) => {
     e.preventDefault();
-    onFilter(allergens.split(',').map(a => a.trim()));
+    dispatch(fetchRecipes({ searchTerm, allergen }));
   };
 
   return (
-    <form onSubmit={handleSubmit} className="recipe-filter">
-      <input 
-        type="text" 
-        value={allergens} 
-        onChange={(e) => setAllergens(e.target.value)}
-        placeholder="הכנס אלרגנים לסינון (מופרדים בפסיקים)"
+    <form onSubmit={handleSearch} className="recipe-filter">
+      <input
+        type="text"
+        placeholder="חפש מתכון..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <button type="submit">סנן</button>
+      <input
+        type="text"
+        placeholder="סנן לפי אלרגן..."
+        value={allergen}
+        onChange={(e) => setAllergen(e.target.value)}
+      />
+      <button type="submit">חפש</button>
     </form>
   );
 }

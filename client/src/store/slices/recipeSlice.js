@@ -4,16 +4,15 @@ import api from '../../services/api';
 // AsyncThunk לקבלת כל המתכונים
 export const fetchRecipes = createAsyncThunk(
   'recipes/fetchRecipes',
-  async (_, thunkAPI) => {
+  async ({ searchTerm = '', allergen = '' }, thunkAPI) => {
     try {
-      const response = await api.get('/recipes');
+      const response = await api.get('/recipes', { params: { searchTerm, allergen } });
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
 );
-
 // AsyncThunk להוספת מתכון חדש
 export const addRecipe = createAsyncThunk(
   'recipes/addRecipe',

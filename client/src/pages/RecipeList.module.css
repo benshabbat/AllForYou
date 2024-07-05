@@ -1,0 +1,29 @@
+.recipeList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .recipeCard {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: transform 0.3s;
+  }
+  
+  .recipeCard:hover {
+    transform: translateY(-5px);
+  }
+  
+  .recipeTitle {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+  }
+  
+  .recipeAllergens {
+    color: var(--secondary-color);
+    font-size: 0.9em;
+    margin-top: 10px;
+  }
