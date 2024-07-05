@@ -1,0 +1,175 @@
+.loginContainer {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f7f7f7;
+  }
+  
+  .formWrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px;
+    max-width: 450px;
+    margin: 0 auto;
+  }
+  
+  .imageContainer {
+    flex: 1;
+    /* background-image: url('/path-to-your-login-image.jpg'); החלף עם תמונה מתאימה */
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+  
+  .imageOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+  
+  .title {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 30px;
+    font-size: 32px;
+    font-weight: 700;
+  }
+  
+  .form {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .formGroup {
+    margin-bottom: 20px;
+  }
+  
+  .formGroup label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .formGroup input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+  
+  .formGroup input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+  }
+  
+  .formGroup input::placeholder {
+    color: #aaa;
+  }
+  
+  .submitButton {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .submitButton:hover {
+    background-color: #3a7bd5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .submitButton:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .error {
+    color: #d32f2f;
+    text-align: center;
+    margin-bottom: 15px;
+    font-weight: 600;
+    background-color: #ffebee;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .registerLink, .forgotPassword {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 16px;
+  }
+  
+  .registerLink a, .forgotPassword {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  .registerLink a:hover, .forgotPassword:hover {
+    color: #3a7bd5;
+    text-decoration: underline;
+  }
+  
+  .forgotPassword {
+    display: block;
+    margin-top: 15px;
+  }
+  
+  @media (max-width: 768px) {
+    .loginContainer {
+      flex-direction: column;
+    }
+  
+    .imageContainer {
+      display: none;
+    }
+  
+    .formWrapper {
+      padding: 20px;
+    }
+  }
+  
+  /* Animations */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .formWrapper {
+    animation: fadeInUp 0.6s ease-out;
+  }
+  
+  /* Accessibility */
+  input:focus, .submitButton:focus, .forgotPassword:focus {
+    outline: none;
+  }
+  
+  .formGroup input:focus-visible, .submitButton:focus-visible, .forgotPassword:focus-visible {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+  }
