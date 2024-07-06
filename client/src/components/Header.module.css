@@ -1,7 +1,10 @@
 .header {
   background: linear-gradient(135deg, #6dd5ed, #2193b0);
   padding: 1rem 0;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .container {
@@ -13,6 +16,7 @@
   padding: 0 1rem;
 }
 
+/* עיצוב הלוגו */
 .logo {
   display: flex;
   align-items: center;
@@ -32,6 +36,7 @@
   font-size: 2rem;
 }
 
+/* עיצוב התפריט */
 .nav {
   display: flex;
   gap: 1rem;
@@ -42,7 +47,8 @@
   text-decoration: none;
   padding: 0.5rem 1rem;
   border-radius: 20px;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  transition: all 0.3s ease;
+  font-weight: 500;
 }
 
 .navLink:hover, .activeLink {
@@ -52,8 +58,10 @@
 
 .activeLink {
   font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+/* כפתור התנתקות */
 .logoutButton {
   background-color: #ff6b6b;
   color: #ffffff;
@@ -61,14 +69,28 @@
   padding: 0.5rem 1rem;
   border-radius: 20px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  transition: all 0.3s ease;
+  font-weight: 500;
 }
 
 .logoutButton:hover {
   background-color: #ee5253;
   transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+/* אנימציה לכפתורים */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.navLink:hover, .logoutButton:hover {
+  animation: pulse 0.5s ease-in-out;
+}
+
+/* התאמה למסכים קטנים */
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
@@ -79,4 +101,15 @@
     flex-wrap: wrap;
     justify-content: center;
   }
+
+  .navLink, .logoutButton {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* נגישות */
+.navLink:focus, .logoutButton:focus, .logo:focus {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
 }
