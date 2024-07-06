@@ -4,71 +4,45 @@
   padding: 20px;
 }
 
-.pageTitle {
+.title {
   font-size: 2.5rem;
-  color: var(--primary-color);
+  color: #333;
   text-align: center;
   margin-bottom: 30px;
 }
 
-.recipeList {
+.recipeGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 30px;
-  list-style-type: none;
-  padding: 0;
+  margin-top: 30px;
 }
 
-.recipeCard {
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.recipeCard:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-.recipeTitle {
-  font-size: 1.5rem;
-  color: var(--primary-color);
-  margin-bottom: 10px;
-}
-
-.recipeDescription {
-  color: #666;
-  margin-bottom: 15px;
-}
-
-.recipeAllergens {
-  font-size: 0.9rem;
-  color: var(--secondary-color);
-  margin-bottom: 15px;
-}
-
-.viewRecipeButton {
-  display: inline-block;
-  background-color: var(--primary-color);
-  color: #ffffff;
-  padding: 10px 15px;
-  border-radius: 5px;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-
-.viewRecipeButton:hover {
-  background-color: #3a7bd5;
-}
-
-.loading, .error {
+.loading, .error, .noRecipes {
   text-align: center;
+  padding: 20px;
   font-size: 1.2rem;
-  margin-top: 50px;
+}
+
+.loading {
+  color: #3498db;
 }
 
 .error {
-  color: #d32f2f;
+  color: #e74c3c;
+}
+
+.noRecipes {
+  color: #7f8c8d;
+}
+
+/* מדיה קווירי לתצוגה במסכים קטנים */
+@media (max-width: 768px) {
+  .recipeGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
 }
