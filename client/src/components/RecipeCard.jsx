@@ -12,18 +12,21 @@ const allergenIcons = {
   'גלוטן': GiWheat
 };
 
-function RecipeCard({ recipe }) {
+// קומפוננטת RecipeCard מציגה כרטיסיה של מתכון בודד
+const RecipeCard = ({ recipe }) => {
   return (
     <div className={styles.recipeCard}>
       {/* תמונת המתכון */}
-      <img src={recipe.image} alt={recipe.name} className={styles.recipeImage} />
+      {recipe.image && <img src={recipe.image} alt={recipe.name} className={styles.recipeImage} />}
       
       <div className={styles.recipeContent}>
         {/* שם המתכון */}
         <h3 className={styles.recipeTitle}>{recipe.name}</h3>
         
         {/* תיאור קצר של המתכון */}
-        <p className={styles.recipeDescription}>{recipe.description}</p>
+        <p className={styles.recipeDescription}>
+          {recipe.description || recipe.ingredients.slice(0, 100)}...
+        </p>
         
         {/* אייקונים של אלרגנים */}
         <div className={styles.allergenIcons}>
@@ -40,6 +43,6 @@ function RecipeCard({ recipe }) {
       </div>
     </div>
   );
-}
+};
 
 export default RecipeCard;
