@@ -2,7 +2,22 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
 
-// אסינכרוני: טעינת מתכונים
+// מצב התחלתי של ה-slice
+const initialState = {
+  recipes: [],          // מערך של כל המתכונים
+  totalRecipes: 0,      // מספר כולל של מתכונים (לצורך עימוד)
+  isLoading: false,     // האם יש טעינה כרגע
+  error: null,          // הודעת שגיאה, אם קיימת
+};
+
+// פונקציית עזר לטיפול בשגיאות
+const handleError = (error, defaultMessage) => {
+  const errorMessage = error.response?.data?.message || defaultMessage;
+  toast.error(errorMessage);
+  return errorMessage;
+};
+
+// טעינת כל המתכונים עם אפשרויות סינון
 export const fetchRecipes = createAsyncThunk(
   'recipes/fetchRecipes',
   async ({ page = 1, limit = 10, searchTerm = '', allergens = [], category = '' }, thunkAPI) => {
@@ -12,27 +27,25 @@ export const fetchRecipes = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      toast.error('שגיאה בטעינת המתכונים');
-      return thunkAPI.rejectWithValue(error.response.data.message);
+      return thunkAPI.rejectWithValue(handleError(error, 'שגיאה בטעינת המתכונים'));
     }
   }
 );
 
-// אסינכרוני: טעינת מתכון בודד לפי מזהה
-export const fetchRecipeById = createAsyncThunk(
-  'recipes/fetchRecipeById',
-  async (id, thunkAPI) => {
+// טעינת מתכונים של משתמש ספציפי
+export const fetchUserRecipes = createAsyncThunk(
+  'recipes/fetchUserRecipes',
+  async (userId, thunkAPI) => {
     try {
-      const response = await api.get(`/recipes/${id}`);
+      const response = await api.get(`/recipes/user/${userId}`);
       return response.data;
     } catch (error) {
-      toast.error('שגיאה בטעינת המתכון');
-      return thunkAPI.rejectWithValue(error.response.data.message);
+      return thunkAPI.rejectWithValue(handleError(error, 'שגיאה בטעינת המתכונים של המשתמש'));
     }
   }
 );
 
-// אסינכרוני: הוספת מתכון חדש
+// הוספת מתכון חדש
 export const addRecipe = createAsyncThunk(
   'recipes/addRecipe',
   async (recipeData, thunkAPI) => {
@@ -41,13 +54,12 @@ export const addRecipe = createAsyncThunk(
       toast.success('המתכון נוסף בהצלחה');
       return response.data;
     } catch (error) {
-      toast.error('שגיאה בהוספת המתכון');
-      return thunkAPI.rejectWithValue(error.response.data.message);
+      return thunkAPI.rejectWithValue(handleError(error, 'שגיאה בהוספת המתכון'));
     }
   }
 );
 
-// אסינכרוני: עדכון מתכון קיים
+// עדכון מתכון קיים
 export const updateRecipe = createAsyncThunk(
   'recipes/updateRecipe',
   async ({ id, recipeData }, thunkAPI) => {
@@ -56,13 +68,12 @@ export const updateRecipe = createAsyncThunk(
       toast.success('המתכון עודכן בהצלחה');
       return response.data;
     } catch (error) {
-      toast.error('שגיאה בעדכון המתכון');
-      return thunkAPI.rejectWithValue(error.response.data.message);
+      return thunkAPI.rejectWithValue(handleError(error, 'שגיאה בעדכון המתכון'));
     }
   }
 );
 
-// אסינכרוני: מחיקת מתכון
+// מחיקת מתכון
 export const deleteRecipe = createAsyncThunk(
   'recipes/deleteRecipe',
   async (id, thunkAPI) => {
@@ -71,13 +82,12 @@ export const deleteRecipe = createAsyncThunk(
       toast.success('המתכון נמחק בהצלחה');
       return id;
     } catch (error) {
-      toast.error('שגיאה במחיקת המתכון');
-      return thunkAPI.rejectWithValue(error.response.data.message);
+      return thunkAPI.rejectWithValue(handleError(error, 'שגיאה במחיקת המתכון'));
     }
   }
 );
 
-// אסינכרוני: דירוג מתכון
+// דירוג מתכון
 export const rateRecipe = createAsyncThunk(
   'recipes/rateRecipe',
   async ({ id, rating }, thunkAPI) => {
@@ -86,43 +96,21 @@ export const rateRecipe = createAsyncThunk(
       toast.success('הדירוג נוסף בהצלחה');
       return response.data;
     } catch (error) {
-      toast.error('שגיאה בהוספת הדירוג');
-      return thunkAPI.rejectWithValue(error.response.data.message);
+      return thunkAPI.rejectWithValue(handleError(error, 'שגיאה בדירוג המתכון'));
     }
   }
 );
 
-// אסינכרוני: טעינת מתכונים של משתמש ספציפי
-export const fetchUserRecipes = createAsyncThunk(
-  'recipes/fetchUserRecipes',
-  async (userId, thunkAPI) => {
-    try {
-      const response = await api.get(`/recipes/user/${userId}`);
-      return response.data;
-    } catch (error) {
-      toast.error('שגיאה בטעינת המתכונים של המשתמש');
-      return thunkAPI.rejectWithValue(error.response.data.message);
-    }
-  }
-);
-
+// יצירת ה-slice
 const recipeSlice = createSlice({
   name: 'recipes',
-  initialState: {
-    recipes: [],
-    totalRecipes: 0,
-    currentRecipe: null,
-    isLoading: false,
-    error: null,
-  },
+  initialState,
   reducers: {
-    clearCurrentRecipe: (state) => {
-      state.currentRecipe = null;
-    },
+    // ניתן להוסיף כאן reducers סינכרוניים אם יש צורך
   },
   extraReducers: (builder) => {
     builder
-      // טיפול במצבים שונים של טעינת מתכונים
+      // טיפול בטעינת כל המתכונים
       .addCase(fetchRecipes.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -136,64 +124,45 @@ const recipeSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload;
       })
-      // טיפול במצבים שונים של טעינת מתכון בודד
-      .addCase(fetchRecipeById.pending, (state) => {
+      // טיפול בטעינת מתכונים של משתמש ספציפי
+      .addCase(fetchUserRecipes.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(fetchRecipeById.fulfilled, (state, action) => {
+      .addCase(fetchUserRecipes.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.currentRecipe = action.payload;
+        state.recipes = action.payload;
+        // שים לב: כאן לא מעדכנים את totalRecipes כי זה רק עבור משתמש ספציפי
       })
-      .addCase(fetchRecipeById.rejected, (state, action) => {
+      .addCase(fetchUserRecipes.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       })
-      // טיפול במצבים שונים של הוספת מתכון
+      // טיפול בהוספת מתכון חדש
       .addCase(addRecipe.fulfilled, (state, action) => {
         state.recipes.push(action.payload);
+        state.totalRecipes++;
       })
-      // טיפול במצבים שונים של עדכון מתכון
+      // טיפול בעדכון מתכון
       .addCase(updateRecipe.fulfilled, (state, action) => {
         const index = state.recipes.findIndex(recipe => recipe._id === action.payload._id);
         if (index !== -1) {
           state.recipes[index] = action.payload;
         }
-        if (state.currentRecipe && state.currentRecipe._id === action.payload._id) {
-          state.currentRecipe = action.payload;
-        }
       })
-      // טיפול במצבים שונים של מחיקת מתכון
+      // טיפול במחיקת מתכון
       .addCase(deleteRecipe.fulfilled, (state, action) => {
         state.recipes = state.recipes.filter(recipe => recipe._id !== action.payload);
-        if (state.currentRecipe && state.currentRecipe._id === action.payload) {
-          state.currentRecipe = null;
-        }
+        state.totalRecipes--;
       })
-      // טיפול במצבים שונים של דירוג מתכון
+      // טיפול בדירוג מתכון
       .addCase(rateRecipe.fulfilled, (state, action) => {
         const index = state.recipes.findIndex(recipe => recipe._id === action.payload._id);
         if (index !== -1) {
-          state.recipes[index].rating = action.payload.rating;
-          state.recipes[index].ratingCount = action.payload.ratingCount;
+          state.recipes[index] = action.payload;
         }
-        if (state.currentRecipe && state.currentRecipe._id === action.payload._id) {
-          state.currentRecipe.rating = action.payload.rating;
-          state.currentRecipe.ratingCount = action.payload.ratingCount;
-        }
-      }).addCase(fetchUserRecipes.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(fetchUserRecipes.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.recipes = action.payload;
-      })
-      .addCase(fetchUserRecipes.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload;
       });
   },
 });
 
-export const { clearCurrentRecipe } = recipeSlice.actions;
 export default recipeSlice.reducer;
