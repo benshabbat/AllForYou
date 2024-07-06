@@ -92,6 +92,20 @@ export const rateRecipe = createAsyncThunk(
   }
 );
 
+// אסינכרוני: טעינת מתכונים של משתמש ספציפי
+export const fetchUserRecipes = createAsyncThunk(
+  'recipes/fetchUserRecipes',
+  async (userId, thunkAPI) => {
+    try {
+      const response = await api.get(`/recipes/user/${userId}`);
+      return response.data;
+    } catch (error) {
+      toast.error('שגיאה בטעינת המתכונים של המשתמש');
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 const recipeSlice = createSlice({
   name: 'recipes',
   initialState: {
@@ -167,6 +181,16 @@ const recipeSlice = createSlice({
           state.currentRecipe.rating = action.payload.rating;
           state.currentRecipe.ratingCount = action.payload.ratingCount;
         }
+      }).addCase(fetchUserRecipes.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchUserRecipes.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.recipes = action.payload;
+      })
+      .addCase(fetchUserRecipes.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
       });
   },
 });

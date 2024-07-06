@@ -14,10 +14,13 @@ function App() {
     <Router>
       <Header />
       <Routes>
+        {/* נתיבים ציבוריים */}
         <Route path="/" element={<Home />} />
         <Route path="/recipes" element={<RecipeList />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        
+        {/* נתיבים מאובטחים */}
         <Route 
           path="/add-recipe" 
           element={
