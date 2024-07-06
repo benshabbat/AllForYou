@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchRecipes } from '../store/slices/recipeSlice';
+import { GiPeanut, GiMilkCarton, GiBrokenEggshell, GiWheat } from 'react-icons/gi';
 import styles from './AdvancedSearch.module.css';
-import { GiPeanut, GiMilkCarton, GiEggClutch, GiWheat } from 'react-icons/gi';
+
+// מיפוי אייקונים לאלרגנים
 const allergenIcons = {
   'בוטנים': GiPeanut,
   'חלב': GiMilkCarton,
-  'ביצים': GiEggClutch,
+  'ביצים': GiBrokenEggshell,
   'גלוטן': GiWheat
 };
 
@@ -19,11 +21,13 @@ function AdvancedSearch() {
     difficulty: ''
   });
 
+  // טיפול בשינויים בשדות הטקסט והבחירה
   const handleChange = (e) => {
     const { name, value } = e.target;
     setSearchParams(prev => ({ ...prev, [name]: value }));
   };
 
+  // טיפול בשינויים בבחירת אלרגנים
   const handleAllergenChange = (allergen) => {
     setSearchParams(prev => ({
       ...prev,
@@ -33,6 +37,7 @@ function AdvancedSearch() {
     }));
   };
 
+  // שליחת טופס החיפוש
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(fetchRecipes(searchParams));
@@ -40,6 +45,7 @@ function AdvancedSearch() {
 
   return (
     <form onSubmit={handleSubmit} className={styles.searchForm}>
+      {/* שדה חיפוש לפי מילת מפתח */}
       <input
         type="text"
         name="keyword"
@@ -48,6 +54,8 @@ function AdvancedSearch() {
         placeholder="חיפוש לפי מילת מפתח"
         className={styles.input}
       />
+
+      {/* בחירת קטגוריה */}
       <select
         name="category"
         value={searchParams.category}
@@ -59,6 +67,8 @@ function AdvancedSearch() {
         <option value="קינוחים">קינוחים</option>
         <option value="סלטים">סלטים</option>
       </select>
+
+      {/* בחירת אלרגנים */}
       <div className={styles.allergens}>
         <label>סנן אלרגנים:</label>
         <div className={styles.allergenButtons}>
@@ -75,6 +85,8 @@ function AdvancedSearch() {
           ))}
         </div>
       </div>
+
+      {/* בחירת רמת קושי */}
       <select
         name="difficulty"
         value={searchParams.difficulty}
@@ -86,6 +98,8 @@ function AdvancedSearch() {
         <option value="בינוני">בינוני</option>
         <option value="מאתגר">מאתגר</option>
       </select>
+
+      {/* כפתור שליחת החיפוש */}
       <button type="submit" className={styles.searchButton}>חיפוש</button>
     </form>
   );
