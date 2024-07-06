@@ -1,55 +1,100 @@
-/* מיכל ראשי לרשימת המתכונים */
 .recipeListContainer {
   max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+  margin: 2rem auto;
+  padding: 0 1rem;
 }
 
-/* עיצוב כותרת הדף */
 .title {
   font-size: 2.5rem;
-  color: #333;
+  color: #2193b0;
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 2rem;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
 
-/* רשת להצגת המתכונים */
 .recipeGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 30px;
-  margin-top: 30px;
+  gap: 2rem;
+  margin-top: 2rem;
 }
 
-/* עיצוב משותף למצבי טעינה, שגיאה והודעת "אין מתכונים" */
+.recipeCard {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.recipeCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.recipeImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.recipeContent {
+  padding: 1rem;
+}
+
+.recipeName {
+  font-size: 1.2rem;
+  color: #2193b0;
+  margin-bottom: 0.5rem;
+}
+
+.recipeDescription {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.viewRecipeButton {
+  display: inline-block;
+  background-color: #6dd5ed;
+  color: #ffffff;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.viewRecipeButton:hover {
+  background-color: #2193b0;
+}
+
 .loading, .error, .noRecipes {
   text-align: center;
-  padding: 20px;
+  padding: 2rem;
   font-size: 1.2rem;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  margin-top: 2rem;
 }
 
-/* צבע ספציפי למצב טעינה */
 .loading {
-  color: #3498db;
+  color: #2193b0;
 }
 
-/* צבע ספציפי למצב שגיאה */
 .error {
-  color: #e74c3c;
+  color: #ff6b6b;
 }
 
-/* צבע ספציפי להודעת "אין מתכונים" */
 .noRecipes {
-  color: #7f8c8d;
+  color: #6c757d;
 }
 
-/* התאמה למסכים קטנים */
 @media (max-width: 768px) {
   .recipeGrid {
-    grid-template-columns: 1fr; /* שינוי לעמודה אחת במסכים קטנים */
+    grid-template-columns: 1fr;
   }
 
   .title {
-    font-size: 2rem; /* הקטנת גודל הכותרת במסכים קטנים */
+    font-size: 2rem;
   }
 }
