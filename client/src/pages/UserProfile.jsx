@@ -10,7 +10,6 @@ function UserProfile() {
   const { recipes, isLoading, error } = useSelector((state) => state.recipes);
 
   useEffect(() => {
-    // טעינת המתכונים של המשתמש בעת טעינת הדף
     if (user) {
       dispatch(fetchUserRecipes(user.id));
     }
@@ -23,14 +22,11 @@ function UserProfile() {
   return (
     <div className={styles.profileContainer}>
       <h1 className={styles.title}>הפרופיל שלי</h1>
-      
-      {/* מידע על המשתמש */}
       <div className={styles.userInfo}>
         <h2>{user.username}</h2>
-        <p>{user.email}</p>
+        <p>אימייל: {user.email}</p>
+        <p>הצטרף בתאריך: {new Date(user.createdAt).toLocaleDateString()}</p>
       </div>
-
-      {/* רשימת המתכונים של המשתמש */}
       <div className={styles.userRecipes}>
         <h3>המתכונים שלי</h3>
         {recipes.length > 0 ? (

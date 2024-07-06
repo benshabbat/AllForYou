@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
-import { login, clearError } from '../store/slices/authSlice';
+import { register, clearError } from '../store/slices/authSlice';
 import { toast } from 'react-toastify';
 import styles from './Auth.module.css';
 
-function Login() {
+function Register() {
   const [formData, setFormData] = useState({
+    username: '',
     email: '',
-    password: ''
+    password: '',
+    confirmPassword: ''
   });
   const [errors, setErrors] = useState({});
 
@@ -35,8 +37,12 @@ function Login() {
 
   const validateForm = () => {
     const newErrors = {};
+    if (!formData.username.trim()) newErrors.username = 'שם משתמש הוא שדה חובה';
     if (!formData.email.trim()) newErrors.email = 'אימייל הוא שדה חובה';
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'כתובת אימייל לא תקינה';
     if (!formData.password) newErrors.password = 'סיסמה היא שדה חובה';
+    else if (formData.password.length < 6) newErrors.password = 'הסיסמה חייבת להכיל לפחות 6 תווים';
+    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'הסיסמאות אינן תואמות';
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -45,10 +51,10 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      const result = await dispatch(login(formData));
+      const result = await dispatch(register(formData));
       if (!result.error) {
-        toast.success('התחברת בהצלחה!');
-        navigate('/');
+        toast.success('נרשמת בהצלחה'); 
+        navigate('/profile');
       }
     }
   };
@@ -56,8 +62,21 @@ function Login() {
   return (
     <div className={styles.authContainer}>
       <form onSubmit={handleSubmit} className={styles.authForm}>
-        <h2>התחברות</h2>
+        <h2>הרשמה</h2>
         
+        <div className={styles.formGroup}>
+          <label htmlFor="username">שם משתמש</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            className={errors.username ? styles.inputError : ''}
+          />
+          {errors.username && <span className={styles.errorMessage}>{errors.username}</span>}
+        </div>
+
         <div className={styles.formGroup}>
           <label htmlFor="email">אימייל</label>
           <input
@@ -84,18 +103,31 @@ function Login() {
           {errors.password && <span className={styles.errorMessage}>{errors.password}</span>}
         </div>
 
+        <div className={styles.formGroup}>
+          <label htmlFor="confirmPassword">אימות סיסמה</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            className={errors.confirmPassword ? styles.inputError : ''}
+          />
+          {errors.confirmPassword && <span className={styles.errorMessage}>{errors.confirmPassword}</span>}
+        </div>
+
         {error && <div className={styles.serverError}>{error}</div>}
 
         <button type="submit" className={styles.submitButton} disabled={isLoading}>
-          {isLoading ? 'מתחבר...' : 'התחבר'}
+          {isLoading ? 'מתבצעת הרשמה...' : 'הירשם'}
         </button>
 
         <p className={styles.switchAuthMode}>
-          אין לך חשבון? <Link to="/register">הירשם כאן</Link>
+          כבר יש לך חשבון? <Link to="/login">התחבר כאן</Link>
         </p>
       </form>
     </div>
   );
 }
 
-export default Login;
+export default Register;
