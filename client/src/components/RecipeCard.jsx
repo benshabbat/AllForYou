@@ -1,13 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { GiPeanut, GiMilkCarton, GiBrokenEggshell, GiWheat } from 'react-icons/gi';
+import { GiPeanut, GiMilkCarton, GiWheat } from 'react-icons/gi';
+import { FaEgg } from 'react-icons/fa';
 import styles from './RecipeCard.module.css';
 
 // מיפוי אייקונים לאלרגנים
 const allergenIcons = {
   'בוטנים': GiPeanut,
   'חלב': GiMilkCarton,
-  'ביצים': GiBrokenEggshell,
+  'ביצים': FaEgg,
   'גלוטן': GiWheat
 };
 

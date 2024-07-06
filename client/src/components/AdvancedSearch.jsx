@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchRecipes } from '../store/slices/recipeSlice';
-import { GiPeanut, GiMilkCarton, GiBrokenEggshell, GiWheat } from 'react-icons/gi';
+import { GiPeanut, GiMilkCarton, GiWheat } from 'react-icons/gi';
+import { FaEgg } from 'react-icons/fa';
 import styles from './AdvancedSearch.module.css';
 
 // מיפוי אייקונים לאלרגנים
 const allergenIcons = {
   'בוטנים': GiPeanut,
   'חלב': GiMilkCarton,
-  'ביצים': GiBrokenEggshell,
+  'ביצים': FaEgg,
   'גלוטן': GiWheat
 };
 
