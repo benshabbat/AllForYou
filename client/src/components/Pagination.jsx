@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './Pagination.module.css';
 
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+function Pagination({ currentPage, totalPages, onPageChange }) {
+  // יצירת מערך של מספרי עמודים
   const pageNumbers = [];
-
   for (let i = 1; i <= totalPages; i++) {
     pageNumbers.push(i);
   }
@@ -26,7 +26,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       </ul>
     </nav>
   );
-};
+}
 
 Pagination.propTypes = {
   currentPage: PropTypes.number.isRequired,
