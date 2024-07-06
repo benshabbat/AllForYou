@@ -7,15 +7,17 @@ import AdvancedSearch from '../components/AdvancedSearch';
 import { RootState } from '../store';
 import styles from './RecipeList.module.css';
 
-// קבוע המגדיר כמה מתכונים להציג בכל עמוד
+// מספר המתכונים שיוצגו בכל עמוד
 const RECIPES_PER_PAGE = 12;
 
 const RecipeList = () => {
   const dispatch = useDispatch();
+  // שליפת נתוני המתכונים מה-Redux store
   const { recipes, totalRecipes, isLoading, error } = useSelector((state: RootState) => state.recipes);
+  // ניהול מספר העמוד הנוכחי
   const [currentPage, setCurrentPage] = useState(1);
 
-  // טעינת מתכונים בעת טעינת הקומפוננטה או שינוי עמוד
+  // אפקט לטעינת מתכונים בעת טעינת הקומפוננטה או שינוי עמוד
   useEffect(() => {
     dispatch(fetchRecipes({ page: currentPage, limit: RECIPES_PER_PAGE }));
   }, [dispatch, currentPage]);
@@ -30,12 +32,13 @@ const RecipeList = () => {
   // טיפול בחיפוש מתקדם
   const handleAdvancedSearch = (searchParams) => {
     dispatch(fetchRecipes({ ...searchParams, page: 1, limit: RECIPES_PER_PAGE }));
+    // איפוס מספר העמוד לאחר חיפוש חדש
     setCurrentPage(1);
   };
 
-  // הצגת הודעת טעינה
+  // הצגת מסך טעינה
   if (isLoading) return <div className={styles.loading}>טוען מתכונים...</div>;
-
+  
   // הצגת הודעת שגיאה
   if (error) return <div className={styles.error}>שגיאה: {error}</div>;
 
@@ -46,8 +49,8 @@ const RecipeList = () => {
       {/* קומפוננטת חיפוש מתקדם */}
       <AdvancedSearch onSearch={handleAdvancedSearch} />
 
-      {/* רשימת המתכונים */}
-      {recipes.length > 0 ? (
+      {/* הצגת רשימת המתכונים או הודעה אם אין מתכונים */}
+      {recipes && recipes.length > 0 ? (
         <div className={styles.recipeGrid}>
           {recipes.map(recipe => (
             <RecipeCard key={recipe._id} recipe={recipe} />
@@ -57,8 +60,8 @@ const RecipeList = () => {
         <p className={styles.noRecipes}>לא נמצאו מתכונים. נסה לשנות את פרמטרי החיפוש.</p>
       )}
 
-      {/* קומפוננטת עימוד */}
-      {totalRecipes > RECIPES_PER_PAGE && (
+      {/* הצגת קומפוננטת העימוד רק אם יש יותר מתכונים ממה שניתן להציג בעמוד אחד */}
+      {totalRecipes && totalRecipes > RECIPES_PER_PAGE && (
         <Pagination
           currentPage={currentPage}
           totalPages={Math.ceil(totalRecipes / RECIPES_PER_PAGE)}
