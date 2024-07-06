@@ -16,11 +16,13 @@ const RecipeList = () => {
   const { recipes, totalRecipes, isLoading, error } = useSelector((state: RootState) => state.recipes);
   // ניהול מספר העמוד הנוכחי
   const [currentPage, setCurrentPage] = useState(1);
+  // ניהול פרמטרי החיפוש
+  const [searchParams, setSearchParams] = useState({});
 
-  // אפקט לטעינת מתכונים בעת טעינת הקומפוננטה או שינוי עמוד
+  // אפקט לטעינת מתכונים בעת טעינת הקומפוננטה, שינוי עמוד או שינוי בפרמטרי החיפוש
   useEffect(() => {
-    dispatch(fetchRecipes({ page: currentPage, limit: RECIPES_PER_PAGE }));
-  }, [dispatch, currentPage]);
+    dispatch(fetchRecipes({ ...searchParams, page: currentPage, limit: RECIPES_PER_PAGE }));
+  }, [dispatch, currentPage, searchParams]);
 
   // טיפול בשינוי עמוד
   const handlePageChange = (pageNumber: number) => {
@@ -30,44 +32,48 @@ const RecipeList = () => {
   };
 
   // טיפול בחיפוש מתקדם
-  const handleAdvancedSearch = (searchParams) => {
-    dispatch(fetchRecipes({ ...searchParams, page: 1, limit: RECIPES_PER_PAGE }));
-    // איפוס מספר העמוד לאחר חיפוש חדש
-    setCurrentPage(1);
+  const handleAdvancedSearch = (newSearchParams) => {
+    setSearchParams(newSearchParams);
+    setCurrentPage(1); // חזרה לעמוד הראשון בעת ביצוע חיפוש חדש
   };
 
-  // הצגת מסך טעינה
-  if (isLoading) return <div className={styles.loading}>טוען מתכונים...</div>;
-  
-  // הצגת הודעת שגיאה
-  if (error) return <div className={styles.error}>שגיאה: {error}</div>;
+  // רנדור תוכן הדף
+  const renderContent = () => {
+    if (isLoading) {
+      return <div className={styles.loading}>טוען מתכונים...</div>;
+    }
 
-  return (
-    <div className={styles.recipeListContainer}>
-      <h1 className={styles.title}>מתכונים</h1>
-      
-      {/* קומפוננטת חיפוש מתקדם */}
-      <AdvancedSearch onSearch={handleAdvancedSearch} />
+    if (error) {
+      return <div className={styles.error}>שגיאה: {error}</div>;
+    }
 
-      {/* הצגת רשימת המתכונים או הודעה אם אין מתכונים */}
-      {recipes && recipes.length > 0 ? (
+    if (!recipes || recipes.length === 0) {
+      return <p className={styles.noRecipes}>לא נמצאו מתכונים. נסה לשנות את פרמטרי החיפוש.</p>;
+    }
+
+    return (
+      <>
         <div className={styles.recipeGrid}>
           {recipes.map(recipe => (
             <RecipeCard key={recipe._id} recipe={recipe} />
           ))}
         </div>
-      ) : (
-        <p className={styles.noRecipes}>לא נמצאו מתכונים. נסה לשנות את פרמטרי החיפוש.</p>
-      )}
+        {totalRecipes > RECIPES_PER_PAGE && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(totalRecipes / RECIPES_PER_PAGE)}
+            onPageChange={handlePageChange}
+          />
+        )}
+      </>
+    );
+  };
 
-      {/* הצגת קומפוננטת העימוד רק אם יש יותר מתכונים ממה שניתן להציג בעמוד אחד */}
-      {totalRecipes && totalRecipes > RECIPES_PER_PAGE && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={Math.ceil(totalRecipes / RECIPES_PER_PAGE)}
-          onPageChange={handlePageChange}
-        />
-      )}
+  return (
+    <div className={styles.recipeListContainer}>
+      <h1 className={styles.title}>מתכונים</h1>
+      <AdvancedSearch onSearch={handleAdvancedSearch} />
+      {renderContent()}
     </div>
   );
 };
