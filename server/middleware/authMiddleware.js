@@ -13,17 +13,16 @@ export const protect = async (req, res, next) => {
       // אימות הטוקן
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // מציאת המשתמש לפי ה-ID מהטוקן ושמירתו ב-req.user
-      // הסיסמה לא נכללת בתוצאה
+      // מציאת המשתמש לפי המזהה בטוקן וצירופו לבקשה
+      // '-password' מסיר את שדה הסיסמה מהתוצאה
       req.user = await User.findById(decoded.id).select('-password');
-
       next();
     } catch (error) {
-      console.error('Authentication error:', error);
       res.status(401).json({ message: 'לא מורשה, טוקן לא תקין' });
     }
   }
 
+  // אם לא נמצא טוקן
   if (!token) {
     res.status(401).json({ message: 'לא מורשה, אין טוקן' });
   }
