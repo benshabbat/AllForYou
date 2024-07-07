@@ -7,30 +7,36 @@ import helmet from 'helmet';
 import recipeRoutes from './routes/recipes.js';
 import userRoutes from './routes/users.js';
 
-// Load environment variables from .env file
+// טעינת משתני סביבה מקובץ .env
 dotenv.config();
 
-// Initialize Express app
+// יצירת אפליקציית Express
 const app = express();
 
 // Middleware
-app.use(cors()); // Enable Cross-Origin Resource Sharing for all routes
-app.use(express.json()); // Parse JSON request bodies
-app.use(morgan('dev')); // HTTP request logger for development use
-app.use(helmet()); // Set various HTTP headers for improved security
+app.use(cors()); // אפשור Cross-Origin Resource Sharing
+app.use(express.json()); // פענוח גופי בקשות JSON
+app.use(morgan('dev')); // לוגר של בקשות HTTP לפיתוח
+app.use(helmet()); // הגדרת כותרות HTTP לאבטחה משופרת
 
-// Routes
-app.use('/api/recipes', recipeRoutes); // Mount recipe-related routes
-app.use('/api/users', userRoutes); // Mount user-related routes
+// נתיבים
+app.use('/api/recipes', recipeRoutes); // נתיבים הקשורים למתכונים
+app.use('/api/users', userRoutes); // נתיבים הקשורים למשתמשים
 
-// Connect to MongoDB
+// חיבור למסד הנתונים MongoDB
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB connected'))
+  .then(() => console.log('MongoDB connected successfully'))
   .catch(err => {
     console.error('MongoDB connection error:', err);
-    console.error('Connection string:', process.env.MONGO_URI);
+    process.exit(1); // סיום התהליך במקרה של שגיאת התחברות
   });
 
-// Set port and start server
+// טיפול בשגיאות לא מטופלות
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled Rejection:', err);
+  process.exit(1);
+});
+
+// הגדרת פורט והפעלת השרת
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
