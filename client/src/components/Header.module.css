@@ -1,7 +1,7 @@
 .header {
-  background: linear-gradient(135deg, #6dd5ed, #2193b0);
-  padding: 1rem 0;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  background: linear-gradient(135deg, #6dd5ed, #2193b0); /* שינוי הגרדיאנט לגוונים פחות רוויים */
+  padding: 1.5rem 0; /* הגדלת המרווח העליון והתחתון */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -13,7 +13,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 1rem;
+  padding: 0 1.5rem; /* הגדלת המרווח האופקי */
 }
 
 /* עיצוב הלוגו */
@@ -21,10 +21,11 @@
   display: flex;
   align-items: center;
   color: #ffffff;
-  font-size: 1.5rem;
+  font-size: 1.6rem; /* הגדלת גודל הלוגו */
   font-weight: bold;
   text-decoration: none;
   transition: transform 0.3s ease;
+  margin-right: 1rem; /* הוספת מרווח ימני לאיקון הלוגו */
 }
 
 .logo:hover {
@@ -32,33 +33,44 @@
 }
 
 .logoIcon {
-  margin-right: 0.5rem;
-  font-size: 2rem;
+  font-size: 2.2rem; /* הגדלת גודל האיקון */
 }
 
 /* עיצוב התפריט */
 .nav {
   display: flex;
-  gap: 1rem;
+  gap: 1.2rem; /* הגדלת המרווח בין הפריטים בתפריט */
 }
 
 .navLink {
   color: #ffffff;
   text-decoration: none;
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1.2rem; /* הגדלת המרווחים בתפריט */
   border-radius: 20px;
   transition: all 0.3s ease;
   font-weight: 500;
 }
 
 .navLink:hover, .activeLink {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.2); /* שינוי הרקע בעת מעבר עם העכבר */
   transform: translateY(-2px);
+  color: #f1f1f1; /* שינוי צבע הטקסט בעת מעבר עם העכבר */
 }
 
 .activeLink {
   font-weight: bold;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.3); /* הוספת רקע עם שקיפות מעט יותר גבוהה */
+  color: #fff; /* שינוי צבע הטקסט ללבן */
+  padding: 0.6rem 1.4rem; /* הגדלת מרווחי הפריט הפעיל בתפריט */
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.activeLink:hover {
+  background-color: rgba(255, 255, 255, 0.4); /* הגברת שקיפות הרקע בעת מעבר עם העכבר */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* הגברת הצל בעת מעבר עם העכבר */
 }
 
 /* כפתור התנתקות */
@@ -66,7 +78,7 @@
   background-color: #ff6b6b;
   color: #ffffff;
   border: none;
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1.2rem; /* הגדלת המרווחים בכפתור */
   border-radius: 20px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -76,7 +88,7 @@
 .logoutButton:hover {
   background-color: #ee5253;
   transform: translateY(-2px);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* אנימציה לכפתורים */

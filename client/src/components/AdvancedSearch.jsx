@@ -1,37 +1,46 @@
-import React, { useState } from 'react';
-import { GiPeanut, GiMilkCarton, GiWheat } from 'react-icons/gi';
-import { FaEgg } from 'react-icons/fa';
-import styles from './AdvancedSearch.module.css';
+import React, { useState } from "react";
+import { GiPeanut, GiMilkCarton, GiWheat } from "react-icons/gi";
+import { FaEgg } from "react-icons/fa";
+import styles from "./AdvancedSearch.module.css";
 
+// מילון של אייקונים עבור אלרגנים
 const allergenIcons = {
-  'בוטנים': GiPeanut,
-  'חלב': GiMilkCarton,
-  'ביצים': FaEgg,
-  'גלוטן': GiWheat
+  בוטנים: GiPeanut,
+  חלב: GiMilkCarton,
+  ביצים: FaEgg,
+  גלוטן: GiWheat,
 };
 
 function AdvancedSearch({ onSearch }) {
+  // הגדרת מצב החיפוש המתקדם
   const [searchParams, setSearchParams] = useState({
-    keyword: '',
-    category: '',
+    keyword: "",
+    category: "",
     allergens: [],
-    difficulty: ''
+    difficulty: "",
   });
 
+  // טיפול בשינויים בקלטים
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setSearchParams(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleAllergenToggle = (allergen) => {
-    setSearchParams(prev => ({
+    setSearchParams((prev) => ({
       ...prev,
-      allergens: prev.allergens.includes(allergen)
-        ? prev.allergens.filter(a => a !== allergen)
-        : [...prev.allergens, allergen]
+      [name]:
+        name === "allergens" ? value.split(",").map((a) => a.trim()) : value,
     }));
   };
 
+  // טיפול בבחירת/ביטול בחירת אלרגנים
+  const handleAllergenToggle = (allergen) => {
+    setSearchParams((prev) => ({
+      ...prev,
+      allergens: prev.allergens.includes(allergen)
+        ? prev.allergens.filter((a) => a !== allergen)
+        : [...prev.allergens, allergen],
+    }));
+  };
+
+  // טיפול בשליחת הטופס
   const handleSubmit = (e) => {
     e.preventDefault();
     onSearch(searchParams);
@@ -39,32 +48,7 @@ function AdvancedSearch({ onSearch }) {
 
   return (
     <form onSubmit={handleSubmit} className={styles.searchForm}>
-      <div className={styles.inputGroup}>
-        <input
-          type="text"
-          name="keyword"
-          value={searchParams.keyword}
-          onChange={handleChange}
-          placeholder="חיפוש לפי מילת מפתח"
-          className={styles.input}
-        />
-      </div>
-
-      <div className={styles.inputGroup}>
-        <select
-          name="category"
-          value={searchParams.category}
-          onChange={handleChange}
-          className={styles.select}
-        >
-          <option value="">כל הקטגוריות</option>
-          <option value="עיקריות">עיקריות</option>
-          <option value="קינוחים">קינוחים</option>
-          <option value="סלטים">סלטים</option>
-          <option value="מרקים">מרקים</option>
-        </select>
-      </div>
-
+      {/* סינון אלרגנים */}
       <div className={styles.allergenGroup}>
         <span className={styles.allergenLabel}>סנן אלרגנים:</span>
         <div className={styles.allergenButtons}>
@@ -73,7 +57,9 @@ function AdvancedSearch({ onSearch }) {
               key={allergen}
               type="button"
               onClick={() => handleAllergenToggle(allergen)}
-              className={`${styles.allergenButton} ${searchParams.allergens.includes(allergen) ? styles.active : ''}`}
+              className={`${styles.allergenButton} ${
+                searchParams.allergens.includes(allergen) ? styles.active : ""
+              }`}
             >
               <Icon className={styles.allergenIcon} />
               <span>{allergen}</span>
@@ -81,22 +67,61 @@ function AdvancedSearch({ onSearch }) {
           ))}
         </div>
       </div>
+      <div className={styles.inpFutsContainer}>
+        {/* חיפוש לפי מילת מפתח */}
+        <div className={styles.inputGroup}>
+          <input
+            type="text"
+            name="keyword"
+            value={searchParams.keyword}
+            onChange={handleChange}
+            placeholder="חיפוש לפי מילת מפתח"
+            className={styles.input}
+          />
+          <span className={styles.inputIcon}>🔍</span>
+        </div>
+      </div>
+      <div className={styles.inputsContainer}>
+        {/* בחירת קטגוריה */}
+        <div className={styles.inputGroup}>
+          <select
+            name="category"
+            value={searchParams.category}
+            onChange={handleChange}
+            className={styles.select}
+          >
+            <option value="">כל הקטגוריות</option>
+            <option value="עיקריות">עיקריות</option>
+            <option value="קינוחים">קינוחים</option>
+            <option value="סלטים">סלטים</option>
+            <option value="מרקים">מרקים</option>
+          </select>
+          <span className={styles.inputIcon}>▼</span>
+        </div>
 
-      <div className={styles.inputGroup}>
-        <select
-          name="difficulty"
-          value={searchParams.difficulty}
-          onChange={handleChange}
-          className={styles.select}
-        >
-          <option value="">כל רמות הקושי</option>
-          <option value="קל">קל</option>
-          <option value="בינוני">בינוני</option>
-          <option value="מאתגר">מאתגר</option>
-        </select>
+        {/* בחירת רמת קושי */}
+        <div className={styles.inputGroup}>
+          <select
+            name="difficulty"
+            value={searchParams.difficulty}
+            onChange={handleChange}
+            className={styles.select}
+          >
+            <option value="">כל רמות הקושי</option>
+            <option value="קל">קל</option>
+            <option value="בינוני">בינוני</option>
+            <option value="מאתגר">מאתגר</option>
+          </select>
+          <span className={styles.inputIcon}>▼</span>
+        </div>
       </div>
 
-      <button type="submit" className={styles.searchButton}>חיפוש</button>
+      {/* כפתור חיפוש */}
+      <div className={styles.searchButtonContainer}>
+        <button type="submit" className={styles.searchButton}>
+          חיפוש
+        </button>
+      </div>
     </form>
   );
 }
