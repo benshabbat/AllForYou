@@ -89,3 +89,18 @@ export const rateRecipe = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+export const getUserRecipes = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    if (!userId || userId === 'undefined') {
+      return res.status(400).json({ message: 'נדרש מזהה משתמש תקין' });
+    }
+    const recipes = await Recipe.find({ createdBy: userId });
+    res.json(recipes);
+  } catch (error) {
+    console.error('Error in getUserRecipes:', error);
+    res.status(500).json({ message: error.message });
+  }
+};

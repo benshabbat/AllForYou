@@ -1,8 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { toast } from 'react-toastify';
 import api from '../../services/api';
 
-// אסינכרוני: הרשמת משתמש חדש
 export const register = createAsyncThunk(
   'auth/register',
   async (userData, thunkAPI) => {
@@ -11,44 +9,46 @@ export const register = createAsyncThunk(
       localStorage.setItem('token', response.data.token);
       return response.data;
     } catch (error) {
-      console.error('Registration error:', error.response?.data?.message || error.message);
-      toast.error(error.response?.data?.message || 'שגיאה בהרשמה');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'שגיאה בהרשמה');
     }
   }
 );
 
-// אסינכרוני: התחברות משתמש
 export const login = createAsyncThunk(
   'auth/login',
   async (userData, thunkAPI) => {
     try {
       const response = await api.post('/users/login', userData);
-      localStorage.setItem('token', response.data.token);
-      return response.data;
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        return response.data;
+      }
+      return thunkAPI.rejectWithValue('לא התקבל טוקן מהשרת');
     } catch (error) {
-      console.error('Login error:', error.response?.data?.message || error.message);
-      toast.error(error.response?.data?.message || 'שגיאה בהתחברות');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'שגיאה בהתחברות');
     }
   }
 );
 
-// אסינכרוני: טעינת פרטי המשתמש המחובר
 export const loadUser = createAsyncThunk(
   'auth/loadUser',
   async (_, thunkAPI) => {
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        return thunkAPI.rejectWithValue('אין טוקן, המשתמש לא מאומת');
+      }
       const response = await api.get('/users/me');
       return response.data;
     } catch (error) {
-      console.error('Load user error:', error.response?.data?.message || error.message);
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token');
+      }
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'שגיאה בטעינת פרטי משתמש');
     }
   }
 );
 
-// יצירת ה-slice עבור אימות
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
@@ -58,20 +58,17 @@ const authSlice = createSlice({
     error: null,
   },
   reducers: {
-    // התנתקות משתמש
     logout: (state) => {
       localStorage.removeItem('token');
       state.user = null;
       state.token = null;
     },
-    // ניקוי שגיאות
     clearError: (state) => {
       state.error = null;
     },
   },
   extraReducers: (builder) => {
     builder
-      // טיפול במצבי הרשמה
       .addCase(register.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -86,7 +83,6 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload;
       })
-      // טיפול במצבי התחברות
       .addCase(login.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -101,13 +97,22 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload;
       })
-      // טיפול בטעינת פרטי משתמש
-      .addCase(loadUser.fulfilled, (state, action) => {
-        state.user = action.payload;
+      .addCase(loadUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
       })
-      .addCase(loadUser.rejected, (state) => {
+      .addCase(loadUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload;
+        state.error = null;
+      })
+      .addCase(loadUser.rejected, (state, action) => {
+        state.isLoading = false;
         state.user = null;
-        state.token = null;
+        state.error = action.payload;
+        if (!localStorage.getItem('token')) {
+          state.token = null;
+        }
       });
   },
 });

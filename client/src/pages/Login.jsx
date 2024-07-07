@@ -6,38 +6,33 @@ import { toast } from 'react-toastify';
 import styles from './Auth.module.css';
 
 function Login() {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isLoading, error } = useSelector((state) => state.auth);
+  const { isLoading, error, user } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    // ניקוי שגיאות בעת טעינת הקומפוננטה
     return () => dispatch(clearError());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (user) {
+      navigate('/profile');
+    }
+  }, [user, navigate]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevData => ({
-      ...prevData,
-      [name]: value
-    }));
-    // ניקוי שגיאות ספציפיות בעת הקלדה
-    if (errors[name]) {
-      setErrors(prevErrors => ({ ...prevErrors, [name]: '' }));
-    }
+    setFormData(prevData => ({ ...prevData, [name]: value }));
+    setErrors(prevErrors => ({ ...prevErrors, [name]: '' }));
   };
 
   const validateForm = () => {
     const newErrors = {};
     if (!formData.email.trim()) newErrors.email = 'אימייל הוא שדה חובה';
     if (!formData.password) newErrors.password = 'סיסמה היא שדה חובה';
-    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -45,10 +40,11 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      const result = await dispatch(login(formData));
-      if (!result.error) {
-        toast.success('התחברת בהצלחה!'); 
-        navigate('/profile');
+      try {
+        await dispatch(login(formData)).unwrap();
+        toast.success('התחברת בהצלחה!');
+      } catch (err) {
+        toast.error(err || 'שגיאה בהתחברות. אנא נסה שוב.');
       }
     }
   };

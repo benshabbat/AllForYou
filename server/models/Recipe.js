@@ -3,16 +3,16 @@ import mongoose from 'mongoose';
 const RecipeSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
+    required: [true, 'שם המתכון הוא שדה חובה'],
     trim: true
   },
   ingredients: {
     type: String,
-    required: true
+    required: [true, 'רשימת המרכיבים היא שדה חובה']
   },
   instructions: {
     type: String,
-    required: true
+    required: [true, 'הוראות ההכנה הן שדה חובה']
   },
   allergens: {
     type: [String],
@@ -25,7 +25,7 @@ const RecipeSchema = new mongoose.Schema({
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: [true, 'יש לציין את יוצר המתכון']
   },
   createdAt: {
     type: Date,
@@ -54,10 +54,18 @@ RecipeSchema.methods.calculateAverageRating = function() {
     this.averageRating = 0;
   } else {
     const sum = this.ratings.reduce((acc, item) => acc + item.rating, 0);
-    this.averageRating = sum / this.ratings.length;
+    this.averageRating = (sum / this.ratings.length).toFixed(1);
   }
   return this.averageRating;
 };
+
+// הוק לפני שמירה: חישוב הדירוג הממוצע
+RecipeSchema.pre('save', function(next) {
+  if (this.isModified('ratings')) {
+    this.calculateAverageRating();
+  }
+  next();
+});
 
 const Recipe = mongoose.model('Recipe', RecipeSchema);
 

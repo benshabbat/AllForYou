@@ -1,15 +1,23 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { RootState } from '../store'; // ייבוא טיפוס RootState
+import { RootState } from '../store';
 
-// קומפוננטת PrivateRoute מגנה על נתיבים שדורשים הרשאת גישה
 const PrivateRoute = ({ children }) => {
-  // בדיקה האם קיים משתמש מחובר
-  const { user } = useSelector((state: RootState) => state.auth);
-  
-  // אם קיים משתמש מחובר, מציג את תוכן הדף. אחרת, מנווט לדף ההתחברות
-  return user ? children : <Navigate to="/login" replace />;
+  const { user, isLoading, token } = useSelector((state: RootState) => state.auth);
+
+  // אם עדיין טוען, נציג מסך טעינה או נחזיר null
+  if (isLoading) {
+    return <div>טוען...</div>; // או כל קומפוננטת טעינה אחרת
+  }
+
+  // אם יש משתמש או טוקן, נציג את התוכן
+  if (user || token) {
+    return children;
+  }
+
+  // אחרת, ננווט לדף ההתחברות
+  return <Navigate to="/login" replace />;
 };
 
 export default PrivateRoute;
