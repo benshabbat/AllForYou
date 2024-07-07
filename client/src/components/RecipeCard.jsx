@@ -12,31 +12,37 @@ const allergenIcons = {
   'גלוטן': GiWheat
 };
 
-// קומפוננטת RecipeCard מציגה כרטיסיה של מתכון בודד
 const RecipeCard = ({ recipe }) => {
+  // פונקציית עזר להצגת תיאור מקוצר
+  const truncateDescription = (text, maxLength = 100) => {
+    return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+  };
+
   return (
     <div className={styles.recipeCard}>
-      {/* תמונת המתכון */}
-      {recipe.image && <img src={recipe.image} alt={recipe.name} className={styles.recipeImage} />}
+      {recipe.image && (
+        <img 
+          src={recipe.image} 
+          alt={recipe.name} 
+          className={styles.recipeImage}
+          loading="lazy" // שיפור ביצועים: טעינה עצלה של תמונות
+        />
+      )}
       
       <div className={styles.recipeContent}>
-        {/* שם המתכון */}
         <h3 className={styles.recipeTitle}>{recipe.name}</h3>
         
-        {/* תיאור קצר של המתכון */}
         <p className={styles.recipeDescription}>
-          {recipe.description || recipe.ingredients.slice(0, 100)}...
+          {truncateDescription(recipe.description || recipe.ingredients)}
         </p>
         
-        {/* אייקונים של אלרגנים */}
         <div className={styles.allergenIcons}>
           {recipe.allergens.map(allergen => {
             const Icon = allergenIcons[allergen];
-            return Icon ? <Icon key={allergen} className={styles.allergenIcon} title={allergen} /> : null;
+            return Icon && <Icon key={allergen} className={styles.allergenIcon} title={allergen} />;
           })}
         </div>
         
-        {/* כפתור לצפייה במתכון המלא */}
         <Link to={`/recipe/${recipe._id}`} className={styles.viewRecipeButton}>
           צפה במתכון
         </Link>
@@ -45,4 +51,4 @@ const RecipeCard = ({ recipe }) => {
   );
 };
 
-export default RecipeCard;
+export default React.memo(RecipeCard);
