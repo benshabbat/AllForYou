@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Provider, useDispatch,useSelector  } from 'react-redux';
-import { store } from './store/index.js'; 
+import { Provider, useDispatch, useSelector } from 'react-redux';
+import { store } from './store/index.js';
 import { loadUser } from './store/slices/authSlice';
 import Header from './components/Header';
 import Home from './pages/Home';
@@ -12,15 +12,18 @@ import Login from './pages/Login';
 import UserProfile from './pages/UserProfile';
 import PrivateRoute from './components/PrivateRoute';
 
+// קומפוננטה פנימית המכילה את תוכן האפליקציה
 function AppContent() {
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
 
   useEffect(() => {
+    // טעינת פרטי המשתמש אם קיים טוקן
     if (token) {
       dispatch(loadUser());
     }
   }, [dispatch, token]);
+
   return (
     <Router>
       <Header />
@@ -36,6 +39,7 @@ function AppContent() {
   );
 }
 
+// קומפוננטה ראשית המספקת את ה-Redux store לכל האפליקציה
 function App() {
   return (
     <Provider store={store}>
