@@ -10,14 +10,13 @@ function UserProfile() {
   const { recipes, isLoading, error } = useSelector((state) => state.recipes);
 
   useEffect(() => {
-    if (user && user._id) {
-      console.log("Fetching recipes for user:", user._id);
+    // טעינת מתכוני המשתמש בעת טעינת הדף
+    if (user?._id) {
       dispatch(fetchUserRecipes(user._id));
-    } else {
-      console.log("User or user ID is undefined", user);
     }
   }, [dispatch, user]);
 
+  // רנדור מותנה למצבי טעינה, שגיאה או משתמש לא מחובר
   if (isLoading) return <div className={styles.loading}>טוען פרופיל...</div>;
   if (error) return <div className={styles.error}>שגיאה: {error}</div>;
   if (!user) return <div className={styles.error}>משתמש לא מחובר</div>;
@@ -25,11 +24,15 @@ function UserProfile() {
   return (
     <div className={styles.profileContainer}>
       <h1 className={styles.title}>הפרופיל שלי</h1>
+      
+      {/* הצגת מידע על המשתמש */}
       <div className={styles.userInfo}>
         <h2>{user.username}</h2>
         <p>אימייל: {user.email}</p>
         <p>הצטרף בתאריך: {new Date(user.createdAt).toLocaleDateString()}</p>
       </div>
+      
+      {/* הצגת מתכוני המשתמש */}
       <div className={styles.userRecipes}>
         <h3>המתכונים שלי</h3>
         {recipes && recipes.length > 0 ? (
@@ -39,7 +42,7 @@ function UserProfile() {
             ))}
           </div>
         ) : (
-          <p>עדיין לא הוספת מתכונים או שאירעה שגיאה בטעינת המתכונים.</p>
+          <p>עדיין לא הוספת מתכונים.</p>
         )}
       </div>
     </div>
