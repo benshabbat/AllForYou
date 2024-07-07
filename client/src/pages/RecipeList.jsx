@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { fetchRecipes } from '../store/slices/recipeSlice';
 import Pagination from '../components/Pagination';
 import AdvancedSearch from '../components/AdvancedSearch';
+import RecipeCard from '../components/RecipeCard';
 import styles from './RecipeList.module.css';
 
-// מספר המתכונים שיוצגו בכל עמוד
+// קבוע המגדיר את מספר המתכונים לעמוד
 const RECIPES_PER_PAGE = 12;
 
 const RecipeList = () => {
@@ -18,16 +19,21 @@ const RecipeList = () => {
   // ניהול פרמטרי החיפוש
   const [searchParams, setSearchParams] = useState({});
 
-  // אפקט לטעינת מתכונים בעת טעינת הקומפוננטה, שינוי עמוד או שינוי בפרמטרי החיפוש
-  useEffect(() => {
+  // פונקציה לטעינת מתכונים, עטופה ב-useCallback למניעת רינדורים מיותרים
+  const fetchRecipesData = useCallback(() => {
     dispatch(fetchRecipes({ ...searchParams, page: currentPage, limit: RECIPES_PER_PAGE }));
   }, [dispatch, currentPage, searchParams]);
+
+  // אפקט לטעינת מתכונים בעת טעינת הקומפוננטה או שינוי בפרמטרים
+  useEffect(() => {
+    fetchRecipesData();
+  }, [fetchRecipesData]);
 
   // טיפול בשינוי עמוד
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
-    // גלילה לראש העמוד בעת החלפת עמוד
-    window.scrollTo(0, 0);
+    // גלילה חלקה לראש העמוד בעת החלפת עמוד
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // טיפול בחיפוש מתקדם
@@ -36,7 +42,7 @@ const RecipeList = () => {
     setCurrentPage(1); // חזרה לעמוד הראשון בעת ביצוע חיפוש חדש
   };
 
-  // רנדור תוכן הדף
+  // רנדור תוכן הדף בהתאם למצב הנוכחי
   const renderContent = () => {
     if (isLoading) return <div className={styles.loading}>טוען מתכונים...</div>;
     if (error) return <div className={styles.error}>שגיאה: {error}</div>;
@@ -45,20 +51,7 @@ const RecipeList = () => {
     return (
       <div className={styles.recipeGrid}>
         {recipes.map(recipe => (
-          <div key={recipe._id} className={styles.recipeCard}>
-            {recipe.image && <img src={recipe.image} alt={recipe.name} className={styles.recipeImage} />}
-            <div className={styles.recipeContent}>
-              <h2 className={styles.recipeName}>{recipe.name}</h2>
-              <p className={styles.recipeDescription}>{recipe.description}</p>
-              <div className={styles.recipeDetails}>
-                <span>זמן הכנה: {recipe.prepTime} דקות</span>
-                <span>רמת קושי: {recipe.difficulty}</span>
-              </div>
-              <Link to={`/recipe/${recipe._id}`} className={styles.viewRecipeButton}>
-                צפה במתכון
-              </Link>
-            </div>
-          </div>
+          <RecipeCard key={recipe._id} recipe={recipe} />
         ))}
       </div>
     );
@@ -67,14 +60,8 @@ const RecipeList = () => {
   return (
     <div className={styles.recipeListContainer}>
       <h1 className={styles.title}>המתכונים שלנו</h1>
-      
-      {/* קומפוננטת חיפוש מתקדם */}
       <AdvancedSearch onSearch={handleAdvancedSearch} />
-
-      {/* רשימת המתכונים */}
       {renderContent()}
-
-      {/* קומפוננטת עימוד */}
       {totalRecipes > RECIPES_PER_PAGE && (
         <Pagination
           currentPage={currentPage}
@@ -86,4 +73,5 @@ const RecipeList = () => {
   );
 };
 
-export default RecipeList;
+// שימוש ב-React.memo למניעת רינדורים מיותרים של הקומפוננטה
+export default React.memo(RecipeList);
