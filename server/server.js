@@ -25,8 +25,11 @@ app.use('/api/users', userRoutes); // Mount user-related routes
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB connected successfully'))
-  .catch(err => console.error('MongoDB connection error:', err));
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => {
+    console.error('MongoDB connection error:', err);
+    console.error('Connection string:', process.env.MONGO_URI);
+  });
 
 // Set port and start server
 const PORT = process.env.PORT || 5000;

@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchUserRecipes } from '../store/slices/recipeSlice';
-import RecipeCard from '../components/RecipeCard';
-import styles from './UserProfile.module.css';
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchUserRecipes } from "../store/slices/recipeSlice";
+import RecipeCard from "../components/RecipeCard";
+import styles from "./UserProfile.module.css";
 
 function UserProfile() {
   const dispatch = useDispatch();
@@ -34,14 +34,14 @@ function UserProfile() {
       {/* הצגת מתכוני המשתמש */}
       <div className={styles.userRecipes}>
         <h3>המתכונים שלי</h3>
-        {recipes.length > 0 ? (
+        {recipes && recipes.length > 0 ? (
           <div className={styles.recipeGrid}>
-            {recipes.map(recipe => (
+            {recipes.map((recipe) => (
               <RecipeCard key={recipe._id} recipe={recipe} />
             ))}
           </div>
         ) : (
-          <p>עדיין לא הוספת מתכונים.</p>
+          <p>עדיין לא הוספת מתכונים או שאירעה שגיאה בטעינת המתכונים.</p>
         )}
       </div>
     </div>
