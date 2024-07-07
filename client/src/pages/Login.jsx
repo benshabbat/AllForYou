@@ -10,7 +10,7 @@ function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
   // ניהול שגיאות ולידציה
   const [errors, setErrors] = useState({});
-  // מצב "זכור אותי"
+  // ניהול מצב "זכור אותי"
   const [rememberMe, setRememberMe] = useState(false);
 
   const dispatch = useDispatch();
@@ -23,7 +23,7 @@ function Login() {
     return () => dispatch(clearError());
   }, [dispatch]);
 
-  // ניווט למסך הפרופיל אם המשתמש כבר מחובר
+  // ניווט לפרופיל אם המשתמש כבר מחובר
   useEffect(() => {
     if (user) {
       navigate('/profile');
@@ -51,6 +51,7 @@ function Login() {
     e.preventDefault();
     if (validateForm()) {
       try {
+        // שליחת פרטי ההתחברות ל-Redux
         await dispatch(login({ ...formData, rememberMe })).unwrap();
         toast.success('התחברת בהצלחה!');
       } catch (err) {
@@ -104,7 +105,7 @@ function Login() {
           </label>
         </div>
 
-        {/* הצגת שגיאות מהשרת */}
+        {/* הצגת שגיאות שרת */}
         {error && <div className={styles.serverError}>{error}</div>}
 
         {/* כפתור שליחה */}
