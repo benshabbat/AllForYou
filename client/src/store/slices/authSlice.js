@@ -11,8 +11,9 @@ export const register = createAsyncThunk(
       localStorage.setItem('token', response.data.token);
       return response.data;
     } catch (error) {
-      toast.error('שגיאה בהרשמה');
-      return thunkAPI.rejectWithValue(error.response.data.message);
+      console.error('Registration error:', error.response?.data?.message || error.message);
+      toast.error(error.response?.data?.message || 'שגיאה בהרשמה');
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'שגיאה בהרשמה');
     }
   }
 );
@@ -26,8 +27,9 @@ export const login = createAsyncThunk(
       localStorage.setItem('token', response.data.token);
       return response.data;
     } catch (error) {
-      toast.error('שגיאה בהתחברות');
-      return thunkAPI.rejectWithValue(error.response.data.message);
+      console.error('Login error:', error.response?.data?.message || error.message);
+      toast.error(error.response?.data?.message || 'שגיאה בהתחברות');
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'שגיאה בהתחברות');
     }
   }
 );
@@ -40,11 +42,13 @@ export const loadUser = createAsyncThunk(
       const response = await api.get('/users/me');
       return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data.message);
+      console.error('Load user error:', error.response?.data?.message || error.message);
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'שגיאה בטעינת פרטי משתמש');
     }
   }
 );
 
+// יצירת ה-slice עבור אימות
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
@@ -70,11 +74,13 @@ const authSlice = createSlice({
       // טיפול במצבי הרשמה
       .addCase(register.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(register.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
+        state.error = null;
       })
       .addCase(register.rejected, (state, action) => {
         state.isLoading = false;
@@ -83,11 +89,13 @@ const authSlice = createSlice({
       // טיפול במצבי התחברות
       .addCase(login.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
+        state.error = null;
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
@@ -96,6 +104,10 @@ const authSlice = createSlice({
       // טיפול בטעינת פרטי משתמש
       .addCase(loadUser.fulfilled, (state, action) => {
         state.user = action.payload;
+      })
+      .addCase(loadUser.rejected, (state) => {
+        state.user = null;
+        state.token = null;
       });
   },
 });
