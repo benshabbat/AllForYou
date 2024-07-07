@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
-// הגדרת סכמת המשתמש
 const UserSchema = new mongoose.Schema({
   username: {
     type: String,
