@@ -1,46 +1,56 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
-// הגדרת סכמת המשתמש
 const UserSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: true,
+    required: [true, 'שם משתמש הוא שדה חובה'],
     unique: true,
     trim: true,
+    minlength: [3, 'שם משתמש חייב להכיל לפחות 3 תווים'],
+    maxlength: [30, 'שם משתמש יכול להכיל עד 30 תווים']
   },
   email: {
     type: String,
-    required: true,
+    required: [true, 'אימייל הוא שדה חובה'],
     unique: true,
     trim: true,
     lowercase: true,
+    match: [/^\S+@\S+\.\S+$/, 'נא להזין כתובת אימייל תקינה']
   },
   password: {
     type: String,
-    required: true,
+    required: [true, 'סיסמה היא שדה חובה'],
+    minlength: [6, 'הסיסמה חייבת להכיל לפחות 6 תווים']
   },
   createdAt: {
     type: Date,
-    default: Date.now,
-  },
+    default: Date.now
+  }
 });
 
 // האש לסיסמה לפני שמירה
-// מופעל אוטומטית לפני שמירת מסמך חדש או עדכון סיסמה
 UserSchema.pre('save', async function(next) {
   // בדיקה אם הסיסמה שונתה
   if (!this.isModified('password')) return next();
   
-  // יצירת האש לסיסמה
-  this.password = await bcrypt.hash(this.password, 12);
-  next();
+  try {
+    // יצירת האש לסיסמה
+    const salt = await bcrypt.genSalt(12);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 // מתודה להשוואת סיסמאות
-// מאפשרת השוואה בין סיסמה מוצפנת לסיסמה שהוזנה
 UserSchema.methods.comparePassword = async function(candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.password);
+  try {
+    return await bcrypt.compare(candidatePassword, this.password);
+  } catch (error) {
+    throw new Error(error);
+  }
 };
 
 const User = mongoose.model('User', UserSchema);
