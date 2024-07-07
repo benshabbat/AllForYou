@@ -18,15 +18,12 @@ function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.container}>
-        {/* לוגו - הוספת מרווח סביב הלוגו להבלטה והפרדה מהתפריט */}
         <Link to="/" className={styles.logo}>
           <GiCookingPot className={styles.logoIcon} />
           <span>מתכונים לאלרגיים</span>
         </Link>
 
-        {/* תפריט ניווט */}
         <nav className={styles.nav}>
-          {/* הוספת אפקט "hover" לקישורי התפריט עם שינוי צבע */}
           <NavLink to="/" className={({ isActive }) => (isActive ? styles.activeLink : styles.navLink)} end>
             דף הבית
           </NavLink>
@@ -38,10 +35,12 @@ function Header() {
               <NavLink to="/add-recipe" className={({ isActive }) => (isActive ? styles.activeLink : styles.navLink)}>
                 הוסף מתכון
               </NavLink>
+              <NavLink to="/my-recipes" className={({ isActive }) => (isActive ? styles.activeLink : styles.navLink)}>
+                המתכונים שלי
+              </NavLink>
               <NavLink to="/profile" className={({ isActive }) => (isActive ? styles.activeLink : styles.navLink)}>
                 פרופיל
               </NavLink>
-              {/* כפתור התנתקות עם אפקט "hover" */}
               <button onClick={handleLogout} className={styles.logoutButton}>
                 התנתק
               </button>
