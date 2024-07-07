@@ -4,10 +4,10 @@ import api from '../../services/api';
 
 // מצב התחלתי של ה-slice
 const initialState = {
-  recipes: [],          // מערך של כל המתכונים
-  totalRecipes: 0,      // מספר כולל של מתכונים (לצורך עימוד)
-  isLoading: false,     // האם יש טעינה כרגע
-  error: null,          // הודעת שגיאה, אם קיימת
+  recipes: [],
+  totalRecipes: 0,
+  isLoading: false,
+  error: null,
 };
 
 // פונקציית עזר לטיפול בשגיאות
@@ -16,6 +16,8 @@ const handleError = (error, defaultMessage) => {
   toast.error(errorMessage);
   return errorMessage;
 };
+
+// אסינכרוניות Thunk פעולות
 
 // טעינת כל המתכונים עם אפשרויות סינון
 export const fetchRecipes = createAsyncThunk(
@@ -135,7 +137,6 @@ const recipeSlice = createSlice({
       .addCase(fetchUserRecipes.fulfilled, (state, action) => {
         state.isLoading = false;
         state.recipes = action.payload;
-        // שים לב: כאן לא מעדכנים את totalRecipes כי זה רק עבור משתמש ספציפי
       })
       .addCase(fetchUserRecipes.rejected, (state, action) => {
         state.isLoading = false;
