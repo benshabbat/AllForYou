@@ -6,29 +6,38 @@ import { toast } from 'react-toastify';
 import styles from './Auth.module.css';
 
 function Login() {
+  // ניהול מצב הטופס
   const [formData, setFormData] = useState({ email: '', password: '' });
+  // ניהול שגיאות ולידציה
   const [errors, setErrors] = useState({});
+  // מצב "זכור אותי"
+  const [rememberMe, setRememberMe] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  // שליפת מצב האימות מה-Redux store
   const { isLoading, error, user } = useSelector((state) => state.auth);
 
+  // ניקוי שגיאות בעת עזיבת הקומפוננטה
   useEffect(() => {
     return () => dispatch(clearError());
   }, [dispatch]);
 
+  // ניווט למסך הפרופיל אם המשתמש כבר מחובר
   useEffect(() => {
     if (user) {
       navigate('/profile');
     }
   }, [user, navigate]);
 
+  // טיפול בשינויים בשדות הטופס
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prevData => ({ ...prevData, [name]: value }));
     setErrors(prevErrors => ({ ...prevErrors, [name]: '' }));
   };
 
+  // ולידציה של הטופס
   const validateForm = () => {
     const newErrors = {};
     if (!formData.email.trim()) newErrors.email = 'אימייל הוא שדה חובה';
@@ -37,11 +46,12 @@ function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // טיפול בשליחת הטופס
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        await dispatch(login(formData)).unwrap();
+        await dispatch(login({ ...formData, rememberMe })).unwrap();
         toast.success('התחברת בהצלחה!');
       } catch (err) {
         toast.error(err || 'שגיאה בהתחברות. אנא נסה שוב.');
@@ -54,6 +64,7 @@ function Login() {
       <form onSubmit={handleSubmit} className={styles.authForm}>
         <h2>התחברות</h2>
         
+        {/* שדה אימייל */}
         <div className={styles.formGroup}>
           <label htmlFor="email">אימייל</label>
           <input
@@ -67,6 +78,7 @@ function Login() {
           {errors.email && <span className={styles.errorMessage}>{errors.email}</span>}
         </div>
 
+        {/* שדה סיסמה */}
         <div className={styles.formGroup}>
           <label htmlFor="password">סיסמה</label>
           <input
@@ -80,12 +92,27 @@ function Login() {
           {errors.password && <span className={styles.errorMessage}>{errors.password}</span>}
         </div>
 
+        {/* אפשרות "זכור אותי" */}
+        <div className={styles.formGroup}>
+          <label>
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+            />
+            זכור אותי
+          </label>
+        </div>
+
+        {/* הצגת שגיאות מהשרת */}
         {error && <div className={styles.serverError}>{error}</div>}
 
+        {/* כפתור שליחה */}
         <button type="submit" className={styles.submitButton} disabled={isLoading}>
           {isLoading ? 'מתחבר...' : 'התחבר'}
         </button>
 
+        {/* קישור להרשמה */}
         <p className={styles.switchAuthMode}>
           אין לך חשבון? <Link to="/register">הירשם כאן</Link>
         </p>
