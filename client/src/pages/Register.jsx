@@ -6,55 +6,64 @@ import { toast } from 'react-toastify';
 import styles from './Auth.module.css';
 
 function Register() {
+  // ניהול מצב הטופס
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
     confirmPassword: ''
   });
+  // ניהול שגיאות ולידציה
   const [errors, setErrors] = useState({});
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  // שליפת מצב הרישום מה-Redux store
   const { isLoading, error } = useSelector((state) => state.auth);
 
+  // ניקוי שגיאות בעת עזיבת הקומפוננטה
   useEffect(() => {
-    // ניקוי שגיאות בעת טעינת הקומפוננטה
     return () => dispatch(clearError());
   }, [dispatch]);
 
+  // טיפול בשינויים בשדות הטופס
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prevData => ({
       ...prevData,
       [name]: value
     }));
-    // ניקוי שגיאות ספציפיות בעת הקלדה
-    if (errors[name]) {
-      setErrors(prevErrors => ({ ...prevErrors, [name]: '' }));
-    }
+    setErrors(prevErrors => ({ ...prevErrors, [name]: '' }));
   };
 
+  // ולידציה של הטופס
   const validateForm = () => {
     const newErrors = {};
     if (!formData.username.trim()) newErrors.username = 'שם משתמש הוא שדה חובה';
     if (!formData.email.trim()) newErrors.email = 'אימייל הוא שדה חובה';
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'כתובת אימייל לא תקינה';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'כתובת אימייל לא תקינה';
     if (!formData.password) newErrors.password = 'סיסמה היא שדה חובה';
-    else if (formData.password.length < 6) newErrors.password = 'הסיסמה חייבת להכיל לפחות 6 תווים';
+    else if (formData.password.length < 8) newErrors.password = 'הסיסמה חייבת להכיל לפחות 8 תווים';
+    else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
+      newErrors.password = 'הסיסמה חייבת להכיל אות גדולה, אות קטנה ומספר';
+    }
     if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'הסיסמאות אינן תואמות';
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+  // טיפול בשליחת הטופס
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      const result = await dispatch(register(formData));
-      if (!result.error) {
-        toast.success('נרשמת בהצלחה'); 
+      try {
+        // שליחת פרטי הרישום ל-Redux
+        await dispatch(register(formData)).unwrap();
+        toast.success('נרשמת בהצלחה');
         navigate('/profile');
+      } catch (err) {
+        toast.error(err || 'שגיאה בהרשמה. אנא נסה שוב.');
       }
     }
   };
@@ -64,6 +73,7 @@ function Register() {
       <form onSubmit={handleSubmit} className={styles.authForm}>
         <h2>הרשמה</h2>
         
+        {/* שדה שם משתמש */}
         <div className={styles.formGroup}>
           <label htmlFor="username">שם משתמש</label>
           <input
@@ -77,6 +87,7 @@ function Register() {
           {errors.username && <span className={styles.errorMessage}>{errors.username}</span>}
         </div>
 
+        {/* שדה אימייל */}
         <div className={styles.formGroup}>
           <label htmlFor="email">אימייל</label>
           <input
@@ -90,6 +101,7 @@ function Register() {
           {errors.email && <span className={styles.errorMessage}>{errors.email}</span>}
         </div>
 
+        {/* שדה סיסמה */}
         <div className={styles.formGroup}>
           <label htmlFor="password">סיסמה</label>
           <input
@@ -103,6 +115,7 @@ function Register() {
           {errors.password && <span className={styles.errorMessage}>{errors.password}</span>}
         </div>
 
+        {/* שדה אימות סיסמה */}
         <div className={styles.formGroup}>
           <label htmlFor="confirmPassword">אימות סיסמה</label>
           <input
@@ -116,12 +129,15 @@ function Register() {
           {errors.confirmPassword && <span className={styles.errorMessage}>{errors.confirmPassword}</span>}
         </div>
 
+        {/* הצגת שגיאות שרת */}
         {error && <div className={styles.serverError}>{error}</div>}
 
+        {/* כפתור שליחה */}
         <button type="submit" className={styles.submitButton} disabled={isLoading}>
           {isLoading ? 'מתבצעת הרשמה...' : 'הירשם'}
         </button>
 
+        {/* קישור להתחברות */}
         <p className={styles.switchAuthMode}>
           כבר יש לך חשבון? <Link to="/login">התחבר כאן</Link>
         </p>
