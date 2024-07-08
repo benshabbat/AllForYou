@@ -35,18 +35,36 @@ function RecipeDetails() {
     }
   }, [dispatch, id, navigate]);
 
-  const handleRate = useCallback(async (rating) => {
-    try {
-      await dispatch(rateRecipe({ id: currentRecipe._id, rating })).unwrap();
-    } catch (error) {
-      console.error("Failed to rate recipe:", error);
-      // כאן אפשר להוסיף הודעת שגיאה למשתמש
-    }
-  }, [dispatch, currentRecipe]);
+  const handleRate = useCallback(
+    async (rating) => {
+      try {
+        await dispatch(rateRecipe({ id: currentRecipe._id, rating })).unwrap();
+      } catch (error) {
+        console.error("Failed to rate recipe:", error);
+        // כאן אפשר להוסיף הודעת שגיאה למשתמש
+      }
+    },
+    [dispatch, currentRecipe]
+  );
 
-  if (isLoading) return <div className={styles.loading} aria-live="polite">טוען...</div>;
-  if (error) return <div className={styles.error} aria-live="assertive">שגיאה: {error}</div>;
-  if (!currentRecipe) return <div className={styles.notFound} aria-live="assertive">מתכון לא נמצא</div>;
+  if (isLoading)
+    return (
+      <div className={styles.loading} aria-live="polite">
+        טוען...
+      </div>
+    );
+  if (error)
+    return (
+      <div className={styles.error} aria-live="assertive">
+        שגיאה: {error}
+      </div>
+    );
+  if (!currentRecipe)
+    return (
+      <div className={styles.notFound} aria-live="assertive">
+        מתכון לא נמצא
+      </div>
+    );
 
   return (
     <article className={styles.recipeDetails}>
@@ -59,7 +77,7 @@ function RecipeDetails() {
         <>
           <h1>{currentRecipe.name}</h1>
           <RatingStars
-            rating={currentRecipe.averageRating}
+            initialRating={currentRecipe.averageRating}
             onRating={handleRate}
           />
           <p>דירוג ממוצע: {currentRecipe.averageRating.toFixed(1)}</p>
