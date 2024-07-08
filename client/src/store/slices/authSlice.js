@@ -49,6 +49,7 @@ const authSlice = createSlice({
     token: localStorage.getItem('token'),
     isLoading: false,
     error: null,
+    isInitialized: false, // New flag to track initialization
   },
   reducers: {
     logout: (state) => {
@@ -58,6 +59,9 @@ const authSlice = createSlice({
     },
     clearError: (state) => {
       state.error = null;
+    },
+    setInitialized: (state) => {
+      state.isInitialized = true;
     },
   },
   extraReducers: (builder) => {
@@ -96,18 +100,23 @@ const authSlice = createSlice({
       .addCase(loadUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload;
-        // וודא שה-id מוגדר כראוי
+        state.isInitialized = true;
         if (action.payload && action.payload._id) {
           state.user.id = action.payload._id;
         }
+        console.log('User loaded successfully:', action.payload);
       })
       .addCase(loadUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
         state.user = null;
+        state.token = null; // Clear token on load failure
+        state.isInitialized = true;
+        localStorage.removeItem('token'); // Remove invalid token
+        console.log('Failed to load user:', action.payload);
       });
   },
 });
 
-export const { logout, clearError } = authSlice.actions;
+export const { logout, clearError, setInitialized } = authSlice.actions;
 export default authSlice.reducer;
