@@ -38,6 +38,9 @@ export const fetchRecipes = createAsyncThunk(
 export const fetchUserRecipes = createAsyncThunk(
   'recipes/fetchUserRecipes',
   async (userId, thunkAPI) => {
+    if (!userId) {
+      return thunkAPI.rejectWithValue('מזהה משתמש לא תקין');
+    }
     try {
       const response = await api.get(`/recipes/user/${userId}`);
       return response.data;
