@@ -7,6 +7,7 @@ const initialState = {
   recipes: [],
   totalRecipes: 0,
   userRecipes: [],
+  favorites: [],
   currentRecipe: null,
   isLoading: false,
   error: null,
@@ -127,6 +128,17 @@ export const fetchRecipeById = createAsyncThunk(
     }
   }
 );
+export const toggleFavorite = createAsyncThunk(
+  'recipes/toggleFavorite',
+  async (recipeId, thunkAPI) => {
+    try {
+      const response = await api.post(`/recipes/${recipeId}/favorite`);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'שגיאה בעדכון מועדפים');
+    }
+  }
+);
 
 // יצירת ה-slice
 const recipeSlice = createSlice({
@@ -202,6 +214,14 @@ const recipeSlice = createSlice({
       .addCase(fetchRecipeById.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
+      })      
+      .addCase(toggleFavorite.fulfilled, (state, action) => {
+        const index = state.favorites.indexOf(action.payload);
+        if (index > -1) {
+          state.favorites.splice(index, 1);
+        } else {
+          state.favorites.push(action.payload);
+        }
       });
   },
 });
