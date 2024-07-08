@@ -23,7 +23,7 @@ const RecipeList = () => {
   }, [fetchRecipesData]);
 
   useEffect(() => {
-    console.log('Recipes in store:', recipes);
+    console.log('Recipes in RecipeList:', recipes);
   }, [recipes]);
 
   const handlePageChange = (pageNumber) => {
