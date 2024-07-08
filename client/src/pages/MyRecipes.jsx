@@ -12,15 +12,22 @@ const MyRecipes = () => {
 
   useEffect(() => {
     if (user && user.id) {
+      console.log('Fetching user recipes for user:', user.id);
       dispatch(fetchUserRecipes(user.id));
     }
   }, [dispatch, user]);
 
   useEffect(() => {
+    console.log('Recipes from store:', recipes);
+    console.log('Current user:', user);
     if (recipes && user && user.id) {
-      setUserRecipes(recipes.filter(recipe => recipe.createdBy === user.id));
+      const filteredRecipes = recipes.filter(recipe => recipe.createdBy === user.id);
+      console.log('Filtered user recipes:', filteredRecipes);
+      setUserRecipes(filteredRecipes);
     }
   }, [recipes, user]);
+
+  console.log('Current userRecipes state:', userRecipes);
 
   if (!user) {
     return <div className={styles.loading}>טוען פרטי משתמש...</div>;
@@ -41,9 +48,10 @@ const MyRecipes = () => {
         <p className={styles.noRecipes}>עדיין לא הוספת מתכונים. <a href="/add-recipe">הוסף מתכון חדש</a></p>
       ) : (
         <div className={styles.recipeGrid}>
-          {userRecipes.map(recipe => (
-            <RecipeCard key={recipe._id} recipe={recipe} />
-          ))}
+          {userRecipes.map(recipe => {
+            console.log('Rendering recipe:', recipe);
+            return <RecipeCard key={recipe._id} recipe={recipe} />;
+          })}
         </div>
       )}
     </div>
