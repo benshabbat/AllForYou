@@ -36,25 +36,19 @@ const RecipeList = () => {
     setCurrentPage(1);
   };
 
-  const renderContent = () => {
-    if (isLoading) return <div className={styles.loading}>טוען מתכונים...</div>;
-    if (error) return <div className={styles.error}>שגיאה: {error}</div>;
-    if (!recipes || recipes.length === 0) return <div className={styles.noRecipes}>לא נמצאו מתכונים. נסה לשנות את פרמטרי החיפוש.</div>;
-
-    return (
-      <div className={styles.recipeGrid}>
-        {recipes.map(recipe => (
-          <RecipeCard key={recipe._id} recipe={recipe} />
-        ))}
-      </div>
-    );
-  };
+  if (isLoading) return <div className={styles.loading}>טוען מתכונים...</div>;
+  if (error) return <div className={styles.error}>שגיאה: {error}</div>;
+  if (!recipes || recipes.length === 0) return <div className={styles.noRecipes}>לא נמצאו מתכונים. נסה לשנות את פרמטרי החיפוש.</div>;
 
   return (
     <div className={styles.recipeListContainer}>
       <h1 className={styles.title}>המתכונים שלנו</h1>
       <AdvancedSearch onSearch={handleAdvancedSearch} />
-      {renderContent()}
+      <div className={styles.recipeGrid}>
+        {recipes.map(recipe => (
+          <RecipeCard key={recipe._id} recipe={recipe} />
+        ))}
+      </div>
       {totalRecipes > RECIPES_PER_PAGE && (
         <Pagination
           currentPage={currentPage}

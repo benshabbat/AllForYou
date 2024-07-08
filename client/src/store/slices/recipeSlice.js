@@ -5,6 +5,7 @@ import api from '../../services/api';
 // מצב התחלתי של ה-slice
 const initialState = {
   recipes: [],
+  totalRecipes: 0,
   userRecipes: [],
   currentRecipe: null,
   isLoading: false,
@@ -23,7 +24,7 @@ const handleError = (error, defaultMessage) => {
 // טעינת כל המתכונים עם אפשרויות סינון
 export const fetchRecipes = createAsyncThunk(
   'recipes/fetchRecipes',
-  async ({ page = 1, limit = 10, searchTerm = '', allergens = [], category = '' }, thunkAPI) => {
+  async ({ page = 1, limit = 12, searchTerm = '', allergens = [], category = '' }, thunkAPI) => {
     try {
       console.log('Fetching recipes with params:', { page, limit, searchTerm, allergens, category });
       const response = await api.get('/recipes', {
@@ -33,7 +34,7 @@ export const fetchRecipes = createAsyncThunk(
       return response.data;
     } catch (error) {
       console.error('Error fetching recipes:', error);
-      return thunkAPI.rejectWithValue(handleError(error, 'שגיאה בטעינת המתכונים'));
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'שגיאה בטעינת המתכונים');
     }
   }
 );
@@ -138,15 +139,15 @@ const recipeSlice = createSlice({
     builder
       // טיפול בטעינת כל המתכונים
       .addCase(fetchRecipes.pending, (state) => {
-        console.log('Fetching recipes: pending');
         state.isLoading = true;
         state.error = null;
       })
       .addCase(fetchRecipes.fulfilled, (state, action) => {
         console.log('Fetching recipes: fulfilled', action.payload);
         state.isLoading = false;
-        state.recipes = action.payload.recipes;
-        state.totalRecipes = action.payload.totalRecipes;
+        state.recipes = action.payload.recipes || [];
+        state.totalRecipes = action.payload.totalRecipes || 0;
+        state.error = null;
       })
       .addCase(fetchRecipes.rejected, (state, action) => {
         console.log('Fetching recipes: rejected', action.payload);
