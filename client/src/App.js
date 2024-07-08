@@ -10,7 +10,8 @@ import AddRecipe from './pages/AddRecipe';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import UserProfile from './pages/UserProfile';
-import MyRecipes from './pages/MyRecipes'; // יש להוסיף קומפוננטה זו אם היא לא קיימת
+import MyRecipes from './pages/MyRecipes';
+import RecipeDetails from './pages/RecipeDetails'; // יש ליצור קומפוננטה זו
 import PrivateRoute from './components/PrivateRoute';
 
 function AppContent() {
@@ -27,16 +28,14 @@ function AppContent() {
     <Router>
       <Header />
       <Routes>
-        {/* נתיבים ציבוריים */}
         <Route path="/" element={<Home />} />
         <Route path="/recipes" element={<RecipeList />} />
+        <Route path="/recipe/:id" element={<RecipeDetails />} /> {/* נתיב חדש */}
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        
-        {/* נתיבים מאובטחים */}
         <Route path="/add-recipe" element={<PrivateRoute><AddRecipe /></PrivateRoute>} />
         <Route path="/profile" element={<PrivateRoute><UserProfile /></PrivateRoute>} />
-        <Route path="/my-recipes" element={<PrivateRoute><MyRecipes /></PrivateRoute>} /> {/* נתיב חדש */}
+        <Route path="/my-recipes" element={<PrivateRoute><MyRecipes /></PrivateRoute>} />
       </Routes>
     </Router>
   );
