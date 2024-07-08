@@ -34,10 +34,14 @@ export const loadUser = createAsyncThunk(
   'auth/loadUser',
   async (_, thunkAPI) => {
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        return thunkAPI.rejectWithValue('No token found');
+      }
       const response = await api.get('/users/me');
       return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'שגיאה בטעינת המשתמש');
     }
   }
 );
@@ -49,13 +53,14 @@ const authSlice = createSlice({
     token: localStorage.getItem('token'),
     isLoading: false,
     error: null,
-    isInitialized: false, // New flag to track initialization
+    isInitialized: false,
   },
   reducers: {
     logout: (state) => {
       localStorage.removeItem('token');
       state.user = null;
       state.token = null;
+      state.isInitialized = true;
     },
     clearError: (state) => {
       state.error = null;
@@ -75,10 +80,12 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.error = null;
+        state.isInitialized = true;
       })
       .addCase(register.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
+        state.isInitialized = true;
       })
       .addCase(login.pending, (state) => {
         state.isLoading = true;
@@ -89,10 +96,12 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.error = null;
+        state.isInitialized = true;
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
+        state.isInitialized = true;
       })
       .addCase(loadUser.pending, (state) => {
         state.isLoading = true;
@@ -110,9 +119,9 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload;
         state.user = null;
-        state.token = null; // Clear token on load failure
+        state.token = null;
         state.isInitialized = true;
-        localStorage.removeItem('token'); // Remove invalid token
+        localStorage.removeItem('token');
         console.log('Failed to load user:', action.payload);
       });
   },

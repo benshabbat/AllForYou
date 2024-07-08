@@ -1,9 +1,9 @@
-import React from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../store/slices/authSlice";
-import { GiCookingPot } from "react-icons/gi";
-import styles from "./Header.module.css";
+import React from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../store/slices/authSlice';
+import { GiCookingPot } from 'react-icons/gi';
+import styles from './Header.module.css';
 
 function Header() {
   const dispatch = useDispatch();
@@ -12,10 +12,8 @@ function Header() {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/");
+    navigate('/');
   };
-
-  console.log("Header rendering. User:", user, "Initialized:", isInitialized);
 
   if (!isInitialized) {
     return null; // או תצוגת טעינה כלשהי
