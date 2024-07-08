@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUserRecipes } from '../store/slices/recipeSlice'; // נניח שפעולה זו קיימת
+import { fetchUserRecipes } from '../store/slices/recipeSlice';
 import RecipeCard from '../components/RecipeCard';
-import styles from './MyRecipes.module.css'; // יש ליצור קובץ CSS מתאים
+import styles from './MyRecipes.module.css';
 
 const MyRecipes = () => {
   const dispatch = useDispatch();
@@ -11,16 +11,20 @@ const MyRecipes = () => {
   const [userRecipes, setUserRecipes] = useState([]);
 
   useEffect(() => {
-    if (user) {
+    if (user && user.id) {
       dispatch(fetchUserRecipes(user.id));
     }
   }, [dispatch, user]);
 
   useEffect(() => {
-    if (recipes) {
+    if (recipes && user && user.id) {
       setUserRecipes(recipes.filter(recipe => recipe.createdBy === user.id));
     }
   }, [recipes, user]);
+
+  if (!user) {
+    return <div className={styles.loading}>טוען פרטי משתמש...</div>;
+  }
 
   if (isLoading) {
     return <div className={styles.loading}>טוען את המתכונים שלך...</div>;
