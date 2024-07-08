@@ -5,7 +5,7 @@ import api from '../../services/api';
 // מצב התחלתי של ה-slice
 const initialState = {
   recipes: [],
-  totalRecipes: 0,
+  userRecipes: [], // מערך חדש למתכוני המשתמש
   isLoading: false,
   error: null,
 };
@@ -34,18 +34,17 @@ export const fetchRecipes = createAsyncThunk(
   }
 );
 
-// טעינת מתכונים של משתמש ספציפי
+// פעולה אסינכרונית חדשה לשליפת מתכוני המשתמש
 export const fetchUserRecipes = createAsyncThunk(
   'recipes/fetchUserRecipes',
   async (userId, thunkAPI) => {
-    if (!userId) {
-      return thunkAPI.rejectWithValue('מזהה משתמש לא תקין');
-    }
     try {
       const response = await api.get(`/recipes/user/${userId}`);
       return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(handleError(error, 'שגיאה בטעינת המתכונים של המשתמש'));
+      const message = error.response?.data?.message || 'שגיאה בטעינת המתכונים';
+      toast.error(message);
+      return thunkAPI.rejectWithValue(message);
     }
   }
 );
@@ -129,14 +128,14 @@ const recipeSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload;
       })
-      // טיפול בטעינת מתכונים של משתמש ספציפי
+      // מקרים חדשים עבור fetchUserRecipes
       .addCase(fetchUserRecipes.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
       .addCase(fetchUserRecipes.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.recipes = action.payload;
+        state.userRecipes = action.payload;
       })
       .addCase(fetchUserRecipes.rejected, (state, action) => {
         state.isLoading = false;
