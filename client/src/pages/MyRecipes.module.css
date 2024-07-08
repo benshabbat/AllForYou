@@ -1,0 +1,49 @@
+.myRecipesContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .title {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .loading, .error {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-top: 50px;
+  }
+  
+  .error {
+    color: #ff0000;
+  }
+  
+  .noRecipes {
+    text-align: center;
+    font-size: 1.1rem;
+    margin-top: 30px;
+  }
+  
+  .noRecipes a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .noRecipes a:hover {
+    text-decoration: underline;
+  }
+  
+  .recipeGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .recipeGrid {
+      grid-template-columns: 1fr;
+    }
+  }
