@@ -8,6 +8,7 @@ const initialState = {
   totalRecipes: 0,
   userRecipes: [],
   favorites: [],
+  comments: [],
   currentRecipe: null,
   isLoading: false,
   error: null,
@@ -139,6 +140,30 @@ export const toggleFavorite = createAsyncThunk(
   }
 );
 
+export const fetchComments = createAsyncThunk(
+  'recipes/fetchComments',
+  async (recipeId, thunkAPI) => {
+    try {
+      const response = await api.get(`/recipes/${recipeId}/comments`);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'שגיאה בטעינת תגובות');
+    }
+  }
+);
+
+export const addComment = createAsyncThunk(
+  'recipes/addComment',
+  async ({ recipeId, content }, thunkAPI) => {
+    try {
+      const response = await api.post(`/recipes/${recipeId}/comments`, { content });
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'שגיאה בהוספת תגובה');
+    }
+  }
+);
+
 // יצירת ה-slice
 const recipeSlice = createSlice({
   name: 'recipes',
@@ -222,6 +247,12 @@ const recipeSlice = createSlice({
       .addCase(fetchRecipeById.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
+      }) 
+      .addCase(fetchComments.fulfilled, (state, action) => {
+        state.comments = action.payload;
+      })
+      .addCase(addComment.fulfilled, (state, action) => {
+        state.comments.push(action.payload);
       });
   },
 });
