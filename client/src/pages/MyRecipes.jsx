@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserRecipes } from '../store/slices/recipeSlice';
 import RecipeCard from '../components/RecipeCard';
@@ -7,8 +7,7 @@ import styles from './MyRecipes.module.css';
 const MyRecipes = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { recipes, isLoading, error } = useSelector((state) => state.recipes);
-  const [userRecipes, setUserRecipes] = useState([]);
+  const { userRecipes, isLoading, error } = useSelector((state) => state.recipes);
 
   useEffect(() => {
     if (user && user.id) {
@@ -18,16 +17,8 @@ const MyRecipes = () => {
   }, [dispatch, user]);
 
   useEffect(() => {
-    console.log('Recipes from store:', recipes);
-    console.log('Current user:', user);
-    if (recipes && user && user.id) {
-      const filteredRecipes = recipes.filter(recipe => recipe.createdBy === user.id);
-      console.log('Filtered user recipes:', filteredRecipes);
-      setUserRecipes(filteredRecipes);
-    }
-  }, [recipes, user]);
-
-  console.log('Current userRecipes state:', userRecipes);
+    console.log('Current userRecipes:', userRecipes);
+  }, [userRecipes]);
 
   if (!user) {
     return <div className={styles.loading}>טוען פרטי משתמש...</div>;

@@ -47,6 +47,7 @@ export const fetchUserRecipes = createAsyncThunk(
     }
     try {
       const response = await api.get(`/recipes/user/${userId}`);
+      console.log('User recipes fetched:', response.data);
       return response.data;
     } catch (error) {
       const message = error.response?.data?.message || 'שגיאה בטעינת המתכונים';
@@ -160,6 +161,7 @@ const recipeSlice = createSlice({
       .addCase(fetchUserRecipes.fulfilled, (state, action) => {
         state.isLoading = false;
         state.userRecipes = action.payload;
+        console.log('User recipes updated in state:', state.userRecipes);
       })
       .addCase(fetchUserRecipes.rejected, (state, action) => {
         state.isLoading = false;
