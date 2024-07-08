@@ -15,6 +15,7 @@ const RecipeList = () => {
   const [searchParams, setSearchParams] = useState({});
 
   const fetchRecipesData = useCallback(() => {
+    console.log('Fetching recipes with:', { ...searchParams, page: currentPage, limit: RECIPES_PER_PAGE });
     dispatch(fetchRecipes({ ...searchParams, page: currentPage, limit: RECIPES_PER_PAGE }));
   }, [dispatch, currentPage, searchParams]);
 
@@ -24,14 +25,19 @@ const RecipeList = () => {
 
   useEffect(() => {
     console.log('Recipes in RecipeList:', recipes);
-  }, [recipes]);
+    console.log('Total recipes:', totalRecipes);
+    console.log('Current page:', currentPage);
+    console.log('Search params:', searchParams);
+  }, [recipes, totalRecipes, currentPage, searchParams]);
 
   const handlePageChange = (pageNumber) => {
+    console.log('Changing to page:', pageNumber);
     setCurrentPage(pageNumber);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleAdvancedSearch = (newSearchParams) => {
+    console.log('New search params:', newSearchParams);
     setSearchParams(newSearchParams);
     setCurrentPage(1);
   };

@@ -31,7 +31,7 @@ export const fetchRecipes = createAsyncThunk(
         params: { page, limit, searchTerm, allergens: allergens.join(','), category }
       });
       console.log('Fetched recipes:', response.data);
-      return response.data;
+      return { recipes: response.data, totalRecipes: response.data.length };
     } catch (error) {
       console.error('Error fetching recipes:', error);
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'שגיאה בטעינת המתכונים');
@@ -145,8 +145,8 @@ const recipeSlice = createSlice({
       .addCase(fetchRecipes.fulfilled, (state, action) => {
         console.log('Fetching recipes: fulfilled', action.payload);
         state.isLoading = false;
-        state.recipes = action.payload.recipes || [];
-        state.totalRecipes = action.payload.totalRecipes || 0;
+        state.recipes = action.payload.recipes;
+        state.totalRecipes = action.payload.totalRecipes;
         state.error = null;
       })
       .addCase(fetchRecipes.rejected, (state, action) => {
