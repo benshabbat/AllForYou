@@ -5,7 +5,8 @@ import api from '../../services/api';
 // מצב התחלתי של ה-slice
 const initialState = {
   recipes: [],
-  userRecipes: [], // מערך חדש למתכוני המשתמש
+  userRecipes: [],
+  currentRecipe: null,
   isLoading: false,
   error: null,
 };
@@ -108,6 +109,20 @@ export const rateRecipe = createAsyncThunk(
   }
 );
 
+export const fetchRecipeById = createAsyncThunk(
+  'recipes/fetchRecipeById',
+  async (id, thunkAPI) => {
+    try {
+      const response = await api.get(`/recipes/${id}`);
+      return response.data;
+    } catch (error) {
+      const message = error.response?.data?.message || 'שגיאה בטעינת המתכון';
+      toast.error(message);
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 // יצירת ה-slice
 const recipeSlice = createSlice({
   name: 'recipes',
@@ -167,6 +182,17 @@ const recipeSlice = createSlice({
         if (index !== -1) {
           state.recipes[index] = action.payload;
         }
+      })      .addCase(fetchRecipeById.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchRecipeById.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.currentRecipe = action.payload;
+      })
+      .addCase(fetchRecipeById.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
       });
   },
 });
