@@ -182,7 +182,7 @@ const recipeSlice = createSlice({
         if (index !== -1) {
           state.recipes[index] = action.payload;
         }
-      })      .addCase(fetchRecipeById.pending, (state) => {
+      }).addCase(fetchRecipeById.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
