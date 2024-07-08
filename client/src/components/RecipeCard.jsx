@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleFavorite } from '../store/slices/recipeSlice';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import RatingStars from './RatingStars';
 import styles from './RecipeCard.module.css';
 
 const RecipeCard = ({ recipe }) => {
@@ -49,6 +50,7 @@ const RecipeCard = ({ recipe }) => {
       </div>
       <div className={styles.recipeContent}>
         <h3 className={styles.recipeTitle}>{recipe.name}</h3>
+        <RatingStars initialRating={recipe.averageRating || 0} readOnly={true} />
         <p className={styles.recipeDescription}>{recipe.description}</p>
         <Link to={`/recipe/${recipe._id}`} className={styles.viewRecipeButton}>
           צפה במתכון

@@ -104,13 +104,12 @@ export const deleteRecipe = createAsyncThunk(
 // דירוג מתכון
 export const rateRecipe = createAsyncThunk(
   'recipes/rateRecipe',
-  async ({ id, rating }, thunkAPI) => {
+  async ({ recipeId, rating }, thunkAPI) => {
     try {
-      const response = await api.post(`/recipes/${id}/rate`, { rating });
-      toast.success('הדירוג נוסף בהצלחה');
+      const response = await api.post(`/recipes/${recipeId}/rate`, { rating });
       return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(handleError(error, 'שגיאה בדירוג המתכון'));
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'שגיאה בדירוג המתכון');
     }
   }
 );
@@ -199,9 +198,18 @@ const recipeSlice = createSlice({
       })
       // טיפול בדירוג מתכון
       .addCase(rateRecipe.fulfilled, (state, action) => {
-        const index = state.recipes.findIndex(recipe => recipe._id === action.payload._id);
-        if (index !== -1) {
-          state.recipes[index] = action.payload;
+        const { _id, averageRating } = action.payload;
+        const recipe = state.recipes.find(r => r._id === _id);
+        if (recipe) {
+          recipe.averageRating = averageRating;
+        }
+      })
+      .addCase(toggleFavorite.fulfilled, (state, action) => {
+        const index = state.favorites.indexOf(action.payload);
+        if (index > -1) {
+          state.favorites.splice(index, 1);
+        } else {
+          state.favorites.push(action.payload);
         }
       }).addCase(fetchRecipeById.pending, (state) => {
         state.isLoading = true;
@@ -214,14 +222,6 @@ const recipeSlice = createSlice({
       .addCase(fetchRecipeById.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
-      })      
-      .addCase(toggleFavorite.fulfilled, (state, action) => {
-        const index = state.favorites.indexOf(action.payload);
-        if (index > -1) {
-          state.favorites.splice(index, 1);
-        } else {
-          state.favorites.push(action.payload);
-        }
       });
   },
 });
