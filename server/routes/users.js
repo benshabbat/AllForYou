@@ -4,19 +4,27 @@ import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// נתיב להרשמת משתמש חדש
-// POST /api/users/register
-// גוף הבקשה צריך לכלול: { username, email, password }
+/**
+ * @route   POST /api/users/register
+ * @desc    Register a new user
+ * @access  Public
+ * @body    { username, email, password }
+ */
 router.post('/register', register);
 
-// נתיב להתחברות משתמש קיים
-// POST /api/users/login
-// גוף הבקשה צריך לכלול: { email, password }
+/**
+ * @route   POST /api/users/login
+ * @desc    Authenticate a user and get token
+ * @access  Public
+ * @body    { email, password }
+ */
 router.post('/login', login);
 
-// נתיב לקבלת פרטי המשתמש המחובר
-// GET /api/users/me
-// דורש טוקן אימות בכותרת Authorization
+/**
+ * @route   GET /api/users/me
+ * @desc    Get current user's profile
+ * @access  Private
+ */
 router.get('/me', protect, getMe);
 
 export default router;
