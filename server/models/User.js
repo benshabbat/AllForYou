@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 
 const UserSchema = new mongoose.Schema({
   username: {
@@ -21,21 +22,23 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, 'סיסמה היא שדה חובה'],
-    minlength: [6, 'הסיסמה חייבת להכיל לפחות 6 תווים']
+    minlength: [6, 'הסיסמה חייבת להכיל לפחות 6 תווים'],
+    select: false
   },
   createdAt: {
     type: Date,
     default: Date.now
-  }
+  },
+  resetPasswordToken: String,
+  resetPasswordExpire: Date
+}, {
+  timestamps: true
 });
 
-// האש לסיסמה לפני שמירה
 UserSchema.pre('save', async function(next) {
-  // בדיקה אם הסיסמה שונתה
   if (!this.isModified('password')) return next();
   
   try {
-    // יצירת האש לסיסמה
     const salt = await bcrypt.genSalt(12);
     this.password = await bcrypt.hash(this.password, salt);
     next();
@@ -44,7 +47,6 @@ UserSchema.pre('save', async function(next) {
   }
 });
 
-// מתודה להשוואת סיסמאות
 UserSchema.methods.comparePassword = async function(candidatePassword) {
   try {
     return await bcrypt.compare(candidatePassword, this.password);
@@ -52,6 +54,22 @@ UserSchema.methods.comparePassword = async function(candidatePassword) {
     throw new Error(error);
   }
 };
+
+UserSchema.methods.getResetPasswordToken = function() {
+  const resetToken = crypto.randomBytes(20).toString('hex');
+  
+  this.resetPasswordToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  this.resetPasswordExpire = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+  return resetToken;
+};
+
+// Add index for better query performance
+UserSchema.index({ email: 1, username: 1 });
 
 const User = mongoose.model('User', UserSchema);
 
