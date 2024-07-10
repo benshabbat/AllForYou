@@ -1,7 +1,10 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchUserRecipes } from "../store/slices/recipeSlice";
-import RecipeCard from "../components/RecipeCard";
+import UserInfo from "../components/UserInfo";
+import UserRecipes from "../components/UserRecipes";
+import Loading from "../components/Loading";
+import ErrorMessage from "../components/ErrorMessage";
 import styles from "./UserProfile.module.css";
 
 function UserProfile() {
@@ -10,37 +13,26 @@ function UserProfile() {
   const { userRecipes, isLoading, error } = useSelector((state) => state.recipes);
 
   useEffect(() => {
+    // Fetch user recipes when component mounts and user is available
     if (user?._id) {
       dispatch(fetchUserRecipes(user._id));
     }
   }, [dispatch, user]);
 
-  if (isLoading) return <div className={styles.loading}>טוען פרופיל...</div>;
-  if (error) return <div className={styles.error}>שגיאה: {error}</div>;
-  if (!user) return <div className={styles.error}>משתמש לא מחובר</div>;
+  // Show loading state
+  if (isLoading) return <Loading message="טוען פרופיל..." />;
+
+  // Show error state
+  if (error) return <ErrorMessage message={error} />;
+
+  // Redirect or show message if user is not logged in
+  if (!user) return <ErrorMessage message="משתמש לא מחובר" />;
 
   return (
     <div className={styles.profileContainer}>
       <h1 className={styles.title}>הפרופיל שלי</h1>
-      
-      <div className={styles.userInfo}>
-        <h2>{user.username}</h2>
-        <p>אימייל: {user.email}</p>
-        <p>הצטרף בתאריך: {new Date(user.createdAt).toLocaleDateString()}</p>
-      </div>
-      
-      <div className={styles.userRecipes}>
-        <h3>המתכונים שלי</h3>
-        {userRecipes && userRecipes.length > 0 ? (
-          <div className={styles.recipeGrid}>
-            {userRecipes.map((recipe) => (
-              <RecipeCard key={recipe._id} recipe={recipe} />
-            ))}
-          </div>
-        ) : (
-          <p>עדיין לא הוספת מתכונים.</p>
-        )}
-      </div>
+      <UserInfo user={user} />
+      <UserRecipes recipes={userRecipes} />
     </div>
   );
 }
