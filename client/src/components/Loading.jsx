@@ -1,10 +1,18 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import styles from './Loading.module.css';
 
-const Loading = () => (
-  <div className="loading">
-    <div className="spinner"></div>
-    <p>טוען...</p>
-  </div>
-);
+function Loading({ message = 'טוען...' }) {
+  return (
+    <div className={styles.loading}>
+      <div className={styles.spinner}></div>
+      <p>{message}</p>
+    </div>
+  );
+}
+
+Loading.propTypes = {
+  message: PropTypes.string,
+};
 
 export default Loading;
