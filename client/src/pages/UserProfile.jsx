@@ -12,7 +12,7 @@ function UserProfile() {
   useEffect(() => {
     // טעינת מתכוני המשתמש בעת טעינת הדף
     if (user?._id) {
-      dispatch(fetchUserRecipes(user._id));
+      dispatch(fetchUserRecipes(user?._id));
     }
   }, [dispatch, user]);
 

@@ -49,17 +49,15 @@ function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
+
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      if (!formData.email || !formData.password) {
-        toast.error('אנא מלא את כל השדות');
-        return;
-      }
       try {
-        await dispatch(login({ ...formData, rememberMe })).unwrap();
-        toast.success('התחברת בהצלחה!');
-        navigate('/profile');
+        await dispatch(login(formData)).unwrap();
+        // נסיר את הניווט מכאן כי הוא יתבצע ב-useEffect
       } catch (err) {
         console.error('Login error:', err);
         toast.error(err.message || 'שגיאה בהתחברות. אנא נסה שוב.');
