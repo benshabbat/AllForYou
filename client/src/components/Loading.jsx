@@ -6,7 +6,7 @@ function Loading({ message = 'טוען...' }) {
   return (
     <div className={styles.loading}>
       <div className={styles.spinner}></div>
-      <p>{message}</p>
+      <p className={styles.message}>{message}</p>
     </div>
   );
 }
