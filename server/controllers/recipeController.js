@@ -118,3 +118,45 @@ export const getUserRecipes = async (req, res) => {
     handleError(res, error);
   }
 };
+
+// קבלת תגובות למתכון ספציפי
+export const getRecipeComments = async (req, res) => {
+  try {
+    const recipe = await Recipe.findById(req.params.id).populate({
+      path: 'comments',
+      populate: { path: 'user', select: 'username' }
+    });
+    
+    if (!recipe) {
+      return res.status(404).json({ message: 'מתכון לא נמצא' });
+    }
+    
+    res.json(recipe.comments);
+  } catch (error) {
+    handleError(res, error);
+  }
+};
+
+// הוספת תגובה למתכון
+export const addRecipeComment = async (req, res) => {
+  try {
+    const { content } = req.body;
+    const recipe = await Recipe.findById(req.params.id);
+    
+    if (!recipe) {
+      return res.status(404).json({ message: 'מתכון לא נמצא' });
+    }
+    
+    const newComment = {
+      user: req.user._id,
+      content
+    };
+    
+    recipe.comments.push(newComment);
+    await recipe.save();
+    
+    res.status(201).json(newComment);
+  } catch (error) {
+    handleError(res, error, 400);
+  }
+};

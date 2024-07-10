@@ -7,7 +7,9 @@ import {
   updateRecipe,
   deleteRecipe,
   rateRecipe,
-  getUserRecipes
+  getUserRecipes,
+  getRecipeComments, 
+  addRecipeComment
 } from '../controllers/recipeController.js';
 
 const router = express.Router();
@@ -26,6 +28,21 @@ router.get('/', getAllRecipes);
  */
 router.get('/:id', getRecipe);
 
+
+
+/**
+ * @route   GET /api/recipes/:id/comments
+ * @desc    Get comments for a specific recipe
+ * @access  Public
+ */
+router.get('/:id/comments', getRecipeComments);
+
+/**
+ * @route   POST /api/recipes/:id/comments
+ * @desc    Add a comment to a recipe
+ * @access  Private
+ */
+router.post('/:id/comments', protect, addRecipeComment);
 // Protected routes
 router.use(protect);
 

@@ -6,7 +6,7 @@ import {
   deleteRecipe,
   rateRecipe,
   addComment,
-  // fetchComments,
+  fetchComments,
 } from "../store/slices/recipeSlice";
 import EditRecipe from "../components/EditRecipe";
 import RatingStars from "../components/RatingStars";
@@ -24,7 +24,7 @@ function RecipeDetails() {
 
   useEffect(() => {
     dispatch(fetchRecipeById(id));
-    // dispatch(fetchComments(id));
+    dispatch(fetchComments(id));
   }, [dispatch, id]);
 
   const handleDelete = useCallback(async () => {
