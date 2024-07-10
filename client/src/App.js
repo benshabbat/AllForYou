@@ -20,19 +20,21 @@ const RecipeDetails = lazy(() => import('./pages/RecipeDetails'));
 
 function AppContent() {
   const dispatch = useDispatch();
-  const { isInitialized } = useSelector((state) => state.auth);
+  const { isInitialized, user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const initializeAuth = async () => {
       try {
         if (localStorage.getItem('token')) {
           console.log('Token found in localStorage, loading user...');
-          await dispatch(loadUser());
+          await dispatch(loadUser()).unwrap();
         } else {
           console.log('No token found in localStorage');
         }
       } catch (error) {
         console.error('Error during authentication initialization:', error);
+        // Consider clearing the token if it's invalid
+        localStorage.removeItem('token');
       } finally {
         dispatch(setInitialized());
       }
