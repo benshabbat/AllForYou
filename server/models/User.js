@@ -48,10 +48,13 @@ UserSchema.pre('save', async function(next) {
 });
 
 UserSchema.methods.comparePassword = async function(candidatePassword) {
+  if (!candidatePassword) {
+    throw new Error('סיסמה לא סופקה');
+  }
   try {
     return await bcrypt.compare(candidatePassword, this.password);
   } catch (error) {
-    throw new Error(error);
+    throw new Error('שגיאה בהשוואת סיסמאות: ' + error.message);
   }
 };
 
