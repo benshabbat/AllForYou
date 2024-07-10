@@ -1,33 +1,26 @@
-import Recipe from '../models/Recipe.js';
 import { body } from 'express-validator';
 import { validate } from '../middleware/validate.js';
 import logger from '../utils/logger.js';
-
+import Recipe from '../models/Recipe.js';
 
 // פונקציית עזר לטיפול בשגיאות
 const handleError = (res, error, statusCode = 500) => {
-  console.error('Error:', error);
+  logger.error(`Error in recipe controller: ${error.message}`);
   res.status(statusCode).json({ message: error.message || 'שגיאה בשרת' });
 };
+
+// הגדרת הוולידציות
+export const createRecipeValidation = [
+  body('name').notEmpty().withMessage('שם המתכון הוא שדה חובה'),
+  body('ingredients').isArray().withMessage('רשימת המרכיבים חייבת להיות מערך'),
+  body('instructions').notEmpty().withMessage('הוראות ההכנה הן שדה חובה'),
+];
 
 // קבלת כל המתכונים
 export const getAllRecipes = async (req, res) => {
   try {
     const recipes = await Recipe.find().populate('createdBy', 'username');
     res.json(recipes);
-  } catch (error) {
-    handleError(res, error);
-  }
-};
-
-// קבלת מתכון ספציפי
-export const getRecipe = async (req, res) => {
-  try {
-    const recipe = await Recipe.findById(req.params.id).populate('createdBy', 'username');
-    if (!recipe) {
-      return res.status(404).json({ message: 'מתכון לא נמצא' });
-    }
-    res.json(recipe);
   } catch (error) {
     handleError(res, error);
   }
@@ -51,6 +44,21 @@ export const createRecipe = [
     }
   }
 ];
+
+
+
+// קבלת מתכון ספציפי
+export const getRecipe = async (req, res) => {
+  try {
+    const recipe = await Recipe.findById(req.params.id).populate('createdBy', 'username');
+    if (!recipe) {
+      return res.status(404).json({ message: 'מתכון לא נמצא' });
+    }
+    res.json(recipe);
+  } catch (error) {
+    handleError(res, error);
+  }
+};
 
 // עדכון מתכון
 export const updateRecipe = async (req, res) => {
@@ -170,10 +178,4 @@ export const addRecipeComment = async (req, res) => {
   }
 };
 
-
-export const createRecipeValidation = [
-  body('name').notEmpty().withMessage('שם המתכון הוא שדה חובה'),
-  body('ingredients').isArray().withMessage('רשימת המרכיבים חייבת להיות מערך'),
-  body('instructions').notEmpty().withMessage('הוראות ההכנה הן שדה חובה'),
-];
 
