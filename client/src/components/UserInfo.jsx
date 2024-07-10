@@ -5,9 +5,9 @@ import styles from './UserInfo.module.css';
 function UserInfo({ user }) {
   return (
     <div className={styles.userInfo}>
-      <h2>{user.username}</h2>
-      <p>אימייל: {user.email}</p>
-      <p>הצטרף בתאריך: {new Date(user.createdAt).toLocaleDateString()}</p>
+      <h2 className={styles.username}>{user.username}</h2>
+      <p className={styles.email}>אימייל: {user.email}</p>
+      <p className={styles.joinDate}>הצטרף בתאריך: {new Date(user.createdAt).toLocaleDateString()}</p>
     </div>
   );
 }

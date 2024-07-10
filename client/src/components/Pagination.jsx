@@ -1,5 +1,3 @@
-בהחלט, נשפר את קובץ Pagination.jsx עם כמה תוספות ושיפורים. הנה הגרסה המשופרת:
-jsxCopy// Pagination.jsx
 import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './Pagination.module.css';

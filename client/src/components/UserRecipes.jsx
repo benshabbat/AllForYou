@@ -5,12 +5,12 @@ import styles from './UserRecipes.module.css';
 
 function UserRecipes({ recipes }) {
   if (!recipes || recipes.length === 0) {
-    return <p>עדיין לא הוספת מתכונים.</p>;
+    return <p className={styles.noRecipes}>עדיין לא הוספת מתכונים.</p>;
   }
 
   return (
     <div className={styles.userRecipes}>
-      <h3>המתכונים שלי</h3>
+      <h3 className={styles.title}>המתכונים שלי</h3>
       <div className={styles.recipeGrid}>
         {recipes.map((recipe) => (
           <RecipeCard key={recipe._id} recipe={recipe} />
