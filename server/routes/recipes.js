@@ -11,7 +11,7 @@ import {
   getRecipeComments, 
   addRecipeComment
 } from '../controllers/recipeController.js';
-
+import { apiLimiter } from '../middleware/rateLimiter.js';
 const router = express.Router();
 
 /**
@@ -80,5 +80,9 @@ router.post('/:id/rate', rateRecipe);
  * @access  Private
  */
 router.get('/user/:userId', getUserRecipes);
+
+
+router.use(apiLimiter);
+
 
 export default router;

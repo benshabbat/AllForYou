@@ -16,7 +16,22 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "https:"],
+    },
+  },
+  referrerPolicy: {
+    policy: 'strict-origin-when-cross-origin',
+  },
+  frameguard: {
+    action: 'deny',
+  },
+}));
 
 // Optional dependencies
 try {
@@ -65,3 +80,4 @@ process.on('unhandledRejection', (err) => {
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+

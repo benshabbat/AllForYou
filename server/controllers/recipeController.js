@@ -1,4 +1,8 @@
 import Recipe from '../models/Recipe.js';
+import { body } from 'express-validator';
+import { validate } from '../middleware/validate.js';
+import logger from '../utils/logger.js';
+
 
 // פונקציית עזר לטיפול בשגיאות
 const handleError = (res, error, statusCode = 500) => {
@@ -30,18 +34,23 @@ export const getRecipe = async (req, res) => {
 };
 
 // יצירת מתכון חדש
-export const createRecipe = async (req, res) => {
-  try {
-    const newRecipe = new Recipe({
-      ...req.body,
-      createdBy: req.user._id
-    });
-    const savedRecipe = await newRecipe.save();
-    res.status(201).json(savedRecipe);
-  } catch (error) {
-    handleError(res, error, 400);
+export const createRecipe = [
+  validate(createRecipeValidation),
+  async (req, res) => {
+    try {
+      const newRecipe = new Recipe({
+        ...req.body,
+        createdBy: req.user._id
+      });
+      const savedRecipe = await newRecipe.save();
+      logger.info(`New recipe created: ${savedRecipe._id}`);
+      res.status(201).json(savedRecipe);
+    } catch (error) {
+      logger.error(`Error creating recipe: ${error.message}`);
+      handleError(res, error, 400);
+    }
   }
-};
+];
 
 // עדכון מתכון
 export const updateRecipe = async (req, res) => {
@@ -160,3 +169,11 @@ export const addRecipeComment = async (req, res) => {
     handleError(res, error, 400);
   }
 };
+
+
+export const createRecipeValidation = [
+  body('name').notEmpty().withMessage('שם המתכון הוא שדה חובה'),
+  body('ingredients').isArray().withMessage('רשימת המרכיבים חייבת להיות מערך'),
+  body('instructions').notEmpty().withMessage('הוראות ההכנה הן שדה חובה'),
+];
+
