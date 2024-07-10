@@ -140,17 +140,17 @@ export const toggleFavorite = createAsyncThunk(
   }
 );
 
-export const fetchComments = createAsyncThunk(
-  'recipes/fetchComments',
-  async (recipeId, thunkAPI) => {
-    try {
-      const response = await api.get(`/recipes/${recipeId}/comments`);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'שגיאה בטעינת תגובות');
-    }
-  }
-);
+// export const fetchComments = createAsyncThunk(
+//   'recipes/fetchComments',
+//   async (recipeId, thunkAPI) => {
+//     try {
+//       const response = await api.get(`/recipes/${recipeId}/comments`);
+//       return response.data;
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(error.response?.data?.message || 'שגיאה בטעינת תגובות');
+//     }
+//   }
+// );
 
 export const addComment = createAsyncThunk(
   'recipes/addComment',
@@ -248,9 +248,9 @@ const recipeSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload;
       }) 
-      .addCase(fetchComments.fulfilled, (state, action) => {
-        state.comments = action.payload;
-      })
+      // .addCase(fetchComments.fulfilled, (state, action) => {
+      //   state.comments = action.payload;
+      // })
       .addCase(addComment.fulfilled, (state, action) => {
         state.comments.push(action.payload);
       });
