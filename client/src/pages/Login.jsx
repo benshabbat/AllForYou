@@ -5,9 +5,6 @@ import { login, clearError } from '../store/slices/authSlice';
 import { toast } from 'react-toastify';
 import styles from './Auth.module.css';
 
-// TODO: Import a custom hook for form validation
-// import useFormValidation from '../hooks/useFormValidation';
-
 function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
@@ -16,9 +13,6 @@ function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { isLoading, error, user } = useSelector((state) => state.auth);
-
-  // TODO: Use custom hook for form validation
-  // const { validateForm, validateField } = useFormValidation();
 
   useEffect(() => {
     return () => dispatch(clearError());
@@ -34,13 +28,8 @@ function Login() {
     const { name, value } = e.target;
     setFormData(prevData => ({ ...prevData, [name]: value }));
     setErrors(prevErrors => ({ ...prevErrors, [name]: '' }));
-    
-    // TODO: Implement real-time field validation
-    // const fieldError = validateField(name, value);
-    // setErrors(prevErrors => ({ ...prevErrors, [name]: fieldError }));
   };
 
-  // TODO: Implement more robust form validation
   const validateForm = () => {
     const newErrors = {};
     if (!formData.email.trim()) newErrors.email = 'אימייל הוא שדה חובה';
@@ -49,18 +38,15 @@ function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
-
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        await dispatch(login(formData)).unwrap();
-        // נסיר את הניווט מכאן כי הוא יתבצע ב-useEffect
+        await dispatch(login({ ...formData, rememberMe })).unwrap();
+        toast.success('התחברת בהצלחה!');
       } catch (err) {
         console.error('Login error:', err);
-        toast.error(err.message || 'שגיאה בהתחברות. אנא נסה שוב.');
+        toast.error(err || 'שגיאה בהתחברות. אנא נסה שוב.');
       }
     }
   };
