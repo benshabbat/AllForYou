@@ -1,12 +1,16 @@
 import React, { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Provider, useDispatch, useSelector } from 'react-redux';
-import { store } from './store/index.js'; 
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { store } from './store/index.js';
 import { loadUser, setInitialized } from './store/slices/authSlice';
 import Header from './components/Header';
-import Loading from './components/Loading'; // New loading component
+import Loading from './components/Loading';
 import PrivateRoute from './components/PrivateRoute';
-import NotFound from './components/NotFound'; // New NotFound component
+import NotFound from './components/NotFound';
+import ErrorBoundary from './components/ErrorBoundary';
+
+const queryClient = new QueryClient();
 
 // Lazy loaded components
 const Home = lazy(() => import('./pages/Home'));
@@ -33,7 +37,6 @@ function AppContent() {
         }
       } catch (error) {
         console.error('Error during authentication initialization:', error);
-        // Consider clearing the token if it's invalid
         localStorage.removeItem('token');
       } finally {
         dispatch(setInitialized());
@@ -49,20 +52,22 @@ function AppContent() {
 
   return (
     <Router>
-      <Header />
-      <Suspense fallback={<Loading />}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/recipes" element={<RecipeList />} />
-          <Route path="/recipe/:id" element={<RecipeDetails />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/add-recipe" element={<PrivateRoute><AddRecipe /></PrivateRoute>} />
-          <Route path="/profile" element={<PrivateRoute><UserProfile /></PrivateRoute>} />
-          <Route path="/my-recipes" element={<PrivateRoute><MyRecipes /></PrivateRoute>} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Suspense>
+      <ErrorBoundary>
+        <Header />
+        <Suspense fallback={<Loading />}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/recipes" element={<RecipeList />} />
+            <Route path="/recipe/:id" element={<RecipeDetails />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/add-recipe" element={<PrivateRoute><AddRecipe /></PrivateRoute>} />
+            <Route path="/profile" element={<PrivateRoute><UserProfile /></PrivateRoute>} />
+            <Route path="/my-recipes" element={<PrivateRoute><MyRecipes /></PrivateRoute>} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
+      </ErrorBoundary>
     </Router>
   );
 }
@@ -70,7 +75,9 @@ function AppContent() {
 function App() {
   return (
     <Provider store={store}>
-      <AppContent />
+      <QueryClientProvider client={queryClient}>
+        <AppContent />
+      </QueryClientProvider>
     </Provider>
   );
 }
