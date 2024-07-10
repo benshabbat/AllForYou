@@ -55,7 +55,12 @@ export const login = async (req, res) => {
     }
 
     const token = generateToken(user._id);
-    res.json({ token, userId: user._id });
+    
+    // נחזיר את פרטי המשתמש ללא הסיסמה
+    const userResponse = user.toObject();
+    delete userResponse.password;
+
+    res.json({ token, user: userResponse });
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ message: 'שגיאה בהתחברות. נסה שוב מאוחר יותר.' });
