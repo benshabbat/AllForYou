@@ -52,13 +52,17 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
+      if (!formData.email || !formData.password) {
+        toast.error('אנא מלא את כל השדות');
+        return;
+      }
       try {
         await dispatch(login({ ...formData, rememberMe })).unwrap();
         toast.success('התחברת בהצלחה!');
-        // TODO: Implement proper route guarding instead of navigating here
         navigate('/profile');
       } catch (err) {
-        toast.error(err || 'שגיאה בהתחברות. אנא נסה שוב.');
+        console.error('Login error:', err);
+        toast.error(err.message || 'שגיאה בהתחברות. אנא נסה שוב.');
       }
     }
   };
