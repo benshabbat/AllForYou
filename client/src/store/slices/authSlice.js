@@ -55,6 +55,7 @@ const authSlice = createSlice({
     isLoading: false,
     error: null,
     isInitialized: false,
+    isAuthenticated: false,
   },
   reducers: {
     logout: (state) => {
@@ -62,6 +63,7 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       state.isInitialized = true;
+      state.isAuthenticated = false;
     },
     clearError: (state) => {
       state.error = null;
@@ -98,6 +100,7 @@ const authSlice = createSlice({
         state.token = action.payload.token;
         state.error = null;
         state.isInitialized = true;
+        state.isAuthenticated = true;
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
@@ -106,11 +109,12 @@ const authSlice = createSlice({
       })
       .addCase(loadUser.pending, (state) => {
         state.isLoading = true;
-      })
+      })      
       .addCase(loadUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload;
         state.isInitialized = true;
+        state.isAuthenticated = true;
         if (action.payload && action.payload._id) {
           state.user.id = action.payload._id;
         }
@@ -122,6 +126,7 @@ const authSlice = createSlice({
         state.user = null;
         state.token = null;
         state.isInitialized = true;
+        state.isAuthenticated = false;
         localStorage.removeItem('token');
         console.log('Failed to load user:', action.payload);
       });
