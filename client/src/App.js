@@ -24,7 +24,7 @@ const RecipeDetails = lazy(() => import('./pages/RecipeDetails'));
 
 function AppContent() {
   const dispatch = useDispatch();
-  const { isInitialized, user } = useSelector((state) => state.auth);
+  const { isInitialized } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const initializeAuth = async () => {

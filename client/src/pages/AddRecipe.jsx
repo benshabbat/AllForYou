@@ -4,7 +4,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useMutation, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { addRecipe } from '../api/recipes';
+import { addRecipe } from '../store/slices/recipeSlice';
 import { toast } from 'react-toastify';
 import styles from './AddRecipe.module.css';
 
