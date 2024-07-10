@@ -21,7 +21,8 @@ export const login = createAsyncThunk(
       const response = await api.post('/users/login', userData);
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
-        return response.data;
+        // נוודא שאנחנו מחזירים את כל המידע הדרוש
+        return { token: response.data.token, user: response.data.user };
       }
       return thunkAPI.rejectWithValue('לא התקבל טוקן מהשרת');
     } catch (error) {
