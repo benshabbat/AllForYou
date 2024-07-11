@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleFavorite } from '../store/slices/recipeSlice';
@@ -6,7 +6,7 @@ import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import RatingStars from './RatingStars';
 import styles from './RecipeCard.module.css';
 
-const RecipeCard = ({ recipe }) => {
+const RecipeCard = React.memo(({ recipe }) => {
   const dispatch = useDispatch();
   const favorites = useSelector(state => state.recipes.favorites);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -22,10 +22,10 @@ const RecipeCard = ({ recipe }) => {
     img.src = recipe.image;
   }, [recipe.image]);
 
-  const handleFavoriteClick = (e) => {
+  const handleFavoriteClick = useCallback((e) => {
     e.preventDefault();
     dispatch(toggleFavorite(recipe._id));
-  };
+  }, [dispatch, recipe._id]);
 
   return (
     <div className={styles.recipeCard}>
@@ -58,6 +58,6 @@ const RecipeCard = ({ recipe }) => {
       </div>
     </div>
   );
-};
+});
 
-export default React.memo(RecipeCard);
+export default RecipeCard;

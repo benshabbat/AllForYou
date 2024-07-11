@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchRecipes } from '../store/slices/recipeSlice';
 import { useForm } from '../hooks/useForm';
@@ -13,13 +13,13 @@ function RecipeFilter() {
     category: ''
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = useCallback((e) => {
     e.preventDefault();
     dispatch(fetchRecipes({
       ...formValues,
-      ingredients: formValues.ingredients.split(',').map(i => i.trim())
+      ingredients: formValues.ingredients.split(',').map(i => i.trim()).filter(Boolean)
     }));
-  };
+  }, [dispatch, formValues]);
 
   return (
     <form onSubmit={handleSubmit} className={styles.filterForm}>
@@ -56,4 +56,4 @@ function RecipeFilter() {
   );
 }
 
-export default RecipeFilter;
+export default React.memo(RecipeFilter);
