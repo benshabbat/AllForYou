@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import recipeRoutes from './routes/recipes.js';
 import userRoutes from './routes/users.js';
+import allergenRoutes from './routes/allergens.js';
 import { connectDB } from './config/db.js';
 
 dotenv.config();
@@ -56,6 +57,7 @@ try {
 // Routes
 app.use('/api/recipes', recipeRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/allergens', allergenRoutes);
 
 // Health check route
 app.get('/health', (req, res) => {
