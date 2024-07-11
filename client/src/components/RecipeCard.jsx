@@ -49,9 +49,16 @@ const RecipeCard = React.memo(({ recipe }) => {
         </button>
       </div>
       <div className={styles.recipeContent}>
-        <h3 className={styles.recipeTitle}>{recipe.name}</h3>
+      <h3 className={styles.recipeTitle}>{recipe.name}</h3>
         <RatingStars initialRating={recipe.averageRating || 0} readOnly={true} />
         <p className={styles.recipeDescription}>{recipe.description}</p>
+        <div className={styles.allergenIcons}>
+          {recipe.allergens.map(allergen => (
+            <span key={allergen._id} className={styles.allergenIcon} title={allergen.name}>
+              {allergen.icon}
+            </span>
+          ))}
+        </div>
         <Link to={`/recipe/${recipe._id}`} className={styles.viewRecipeButton}>
           צפה במתכון
         </Link>
