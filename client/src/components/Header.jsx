@@ -1,63 +1,104 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { useQuery } from 'react-query';
-import { fetchRecipes } from '../store/slices/recipeSlice';
-import RecipeCard from '../components/RecipeCard';
-import AdvancedSearch from '../components/AdvancedSearch';
-import Pagination from '../components/Pagination';
-import Loading from '../components/Loading';
-import ErrorMessage from '../components/ErrorMessage';
-import styles from './RecipeList.module.css';
+import React,{useCallback} from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../store/slices/authSlice';
+import { GiCookingPot } from 'react-icons/gi';
+import styles from './Header.module.css';
 
-const RECIPES_PER_PAGE = 12;
+function Header() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { user, isInitialized } = useSelector((state) => state.auth);
 
-function RecipeList() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchParams, setSearchParams] = useState({});
+  const handleLogout = useCallback(() => {
+    dispatch(logout());
+    navigate('/');
+  }, [dispatch, navigate]);
 
-  const { data, isLoading, error } = useQuery(
-    ['recipes', currentPage, searchParams],
-    () => fetchRecipes({ page: currentPage, limit: RECIPES_PER_PAGE, ...searchParams }),
-    { keepPreviousData: true }
-  );
-
-  const handleSearch = useCallback((params) => {
-    setSearchParams(params);
-    setCurrentPage(1);
-  }, []);
-
-  const handlePageChange = useCallback((page) => {
-    setCurrentPage(page);
-  }, []);
-
-  const recipes = useMemo(() => Array.isArray(data) ? data : data?.recipes || [], [data]);
-  const totalRecipes = useMemo(() => typeof data?.totalRecipes === 'number' ? data.totalRecipes : recipes.length, [data, recipes]);
-
-  const recipeCards = useMemo(() => (
-    recipes.map((recipe) => (
-      <RecipeCard key={recipe._id} recipe={recipe} />
-    ))
-  ), [recipes]);
-
-  if (isLoading) return <Loading message="טוען מתכונים..." />;
-  if (error) return <ErrorMessage message={error.message || 'שגיאה בטעינת המתכונים'} />;
-  if (recipes.length === 0) return <p className={styles.noRecipes}>לא נמצאו מתכונים.</p>;
+  if (!isInitialized) {
+    return null;
+  }
 
   return (
-    <div className={styles.recipeListContainer}>
-      <h1 className={styles.title}>המתכונים שלנו</h1>
-      <AdvancedSearch onSearch={handleSearch} />
-      <div className={styles.recipeGrid}>
-        {recipeCards}
+    <header className={styles.header}>
+      <div className={styles.container}>
+        <Link to="/" className={styles.logo}>
+          <GiCookingPot className={styles.logoIcon} />
+          <span>מתכונים לאלרגיים</span>
+        </Link>
+
+        <nav className={styles.nav}>
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              isActive ? styles.activeLink : styles.navLink
+            }
+            end
+          >
+            דף הבית
+          </NavLink>
+          <NavLink
+            to="/recipes"
+            className={({ isActive }) =>
+              isActive ? styles.activeLink : styles.navLink
+            }
+          >
+            מתכונים
+          </NavLink>
+          {user ? (
+            <>
+              <NavLink
+                to="/add-recipe"
+                className={({ isActive }) =>
+                  isActive ? styles.activeLink : styles.navLink
+                }
+              >
+                הוסף מתכון
+              </NavLink>
+              <NavLink
+                to="/my-recipes"
+                className={({ isActive }) =>
+                  isActive ? styles.activeLink : styles.navLink
+                }
+              >
+                המתכונים שלי
+              </NavLink>
+              <NavLink
+                to="/profile"
+                className={({ isActive }) =>
+                  isActive ? styles.activeLink : styles.navLink
+                }
+              >
+                פרופיל
+              </NavLink>
+              <button onClick={handleLogout} className={styles.logoutButton}>
+                התנתק
+              </button>
+            </>
+          ) : (
+            <>
+              <NavLink
+                to="/login"
+                className={({ isActive }) =>
+                  isActive ? styles.activeLink : styles.navLink
+                }
+              >
+                התחבר
+              </NavLink>
+              <NavLink
+                to="/register"
+                className={({ isActive }) =>
+                  isActive ? styles.activeLink : styles.navLink
+                }
+              >
+                הרשם
+              </NavLink>
+            </>
+          )}
+        </nav>
       </div>
-      {recipes.length > 0 && (
-        <Pagination 
-          currentPage={currentPage}
-          totalPages={Math.ceil(totalRecipes / RECIPES_PER_PAGE)}
-          onPageChange={handlePageChange}
-        />
-      )}
-    </div>
+    </header>
   );
 }
 
-export default React.memo(RecipeList);
+export default React.memo(Header);
