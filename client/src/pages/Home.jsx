@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import styles from './Home.module.css';
@@ -6,8 +6,21 @@ import styles from './Home.module.css';
 // TODO: Import pre-made components as needed
 // import { Button, Card } from '../components';
 
+const features = [
+  { title: "חיפוש מתקדם", description: "מצאו מתכונים לפי רכיבים, קטגוריות ואלרגנים" },
+  { title: "דירוג וביקורות", description: "שתפו את החוויות שלכם ועזרו לאחרים למצוא את המתכונים הטובים ביותר" },
+  { title: "שיתוף מתכונים", description: "הוסיפו את המתכונים האהובים עליכם ושתפו אותם עם הקהילה" }
+];
+
 function Home() {
   const { user } = useSelector((state) => state.auth);
+
+  const FeatureCards = useMemo(() => features.map((feature, index) => (
+    <div key={index} className={styles.feature}>
+      <h2>{feature.title}</h2>
+      <p>{feature.description}</p>
+    </div>
+  )), []);
 
   return (
     <div className={styles.home}>
@@ -19,17 +32,7 @@ function Home() {
       </section>
 
       <section className={styles.features}>
-        {/* TODO: Consider creating a separate FeatureCard component */}
-        {[
-          { title: "חיפוש מתקדם", description: "מצאו מתכונים לפי רכיבים, קטגוריות ואלרגנים" },
-          { title: "דירוג וביקורות", description: "שתפו את החוויות שלכם ועזרו לאחרים למצוא את המתכונים הטובים ביותר" },
-          { title: "שיתוף מתכונים", description: "הוסיפו את המתכונים האהובים עליכם ושתפו אותם עם הקהילה" }
-        ].map((feature, index) => (
-          <div key={index} className={styles.feature}>
-            <h2>{feature.title}</h2>
-            <p>{feature.description}</p>
-          </div>
-        ))}
+        {FeatureCards}
       </section>
 
       {user ? (
@@ -54,4 +57,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default React.memo(Home);

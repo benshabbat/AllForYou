@@ -1,3 +1,10 @@
+:root {
+  --primary-color: #4a90e2; /* או כל צבע אחר שאתה משתמש בו */
+  --secondary-color: #f5a623; /* או כל צבע אחר שאתה משתמש בו */
+  --border-radius: 10px;
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
 .home {
   max-width: 1200px;
   margin: 0 auto;
