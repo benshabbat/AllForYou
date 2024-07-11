@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useCallback} from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
@@ -10,14 +10,15 @@ function Header() {
   const navigate = useNavigate();
   const { user, isInitialized } = useSelector((state) => state.auth);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     dispatch(logout());
     navigate('/');
-  };
+  }, [dispatch, navigate]);
 
   if (!isInitialized) {
-    return null; // או תצוגת טעינה כלשהי
+    return null;
   }
+
   return (
     <header className={styles.header}>
       <div className={styles.container}>
@@ -100,4 +101,4 @@ function Header() {
   );
 }
 
-export default Header;
+export default React.memo(Header);

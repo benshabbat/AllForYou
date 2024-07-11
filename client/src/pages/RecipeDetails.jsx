@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import {
@@ -40,19 +40,19 @@ function RecipeDetails() {
     }
   });
 
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     if (window.confirm("האם אתה בטוח שברצונך למחוק מתכון זה?")) {
       deleteMutation.mutate(id);
     }
-  };
+  }, [deleteMutation, id]);
 
-  const handleRate = async (rating) => {
+  const handleRate = useCallback(async (rating) => {
     await rateMutation.mutateAsync({ recipeId: id, rating });
-  };
+  }, [rateMutation, id]);
 
-  const handleAddComment = async (content) => {
+  const handleAddComment = useCallback(async (content) => {
     await commentMutation.mutateAsync({ recipeId: id, content });
-  };
+  }, [commentMutation, id]);
 
   if (isLoading) return <div className={styles.loading} aria-live="polite">טוען...</div>;
   if (error) return <div className={styles.error} aria-live="assertive">שגיאה: {error.message}</div>;
@@ -112,4 +112,4 @@ function RecipeDetails() {
   );
 }
 
-export default RecipeDetails;
+export default React.memo(RecipeDetails);

@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useQuery } from 'react-query';
 import { fetchUserRecipes } from '../store/slices/recipeSlice';
 import { useSelector } from 'react-redux';
 import RecipeCard from '../components/RecipeCard';
-import Loading from '../components/Loading'; // יש להוסיף ייבוא זה
-import ErrorMessage from '../components/ErrorMessage'; // יש להוסיף ייבוא זה
+import Loading from '../components/Loading';
+import ErrorMessage from '../components/ErrorMessage';
 import styles from './MyRecipes.module.css';
 
 const MyRecipes = () => {
@@ -15,6 +15,14 @@ const MyRecipes = () => {
     { enabled: !!user?.id }
   );
 
+  const renderRecipes = useCallback(() => (
+    <div className={styles.recipeGrid}>
+      {userRecipes.map(recipe => (
+        <RecipeCard key={recipe._id} recipe={recipe} />
+      ))}
+    </div>
+  ), [userRecipes]);
+
   if (isLoading) return <Loading message="טוען את המתכונים שלך..." />;
   if (error) return <ErrorMessage message={`שגיאה בטעינת המתכונים: ${error.message}`} />;
   if (!user) return <ErrorMessage message="משתמש לא מחובר" />;
@@ -22,17 +30,11 @@ const MyRecipes = () => {
   return (
     <div className={styles.myRecipesContainer}>
       <h1 className={styles.title}>המתכונים שלי</h1>
-      {userRecipes && userRecipes.length > 0 ? (
-        <div className={styles.recipeGrid}>
-          {userRecipes.map(recipe => (
-            <RecipeCard key={recipe._id} recipe={recipe} />
-          ))}
-        </div>
-      ) : (
+      {userRecipes && userRecipes.length > 0 ? renderRecipes() : (
         <p className={styles.noRecipes}>עדיין לא הוספת מתכונים. <a href="/add-recipe">הוסף מתכון חדש</a></p>
       )}
     </div>
   );
 };
 
-export default MyRecipes;
+export default React.memo(MyRecipes);

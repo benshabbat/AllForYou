@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback,useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { fetchRecipes } from '../store/slices/recipeSlice';
 import RecipeCard from '../components/RecipeCard';
@@ -29,6 +29,8 @@ function RecipeList() {
     setCurrentPage(page);
   }, []);
 
+
+  
   if (isLoading) return <Loading message="טוען מתכונים..." />;
   if (error) return <ErrorMessage message={error.message || 'שגיאה בטעינת המתכונים'} />;
   
@@ -38,16 +40,21 @@ function RecipeList() {
   const recipes = Array.isArray(data) ? data : data?.recipes || [];
   const totalRecipes = typeof data?.totalRecipes === 'number' ? data.totalRecipes : recipes.length;
 
+  const recipeCards = useMemo(() => (
+    recipes.map((recipe) => (
+      <RecipeCard key={recipe._id} recipe={recipe} />
+    ))
+  ), [recipes]);
   if (recipes.length === 0) return <p className={styles.noRecipes}>לא נמצאו מתכונים.</p>;
+
+
 
   return (
     <div className={styles.recipeListContainer}>
       <h1 className={styles.title}>המתכונים שלנו</h1>
       <AdvancedSearch onSearch={handleSearch} />
       <div className={styles.recipeGrid}>
-        {recipes.map((recipe) => (
-          <RecipeCard key={recipe._id} recipe={recipe} />
-        ))}
+        {recipeCards}
       </div>
       {recipes.length > 0 && (
         <Pagination 
