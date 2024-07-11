@@ -1,4 +1,4 @@
-import React, { useState,useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useQuery } from 'react-query';
 import { fetchRecipes } from '../store/slices/recipeSlice';
 import RecipeCard from '../components/RecipeCard';
@@ -32,9 +32,11 @@ function RecipeList() {
   if (isLoading) return <Loading message="טוען מתכונים..." />;
   if (error) return <ErrorMessage message={error.message || 'שגיאה בטעינת המתכונים'} />;
   
-  // Check if data and data.recipes exist before accessing length
-  const recipes = data?.recipes || [];
-  const totalRecipes = data?.totalRecipes || 0;
+  console.log('Received data:', data); // הוסף את זה לדיבוג
+
+  // Check if data exists and has the correct structure
+  const recipes = Array.isArray(data) ? data : data?.recipes || [];
+  const totalRecipes = typeof data?.totalRecipes === 'number' ? data.totalRecipes : recipes.length;
 
   if (recipes.length === 0) return <p className={styles.noRecipes}>לא נמצאו מתכונים.</p>;
 

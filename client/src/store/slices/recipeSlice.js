@@ -15,10 +15,8 @@ export const fetchRecipes = async ({ page = 1, limit = 12, searchTerm = '', alle
     const response = await api.get('/recipes', {
       params: { page, limit, searchTerm, allergens: allergens.join(','), category }
     });
-    return {
-      recipes: response.data.recipes || [],
-      totalRecipes: response.data.totalRecipes || 0
-    };
+    console.log('Fetched recipes:', response.data); // הוסף את זה לדיבוג
+    return response.data;
   } catch (error) {
     console.error('Error fetching recipes:', error);
     throw error;
