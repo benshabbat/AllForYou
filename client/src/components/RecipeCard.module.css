@@ -65,13 +65,13 @@
 
 .allergenIcons {
   display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
+  gap: 5px;
+  margin-top: 10px;
 }
 
 .allergenIcon {
-  font-size: 1.5rem;
-  color: var(--secondary-color);
+  font-size: 20px;
+  color: #555;
 }
 
 .viewRecipeButton {
@@ -88,3 +88,4 @@
 .viewRecipeButton:hover {
   background-color: #3a7bd5;
 }
+
