@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useCallback} from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -54,7 +54,7 @@ function AddRecipe() {
     },
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = useCallback((data) => {
     const formattedData = {
       ...data,
       ingredients: data.ingredients.split("\n"),
@@ -63,7 +63,8 @@ function AddRecipe() {
         : [],
     };
     mutation.mutate(formattedData);
-  };
+  }, [mutation]);
+
 
   return (
     <div className={styles.addRecipeContainer}>
@@ -243,4 +244,4 @@ function AddRecipe() {
   );
 }
 
-export default AddRecipe;
+export default React.memo(AddRecipe);

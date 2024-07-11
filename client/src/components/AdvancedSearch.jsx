@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { GiPeanut, GiMilkCarton, GiWheat } from "react-icons/gi";
 import { FaEgg } from "react-icons/fa";
 import styles from "./AdvancedSearch.module.css";
 
-// מילון של אייקונים עבור אלרגנים
 const allergenIcons = {
   בוטנים: GiPeanut,
   חלב: GiMilkCarton,
@@ -12,7 +11,6 @@ const allergenIcons = {
 };
 
 function AdvancedSearch({ onSearch }) {
-  // הגדרת מצב החיפוש המתקדם
   const [searchParams, setSearchParams] = useState({
     keyword: "",
     category: "",
@@ -20,31 +18,27 @@ function AdvancedSearch({ onSearch }) {
     difficulty: "",
   });
 
-  // טיפול בשינויים בקלטים
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setSearchParams((prev) => ({
       ...prev,
-      [name]:
-        name === "allergens" ? value.split(",").map((a) => a.trim()) : value,
+      [name]: name === "allergens" ? value.split(",").map((a) => a.trim()) : value,
     }));
-  };
+  }, []);
 
-  // טיפול בבחירת/ביטול בחירת אלרגנים
-  const handleAllergenToggle = (allergen) => {
+  const handleAllergenToggle = useCallback((allergen) => {
     setSearchParams((prev) => ({
       ...prev,
       allergens: prev.allergens.includes(allergen)
         ? prev.allergens.filter((a) => a !== allergen)
         : [...prev.allergens, allergen],
     }));
-  };
+  }, []);
 
-  // טיפול בשליחת הטופס
-  const handleSubmit = (e) => {
+  const handleSubmit = useCallback((e) => {
     e.preventDefault();
     onSearch(searchParams);
-  };
+  }, [onSearch, searchParams]);
 
   return (
     <form onSubmit={handleSubmit} className={styles.searchForm}>
@@ -126,4 +120,4 @@ function AdvancedSearch({ onSearch }) {
   );
 }
 
-export default AdvancedSearch;
+export default React.memo(AdvancedSearch);

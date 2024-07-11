@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateRecipe } from '../store/slices/recipeSlice';
 
@@ -7,19 +7,20 @@ function EditRecipe({ recipe, onClose }) {
   const dispatch = useDispatch();
   const { isLoading, error } = useSelector((state) => state.recipes);
 
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setEditedRecipe(prev => ({
       ...prev,
       [name]: name === 'allergens' ? value.split(',').map(item => item.trim()) : value
     }));
-  };
+  }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     await dispatch(updateRecipe({ id: recipe._id, recipeData: editedRecipe }));
     onClose();
-  };
+  }, [dispatch, editedRecipe, recipe._id, onClose]);
+
 
   return (
     <form onSubmit={handleSubmit}>
