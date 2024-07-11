@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { store } from './store/index.js';
-import { loadUser, setInitialized } from './store/slices/authSlice';
+import { loadUser, setInitialized, logout } from './store/slices/authSlice';
 import Header from './components/Header';
 import Loading from './components/Loading';
 import PrivateRoute from './components/PrivateRoute';
@@ -24,7 +24,7 @@ const RecipeDetails = lazy(() => import('./pages/RecipeDetails'));
 
 function AppContent() {
   const dispatch = useDispatch();
-  const { isInitialized } = useSelector((state) => state.auth);
+  const { isInitialized, user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -37,14 +37,13 @@ function AppContent() {
         }
       } catch (error) {
         console.error('Error during authentication initialization:', error);
-        // Clear the invalid token
         localStorage.removeItem('token');
         dispatch(logout());
       } finally {
         dispatch(setInitialized());
       }
     };
-  
+
     initializeAuth();
   }, [dispatch]);
 
