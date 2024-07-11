@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { useQuery } from 'react-query';
 import { fetchUserRecipes } from "../store/slices/recipeSlice";
@@ -10,24 +10,17 @@ import styles from "./UserProfile.module.css";
 
 function UserProfile() {
   const { user } = useSelector((state) => state.auth);
-  const { data: recipes, isLoading, error } = useQuery(
-    ['userRecipes', user._id],
-    () => fetchUserRecipes(user._id),
-    { enabled: !!user._id }
+  const { data: userRecipes, isLoading, error } = useQuery(
+    ['userRecipes', user?._id],
+    () => fetchUserRecipes(user?._id),
+    { enabled: !!user?._id }
   );
-
-  useEffect(() => {
-    // Fetch user recipes when component mounts and user is available
-    if (user?._id) {
-      dispatch(fetchUserRecipes(user._id));
-    }
-  }, [dispatch, user]);
 
   // Show loading state
   if (isLoading) return <Loading message="טוען פרופיל..." />;
 
   // Show error state
-  if (error) return <ErrorMessage message={error} />;
+  if (error) return <ErrorMessage message={error.message} />;
 
   // Redirect or show message if user is not logged in
   if (!user) return <ErrorMessage message="משתמש לא מחובר" />;
