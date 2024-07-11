@@ -30,21 +30,26 @@ function RecipeList() {
   };
 
   if (isLoading) return <Loading message="טוען מתכונים..." />;
-  if (error) return <ErrorMessage message={error.message} />;
-  if (!data || data.recipes.length === 0) return <p className={styles.noRecipes}>לא נמצאו מתכונים.</p>;
+  if (error) return <ErrorMessage message={error.message || 'שגיאה בטעינת המתכונים'} />;
+  
+  // Check if data and data.recipes exist before accessing length
+  const recipes = data?.recipes || [];
+  const totalRecipes = data?.totalRecipes || 0;
+
+  if (recipes.length === 0) return <p className={styles.noRecipes}>לא נמצאו מתכונים.</p>;
 
   return (
     <div className={styles.recipeListContainer}>
       <h1 className={styles.title}>המתכונים שלנו</h1>
       <AdvancedSearch onSearch={handleSearch} />
       <div className={styles.recipeGrid}>
-        {data.recipes.map((recipe) => (
+        {recipes.map((recipe) => (
           <RecipeCard key={recipe._id} recipe={recipe} />
         ))}
       </div>
       <Pagination 
         currentPage={currentPage}
-        totalPages={Math.ceil(data.totalRecipes / RECIPES_PER_PAGE)}
+        totalPages={Math.ceil(totalRecipes / RECIPES_PER_PAGE)}
         onPageChange={handlePageChange}
       />
     </div>
