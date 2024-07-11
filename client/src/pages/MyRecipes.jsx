@@ -3,6 +3,8 @@ import { useQuery } from 'react-query';
 import { fetchUserRecipes } from '../store/slices/recipeSlice';
 import { useSelector } from 'react-redux';
 import RecipeCard from '../components/RecipeCard';
+import Loading from '../components/Loading'; // יש להוסיף ייבוא זה
+import ErrorMessage from '../components/ErrorMessage'; // יש להוסיף ייבוא זה
 import styles from './MyRecipes.module.css';
 
 const MyRecipes = () => {
@@ -13,9 +15,9 @@ const MyRecipes = () => {
     { enabled: !!user?.id }
   );
 
-  if (isLoading) return <div className={styles.loading}>טוען את המתכונים שלך...</div>;
-  if (error) return <div className={styles.error}>שגיאה בטעינת המתכונים: {error.message}</div>;
-  if (!user) return <div className={styles.error}>משתמש לא מחובר</div>;
+  if (isLoading) return <Loading message="טוען את המתכונים שלך..." />;
+  if (error) return <ErrorMessage message={`שגיאה בטעינת המתכונים: ${error.message}`} />;
+  if (!user) return <ErrorMessage message="משתמש לא מחובר" />;
 
   return (
     <div className={styles.myRecipesContainer}>

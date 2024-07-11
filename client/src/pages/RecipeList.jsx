@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useCallback } from 'react';
 import { useQuery } from 'react-query';
 import { fetchRecipes } from '../store/slices/recipeSlice';
 import RecipeCard from '../components/RecipeCard';
@@ -20,14 +20,14 @@ function RecipeList() {
     { keepPreviousData: true }
   );
 
-  const handleSearch = (params) => {
+  const handleSearch = useCallback((params) => {
     setSearchParams(params);
     setCurrentPage(1);
-  };
+  }, []);
 
-  const handlePageChange = (page) => {
+  const handlePageChange = useCallback((page) => {
     setCurrentPage(page);
-  };
+  }, []);
 
   if (isLoading) return <Loading message="טוען מתכונים..." />;
   if (error) return <ErrorMessage message={error.message || 'שגיאה בטעינת המתכונים'} />;
@@ -47,11 +47,13 @@ function RecipeList() {
           <RecipeCard key={recipe._id} recipe={recipe} />
         ))}
       </div>
-      <Pagination 
-        currentPage={currentPage}
-        totalPages={Math.ceil(totalRecipes / RECIPES_PER_PAGE)}
-        onPageChange={handlePageChange}
-      />
+      {recipes.length > 0 && (
+        <Pagination 
+          currentPage={currentPage}
+          totalPages={Math.ceil(totalRecipes / RECIPES_PER_PAGE)}
+          onPageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 }
