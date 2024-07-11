@@ -17,10 +17,10 @@ const RecipeSchema = new mongoose.Schema({
     required: [true, 'הוראות ההכנה הן שדה חובה'],
     minlength: [10, 'הוראות ההכנה חייבות להכיל לפחות 10 תווים']
   },
-  allergens: {
-    type: [String],
-    default: []
-  },
+  allergens: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Allergen'
+  }],
   alternatives: {
     type: String,
     default: ''
