@@ -23,10 +23,18 @@ export const fetchRecipes = async ({ page = 1, limit = 12, searchTerm = '', alle
   }
 };
 
-export const fetchRecipeById = async (id) => {
-  const response = await api.get(`/recipes/${id}`);
-  return response.data;
-};
+export const fetchRecipeById = createAsyncThunk(
+  'recipes/fetchRecipeById',
+  async (id, thunkAPI) => {
+    try {
+      const response = await api.get(`/recipes/${id}`);
+      return response.data;
+    } catch (error) {
+      const message = error.response?.data?.message || 'שגיאה בטעינת המתכון';
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
 
 export const fetchComments = async (recipeId) => {
   try {
