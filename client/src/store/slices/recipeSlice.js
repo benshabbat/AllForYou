@@ -34,8 +34,13 @@ export const fetchComments = async (recipeId) => {
   }
 };
 export const fetchUserRecipes = async (userId) => {
-  const response = await api.get(`/recipes/user/${userId}`);
-  return response.data;
+  try {
+    const response = await api.get(`/recipes/user/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user recipes:', error);
+    return []; // Return an empty array in case of error
+  }
 };
 
 export const rateRecipe = async ({ recipeId, rating }) => {

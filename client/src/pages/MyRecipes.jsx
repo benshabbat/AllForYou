@@ -1,54 +1,33 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import { useQuery } from 'react-query';
 import { fetchUserRecipes } from '../store/slices/recipeSlice';
+import { useSelector } from 'react-redux';
 import RecipeCard from '../components/RecipeCard';
 import styles from './MyRecipes.module.css';
-import { useQuery } from 'react-query';
 
 const MyRecipes = () => {
-  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { data: userRecipes, isLoading, error } = useQuery(
-    ['userRecipes', user.id],
-    () => fetchUserRecipes(user.id),
-    { enabled: !!user.id }
+    ['userRecipes', user?.id],
+    () => fetchUserRecipes(user?.id),
+    { enabled: !!user?.id }
   );
 
-  useEffect(() => {
-    if (user && user.id) {
-      console.log('Fetching user recipes for user:', user.id);
-      dispatch(fetchUserRecipes(user.id));
-    }
-  }, [dispatch, user]);
-
-  useEffect(() => {
-    console.log('Current userRecipes:', userRecipes);
-  }, [userRecipes]);
-
-  if (!user) {
-    return <div className={styles.loading}>טוען פרטי משתמש...</div>;
-  }
-
-  if (isLoading) {
-    return <div className={styles.loading}>טוען את המתכונים שלך...</div>;
-  }
-
-  if (error) {
-    return <div className={styles.error}>שגיאה בטעינת המתכונים: {error}</div>;
-  }
+  if (isLoading) return <div className={styles.loading}>טוען את המתכונים שלך...</div>;
+  if (error) return <div className={styles.error}>שגיאה בטעינת המתכונים: {error.message}</div>;
+  if (!user) return <div className={styles.error}>משתמש לא מחובר</div>;
 
   return (
     <div className={styles.myRecipesContainer}>
       <h1 className={styles.title}>המתכונים שלי</h1>
-      {userRecipes.length === 0 ? (
-        <p className={styles.noRecipes}>עדיין לא הוספת מתכונים. <a href="/add-recipe">הוסף מתכון חדש</a></p>
-      ) : (
+      {userRecipes && userRecipes.length > 0 ? (
         <div className={styles.recipeGrid}>
-          {userRecipes.map(recipe => {
-            console.log('Rendering recipe:', recipe);
-            return <RecipeCard key={recipe._id} recipe={recipe} />;
-          })}
+          {userRecipes.map(recipe => (
+            <RecipeCard key={recipe._id} recipe={recipe} />
+          ))}
         </div>
+      ) : (
+        <p className={styles.noRecipes}>עדיין לא הוספת מתכונים. <a href="/add-recipe">הוסף מתכון חדש</a></p>
       )}
     </div>
   );

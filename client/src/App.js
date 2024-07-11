@@ -37,12 +37,14 @@ function AppContent() {
         }
       } catch (error) {
         console.error('Error during authentication initialization:', error);
+        // Clear the invalid token
         localStorage.removeItem('token');
+        dispatch(logout());
       } finally {
         dispatch(setInitialized());
       }
     };
-
+  
     initializeAuth();
   }, [dispatch]);
 
