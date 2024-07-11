@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { useQuery } from 'react-query';
 import { fetchUserRecipes } from "../store/slices/recipeSlice";
 import UserInfo from "../components/UserInfo";
 import UserRecipes from "../components/UserRecipes";
@@ -8,9 +9,12 @@ import ErrorMessage from "../components/ErrorMessage";
 import styles from "./UserProfile.module.css";
 
 function UserProfile() {
-  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { userRecipes, isLoading, error } = useSelector((state) => state.recipes);
+  const { data: recipes, isLoading, error } = useQuery(
+    ['userRecipes', user._id],
+    () => fetchUserRecipes(user._id),
+    { enabled: !!user._id }
+  );
 
   useEffect(() => {
     // Fetch user recipes when component mounts and user is available

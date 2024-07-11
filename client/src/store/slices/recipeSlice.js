@@ -33,7 +33,20 @@ export const fetchComments = async (recipeId) => {
     throw error;
   }
 };
+export const fetchUserRecipes = async (userId) => {
+  const response = await api.get(`/recipes/user/${userId}`);
+  return response.data;
+};
 
+export const rateRecipe = async ({ recipeId, rating }) => {
+  const response = await api.post(`/recipes/${recipeId}/rate`, { rating });
+  return response.data;
+};
+
+export const addComment = async ({ recipeId, content }) => {
+  const response = await api.post(`/recipes/${recipeId}/comments`, { content });
+  return response.data;
+};
 // Async Thunks
 export const addRecipe = createAsyncThunk(
   'recipes/addRecipe',

@@ -3,11 +3,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserRecipes } from '../store/slices/recipeSlice';
 import RecipeCard from '../components/RecipeCard';
 import styles from './MyRecipes.module.css';
+import { useQuery } from 'react-query';
 
 const MyRecipes = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { userRecipes, isLoading, error } = useSelector((state) => state.recipes);
+  const { data: userRecipes, isLoading, error } = useQuery(
+    ['userRecipes', user.id],
+    () => fetchUserRecipes(user.id),
+    { enabled: !!user.id }
+  );
 
   useEffect(() => {
     if (user && user.id) {

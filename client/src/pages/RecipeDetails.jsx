@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 import {
   fetchRecipeById,
   deleteRecipe,
@@ -15,53 +16,43 @@ import styles from "./RecipeDetails.module.css";
 
 function RecipeDetails() {
   const { id } = useParams();
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { currentRecipe, comments, isLoading, error } = useSelector(
-    (state) => state.recipes
-  );
-  const [isEditing, setIsEditing] = useState(false);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    dispatch(fetchRecipeById(id));
-    dispatch(fetchComments(id));
-  }, [dispatch, id]);
+  const { data: recipe, isLoading, error } = useQuery(['recipe', id], () => fetchRecipeById(id));
+  const { data: comments } = useQuery(['comments', id], () => fetchComments(id));
 
-  const handleDelete = useCallback(async () => {
-    if (window.confirm("האם אתה בטוח שברצונך למחוק מתכון זה?")) {
-      try {
-        await dispatch(deleteRecipe(id)).unwrap();
-        navigate("/recipes");
-      } catch (error) {
-        console.error("Failed to delete recipe:", error);
-        alert("שגיאה במחיקת המתכון. אנא נסה שוב.");
-      }
+  const rateMutation = useMutation(rateRecipe, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['recipe', id]);
     }
-  }, [dispatch, id, navigate]);
+  });
 
-  const handleRate = useCallback(
-    async (rating) => {
-      try {
-        await dispatch(rateRecipe({ id: currentRecipe._id, rating })).unwrap();
-      } catch (error) {
-        console.error("Failed to rate recipe:", error);
-        alert("שגיאה בדירוג המתכון. אנא נסה שוב.");
-      }
-    },
-    [dispatch, currentRecipe]
-  );
+  const commentMutation = useMutation(addComment, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['comments', id]);
+    }
+  });
 
-  const handleAddComment = useCallback(
-    async (content) => {
-      try {
-        await dispatch(addComment({ recipeId: id, content })).unwrap();
-      } catch (error) {
-        console.error("Failed to add comment:", error);
-        alert("שגיאה בהוספת התגובה. אנא נסה שוב.");
-      }
-    },
-    [dispatch, id]
-  );
+  const deleteMutation = useMutation(deleteRecipe, {
+    onSuccess: () => {
+      navigate('/recipes');
+    }
+  });
+
+  const handleRate = (rating) => {
+    rateMutation.mutate({ recipeId: id, rating });
+  };
+
+  const handleAddComment = (content) => {
+    commentMutation.mutate({ recipeId: id, content });
+  };
+
+  const handleDelete = () => {
+    if (window.confirm("האם אתה בטוח שברצונך למחוק מתכון זה?")) {
+      deleteMutation.mutate(id);
+    }
+  };
 
   if (isLoading)
     return (
