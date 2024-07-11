@@ -2,6 +2,8 @@ import React, { useState, useCallback } from "react";
 import { GiPeanut, GiMilkCarton, GiWheat } from "react-icons/gi";
 import { FaEgg } from "react-icons/fa";
 import styles from "./AdvancedSearch.module.css";
+import { fetchAllergens } from '../api/allergens';
+import { useQuery } from 'react-query';
 
 const allergenIcons = {
   בוטנים: GiPeanut,
@@ -12,12 +14,12 @@ const allergenIcons = {
 
 function AdvancedSearch({ onSearch }) {
   const [searchParams, setSearchParams] = useState({
-    keyword: "",
-    category: "",
+    keyword: '',
+    category: '',
     allergens: [],
-    difficulty: "",
+    difficulty: '',
   });
-
+  const { data: allergens } = useQuery('allergens', fetchAllergens);
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setSearchParams((prev) => ({
@@ -26,14 +28,14 @@ function AdvancedSearch({ onSearch }) {
     }));
   }, []);
 
-  const handleAllergenToggle = useCallback((allergen) => {
-    setSearchParams((prev) => ({
+  const handleAllergenToggle = (allergenId) => {
+    setSearchParams(prev => ({
       ...prev,
-      allergens: prev.allergens.includes(allergen)
-        ? prev.allergens.filter((a) => a !== allergen)
-        : [...prev.allergens, allergen],
+      allergens: prev.allergens.includes(allergenId)
+        ? prev.allergens.filter(id => id !== allergenId)
+        : [...prev.allergens, allergenId]
     }));
-  }, []);
+  };
 
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
@@ -46,17 +48,17 @@ function AdvancedSearch({ onSearch }) {
       <div className={styles.allergenGroup}>
         <span className={styles.allergenLabel}>סנן אלרגנים:</span>
         <div className={styles.allergenButtons}>
-          {Object.entries(allergenIcons).map(([allergen, Icon]) => (
+          {allergens?.map((allergen) => (
             <button
-              key={allergen}
+              key={allergen._id}
               type="button"
-              onClick={() => handleAllergenToggle(allergen)}
+              onClick={() => handleAllergenToggle(allergen._id)}
               className={`${styles.allergenButton} ${
-                searchParams.allergens.includes(allergen) ? styles.active : ""
+                searchParams.allergens.includes(allergen._id) ? styles.active : ''
               }`}
             >
-              <Icon className={styles.allergenIcon} />
-              <span>{allergen}</span>
+              {allergen.icon && <span className={styles.allergenIcon}>{allergen.icon}</span>}
+              <span>{allergen.name}</span>
             </button>
           ))}
         </div>
@@ -121,3 +123,11 @@ function AdvancedSearch({ onSearch }) {
 }
 
 export default React.memo(AdvancedSearch);
+
+
+
+
+
+
+ 
+
