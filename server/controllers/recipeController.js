@@ -19,10 +19,26 @@ export const createRecipeValidation = [
 // קבלת כל המתכונים
 export const getAllRecipes = async (req, res) => {
   try {
-    const recipes = await Recipe.find().populate('createdBy', 'username');
+    const { keyword, category, allergens, difficulty } = req.query;
+    let query = {};
+
+    if (keyword) {
+      query.name = { $regex: keyword, $options: 'i' };
+    }
+    if (category) {
+      query.category = category;
+    }
+    if (allergens) {
+      query.allergens = { $nin: allergens.split(',') };
+    }
+    if (difficulty) {
+      query.difficulty = difficulty;
+    }
+
+    const recipes = await Recipe.find(query).populate('allergens');
     res.json(recipes);
   } catch (error) {
-    handleError(res, error);
+    res.status(500).json({ message: error.message });
   }
 };
 

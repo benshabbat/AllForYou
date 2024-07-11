@@ -91,8 +91,14 @@ function RecipeDetails() {
           </section>
 
           <section aria-labelledby="allergens-heading">
-            <h2 id="allergens-heading">אלרגנים:</h2>
-            <p>{recipe.allergens.join(", ")}</p>
+          <h2>אלרגנים:</h2>
+      <div className={styles.allergenList}>
+        {recipe.allergens.map(allergen => (
+          <span key={allergen._id} className={styles.allergen}>
+            {allergen.icon} {allergen.name}
+          </span>
+        ))}
+      </div>
           </section>
 
           <section aria-labelledby="alternatives-heading">
