@@ -8,7 +8,6 @@ import { addRecipe } from '../store/slices/recipeSlice';
 import { toast } from 'react-toastify';
 import styles from './AddRecipe.module.css';
 
-// הגדרת סכמת הולידציה
 const schema = yup.object().shape({
   name: yup.string().required('שם המתכון הוא שדה חובה'),
   description: yup.string().required('תיאור קצר הוא שדה חובה'),
@@ -29,8 +28,6 @@ function AddRecipe() {
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-
-  // הגדרת מוטציה להוספת מתכון
   const mutation = useMutation(addRecipe, {
     onSuccess: () => {
       queryClient.invalidateQueries('recipes');
@@ -66,6 +63,7 @@ function AddRecipe() {
             </div>
           )}
         />
+        
 
         <Controller
           name="description"

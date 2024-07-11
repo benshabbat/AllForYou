@@ -1,5 +1,5 @@
-import React, { useEffect, useCallback, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { useQuery } from 'react-query';
 import { fetchRecipes } from '../store/slices/recipeSlice';
 import RecipeCard from '../components/RecipeCard';
 import AdvancedSearch from '../components/AdvancedSearch';
@@ -11,22 +11,14 @@ import styles from './RecipeList.module.css';
 const RECIPES_PER_PAGE = 12;
 
 function RecipeList() {
-  const dispatch = useDispatch();
-  const { recipes, isLoading, error, totalRecipes } = useSelector((state) => state.recipes);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchParams, setSearchParams] = useState({});
 
-  const fetchRecipesData = useCallback(() => {
-    dispatch(fetchRecipes({ 
-      page: currentPage, 
-      limit: RECIPES_PER_PAGE, 
-      ...searchParams 
-    }));
-  }, [dispatch, currentPage, searchParams]);
-
-  useEffect(() => {
-    fetchRecipesData();
-  }, [fetchRecipesData]);
+  const { data, isLoading, error } = useQuery(
+    ['recipes', currentPage, searchParams],
+    () => fetchRecipes({ page: currentPage, limit: RECIPES_PER_PAGE, ...searchParams }),
+    { keepPreviousData: true }
+  );
 
   const handleSearch = (params) => {
     setSearchParams(params);
@@ -38,21 +30,21 @@ function RecipeList() {
   };
 
   if (isLoading) return <Loading message="טוען מתכונים..." />;
-  if (error) return <ErrorMessage message={error} />;
-  if (!recipes || recipes.length === 0) return <p className={styles.noRecipes}>לא נמצאו מתכונים.</p>;
+  if (error) return <ErrorMessage message={error.message} />;
+  if (!data || data.recipes.length === 0) return <p className={styles.noRecipes}>לא נמצאו מתכונים.</p>;
 
   return (
     <div className={styles.recipeListContainer}>
       <h1 className={styles.title}>המתכונים שלנו</h1>
       <AdvancedSearch onSearch={handleSearch} />
       <div className={styles.recipeGrid}>
-        {recipes.map((recipe) => (
+        {data.recipes.map((recipe) => (
           <RecipeCard key={recipe._id} recipe={recipe} />
         ))}
       </div>
       <Pagination 
         currentPage={currentPage}
-        totalPages={Math.ceil(totalRecipes / RECIPES_PER_PAGE)}
+        totalPages={Math.ceil(data.totalRecipes / RECIPES_PER_PAGE)}
         onPageChange={handlePageChange}
       />
     </div>
