@@ -1,3 +1,4 @@
+
 import { body } from 'express-validator';
 import { validate } from '../middleware/validate.js';
 import logger from '../utils/logger.js';
@@ -11,9 +12,29 @@ const handleError = (res, error, statusCode = 500) => {
 
 // הגדרת הוולידציות
 export const createRecipeValidation = [
-  body('name').notEmpty().withMessage('שם המתכון הוא שדה חובה'),
-  body('ingredients').isArray().withMessage('רשימת המרכיבים חייבת להיות מערך'),
-  body('instructions').notEmpty().withMessage('הוראות ההכנה הן שדה חובה'),
+  body('name').notEmpty().withMessage('שם המתכון הוא שדה חובה').trim().escape(),
+  body('ingredients').isArray().withMessage('רשימת המרכיבים חייבת להיות מערך')
+    .custom((value) => value.every((item) => typeof item === 'string')).withMessage('כל מרכיב חייב להיות מחרוזת'),
+  body('instructions').notEmpty().withMessage('הוראות ההכנה הן שדה חובה').trim().escape(),
+];
+
+// יצירת מתכון חדש
+export const createRecipe = [
+  validate(createRecipeValidation),
+  async (req, res) => {
+    try {
+      const newRecipe = new Recipe({
+        ...req.body,
+        createdBy: req.user._id
+      });
+      const savedRecipe = await newRecipe.save();
+      logger.info(`New recipe created: ${savedRecipe._id}`);
+      res.status(201).json(savedRecipe);
+    } catch (error) {
+      logger.error(`Error creating recipe: ${error.message}`);
+      handleError(res, error, 400);
+    }
+  }
 ];
 
 // קבלת כל המתכונים
@@ -41,26 +62,6 @@ export const getAllRecipes = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
-// יצירת מתכון חדש
-export const createRecipe = [
-  validate(createRecipeValidation),
-  async (req, res) => {
-    try {
-      const newRecipe = new Recipe({
-        ...req.body,
-        createdBy: req.user._id
-      });
-      const savedRecipe = await newRecipe.save();
-      logger.info(`New recipe created: ${savedRecipe._id}`);
-      res.status(201).json(savedRecipe);
-    } catch (error) {
-      logger.error(`Error creating recipe: ${error.message}`);
-      handleError(res, error, 400);
-    }
-  }
-];
-
 
 
 // קבלת מתכון ספציפי
