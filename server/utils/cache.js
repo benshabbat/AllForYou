@@ -1,24 +1,32 @@
-import { createClient } from 'redis';
-
-const client = createClient({
-  url: process.env.REDIS_URL || 'redis://localhost:6379'
-});
-
-client.on('error', (err) => console.log('Redis Client Error', err));
-
-await client.connect();
+let mockCache = new Map();
 
 export const getCache = async (key) => {
-  const value = await client.get(key);
-  return value ? JSON.parse(value) : null;
+  const item = mockCache.get(key);
+  if (!item) return null;
+  
+  if (item.expiry && item.expiry < Date.now()) {
+    mockCache.delete(key);
+    return null;
+  }
+  
+  return JSON.parse(item.value);
 };
 
 export const setCache = async (key, value, expireIn = 3600) => {
-  await client.set(key, JSON.stringify(value), {
-    EX: expireIn
-  });
+  const item = {
+    value: JSON.stringify(value),
+    expiry: expireIn ? Date.now() + expireIn * 1000 : null
+  };
+  mockCache.set(key, item);
 };
 
 export const clearCache = async (key) => {
-  await client.del(key);
+  mockCache.delete(key);
 };
+
+// פונקציה נוספת לניקוי כל המטמון (יכולה להיות שימושית לבדיקות)
+export const clearAllCache = () => {
+  mockCache.clear();
+};
+
+console.log('משתמש במימוש מדומה של מערכת מטמון');
