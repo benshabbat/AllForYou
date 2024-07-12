@@ -31,7 +31,7 @@ export const fetchRecipeById = createAsyncThunk(
       return response.data;
     } catch (error) {
       console.error('Error fetching recipe:', error);
-      return thunkAPI.rejectWithValue('Failed to fetch recipe. Please try again later.');
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch recipe');
     }
   }
 );
@@ -58,17 +58,32 @@ export const fetchUserRecipes = async (userId) => {
   }
 };
 
-export const rateRecipe = async ({ recipeId, rating }) => {
-  const response = await api.post(`/recipes/${recipeId}/rate`, { rating });
-  return response.data;
-};
+export const rateRecipe = createAsyncThunk(
+  'recipes/rateRecipe',
+  async ({ recipeId, rating }, thunkAPI) => {
+    try {
+      const response = await api.post(`/recipes/${recipeId}/rate`, { rating });
+      return response.data;
+    } catch (error) {
+      console.error('Error rating recipe:', error);
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to rate recipe');
+    }
+  }
+);
 
-export const addComment = async ({ recipeId, content }) => {
-  const response = await api.post(`/recipes/${recipeId}/comments`, { content });
-  return response.data;
-};
+export const addComment = createAsyncThunk(
+  'recipes/addComment',
+  async ({ recipeId, content }, thunkAPI) => {
+    try {
+      const response = await api.post(`/recipes/${recipeId}/comments`, { content });
+      return response.data;
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to add comment');
+    }
+  }
+);
 
-// Async Thunks
 export const addRecipe = createAsyncThunk(
   'recipes/addRecipe',
   async (recipeData, thunkAPI) => {
@@ -103,6 +118,7 @@ export const deleteRecipe = createAsyncThunk(
       toast.success('Recipe deleted successfully');
       return id;
     } catch (error) {
+      console.error('Error deleting recipe:', error);
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Error deleting recipe');
     }
   }
@@ -126,6 +142,19 @@ const recipeSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(fetchRecipeById.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchRecipeById.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        // You might want to update the state with the fetched recipe here
+      })
+      .addCase(fetchRecipeById.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
       .addCase(addRecipe.fulfilled, (state, action) => {
         state.userRecipes.push(action.payload);
       })
@@ -145,6 +174,12 @@ const recipeSlice = createSlice({
         } else {
           state.favorites.push(action.payload);
         }
+      })
+      .addCase(rateRecipe.fulfilled, (state, action) => {
+        // Update the recipe's rating in the state if needed
+      })
+      .addCase(addComment.fulfilled, (state, action) => {
+        // Update the recipe's comments in the state if needed
       });
   },
 });

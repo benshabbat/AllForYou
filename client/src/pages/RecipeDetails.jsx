@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { useDispatch } from 'react-redux';
 import {
   fetchRecipeById,
   deleteRecipe,
@@ -15,7 +14,7 @@ import styles from "./RecipeDetails.module.css";
 
 function RecipeDetails() {
   const { id } = useParams();
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = React.useState(false);
 
@@ -23,7 +22,7 @@ function RecipeDetails() {
 
   const deleteMutation = useMutation(deleteRecipe, {
     onSuccess: () => {
-      // Handle successful deletion (e.g., redirect to recipes list)
+      navigate('/recipes');
     }
   });
 
@@ -54,7 +53,7 @@ function RecipeDetails() {
   }, [commentMutation, id]);
 
   if (isLoading) return <div className={styles.loading}>Loading...</div>;
-  if (error) return <div className={styles.error}>Error: {error}</div>;
+  if (error) return <div className={styles.error}>Error: {error.message}</div>;
   if (!recipe) return <div className={styles.notFound}>Recipe not found</div>;
 
   return (
@@ -69,12 +68,12 @@ function RecipeDetails() {
             <p>Average rating: {recipe.averageRating?.toFixed(1) || 'Not rated'}</p>
           </div>
           
-          <img src={recipe.image} alt={recipe.name} className={styles.recipeImage} />
+          {recipe.image && <img src={recipe.image} alt={recipe.name} className={styles.recipeImage} />}
 
           <section aria-labelledby="ingredients-heading">
             <h2 id="ingredients-heading">Ingredients:</h2>
             <ul>
-              {recipe.ingredients.map((ingredient, index) => (
+              {recipe.ingredients && recipe.ingredients.map((ingredient, index) => (
                 <li key={index}>{ingredient.trim()}</li>
               ))}
             </ul>
@@ -83,7 +82,7 @@ function RecipeDetails() {
           <section aria-labelledby="instructions-heading">
             <h2 id="instructions-heading">Instructions:</h2>
             <ol>
-              {recipe.instructions.split('\n').map((instruction, index) => (
+              {recipe.instructions && recipe.instructions.split('\n').map((instruction, index) => (
                 <li key={index}>{instruction.trim()}</li>
               ))}
             </ol>
@@ -92,7 +91,7 @@ function RecipeDetails() {
           <section aria-labelledby="allergens-heading">
             <h2 id="allergens-heading">Allergens:</h2>
             <div className={styles.allergenList}>
-              {recipe.allergens?.map(allergen => (
+              {recipe.allergens && recipe.allergens.map(allergen => (
                 <span key={allergen._id} className={styles.allergen}>
                   {allergen.icon} {allergen.name}
                 </span>
