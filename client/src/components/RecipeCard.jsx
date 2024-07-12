@@ -27,8 +27,14 @@ const RecipeCard = React.memo(({ recipe }) => {
     dispatch(toggleFavorite(recipe._id));
   }, [dispatch, recipe._id]);
 
+  const handleKeyPress = useCallback((e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      handleFavoriteClick(e);
+    }
+  }, [handleFavoriteClick]);
+
   return (
-    <div className={styles.recipeCard}>
+    <div className={styles.recipeCard} role="article">
       <div className={styles.imageContainer}>
         {imageLoaded ? (
           <img
@@ -43,7 +49,9 @@ const RecipeCard = React.memo(({ recipe }) => {
         <button 
           className={styles.favoriteButton} 
           onClick={handleFavoriteClick}
+          onKeyPress={handleKeyPress}
           aria-label={isFavorite ? "הסר ממועדפים" : "הוסף למועדפים"}
+          aria-pressed={isFavorite}
         >
           {isFavorite ? <FaHeart color="red" /> : <FaRegHeart />}
         </button>
@@ -52,9 +60,9 @@ const RecipeCard = React.memo(({ recipe }) => {
       <h3 className={styles.recipeTitle}>{recipe.name}</h3>
         <RatingStars initialRating={recipe.averageRating || 0} readOnly={true} />
         <p className={styles.recipeDescription}>{recipe.description}</p>
-        <div className={styles.allergenIcons}>
+        <div className={styles.allergenIcons} aria-label="אלרגנים">
           {recipe?.allergens?.map(allergen => (
-            <span key={allergen._id} className={styles.allergenIcon} title={allergen.name}>
+            <span key={allergen._id} className={styles.allergenIcon} title={allergen.name} role="img" aria-label={allergen.name}>
               {allergen.icon}
             </span>
           ))}
