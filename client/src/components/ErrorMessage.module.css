@@ -1,13 +1,21 @@
-.error {
-  background-color: #ffebee;
-  color: #d32f2f;
+.message {
   padding: 15px;
   border-radius: 4px;
   margin: 10px 0;
   text-align: center;
 }
 
-.message {
-  font-size: 16px;
-  font-weight: bold;
+.error {
+  background-color: #ffebee;
+  color: #d32f2f;
+}
+
+.warning {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.info {
+  background-color: #e3f2fd;
+  color: #1976d2;
 }
