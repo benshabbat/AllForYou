@@ -218,7 +218,11 @@ export const getRecipeComments = async (req, res) => {
       return res.status(404).json({ message: 'Recipe not found' });
     }
     
-    res.json(recipe.comments);
+    if (recipe.comments.length === 0) {
+      return res.json({ message: 'No comments yet for this recipe', comments: [] });
+    }
+    
+    res.json({ comments: recipe.comments });
   } catch (error) {
     handleError(res, error);
   }
