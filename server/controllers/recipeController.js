@@ -3,6 +3,8 @@ import { body } from 'express-validator';
 import { validate } from '../middleware/validate.js';
 import logger from '../utils/logger.js';
 import Recipe from '../models/Recipe.js';
+import { getCache, setCache, clearCache } from '../utils/cache.js';
+
 
 // פונקציית עזר לטיפול בשגיאות
 const handleError = (res, error, statusCode = 500) => {
@@ -19,27 +21,33 @@ export const createRecipeValidation = [
 ];
 
 // יצירת מתכון חדש
-export const createRecipe = [
-  validate(createRecipeValidation),
-  async (req, res) => {
-    try {
-      const newRecipe = new Recipe({
-        ...req.body,
-        createdBy: req.user._id
-      });
-      const savedRecipe = await newRecipe.save();
-      logger.info(`New recipe created: ${savedRecipe._id}`);
-      res.status(201).json(savedRecipe);
-    } catch (error) {
-      logger.error(`Error creating recipe: ${error.message}`);
-      handleError(res, error, 400);
-    }
+export const createRecipe = async (req, res) => {
+  try {
+    const newRecipe = new Recipe({
+      ...req.body,
+      createdBy: req.user._id
+    });
+    const savedRecipe = await newRecipe.save();
+    
+    // Clear the cache for getAllRecipes
+    await clearCache('recipes:*');
+    
+    res.status(201).json(savedRecipe);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
-];
+};
 
 // קבלת כל המתכונים
 export const getAllRecipes = async (req, res) => {
   try {
+    const cacheKey = `recipes:${JSON.stringify(req.query)}`;
+    const cachedRecipes = await getCache(cacheKey);
+
+    if (cachedRecipes) {
+      return res.json(JSON.parse(cachedRecipes));
+    }
+
     const { keyword, category, allergens, difficulty } = req.query;
     let query = {};
 
@@ -57,6 +65,9 @@ export const getAllRecipes = async (req, res) => {
     }
 
     const recipes = await Recipe.find(query).populate('allergens');
+    
+    await setCache(cacheKey, JSON.stringify(recipes), 300); // Cache for 5 minutes
+
     res.json(recipes);
   } catch (error) {
     res.status(500).json({ message: error.message });
