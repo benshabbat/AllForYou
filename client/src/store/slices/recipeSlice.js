@@ -118,6 +118,7 @@ export const toggleFavorite = createAsyncThunk(
   }
 );
 
+
 const recipeSlice = createSlice({
   name: 'recipes',
   initialState,

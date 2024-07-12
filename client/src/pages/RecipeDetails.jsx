@@ -93,7 +93,7 @@ function RecipeDetails() {
           <section aria-labelledby="allergens-heading">
             <h2 id="allergens-heading">אלרגנים:</h2>
             <div className={styles.allergenList}>
-              {recipe.allergens.map(allergen => (
+              {recipe?.allergens?.map(allergen => (
                 <span key={allergen._id} className={styles.allergen}>
                   {allergen.icon} {allergen.name}
                 </span>
