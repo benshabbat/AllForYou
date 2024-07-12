@@ -9,7 +9,7 @@ import userRoutes from './routes/users.js';
 import allergenRoutes from './routes/allergens.js';
 import { connectDB } from './config/db.js';
 import logger from './utils/logger.js';
-
+import { loginLimiter, apiLimiter } from './middleware/rateLimiter.js';
 dotenv.config();
 
 const app = express();
@@ -17,8 +17,12 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(morgan('combined', { stream: { write: message => logger.info(message.trim()) } }));
+app.use(morgan('dev'));
 app.use(helmet());
+
+// Apply rate limiting
+app.use('/api/users/login', loginLimiter);
+app.use('/api', apiLimiter);
 
 // Routes
 app.use('/api/recipes', recipeRoutes);
