@@ -17,3 +17,14 @@
 {"level":"info","message":"Server running on port 5000","timestamp":"2024-07-12T08:42:48.995Z"}
 {"level":"info","message":"Server running on port 5000","timestamp":"2024-07-12T08:43:06.693Z"}
 {"level":"info","message":"Server running on port 5000","timestamp":"2024-07-12T08:43:35.482Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2024-07-12T09:16:03.426Z"}
+{"level":"info","message":"::1 - - [12/Jul/2024:09:16:41 +0000] \"GET /api/users/me HTTP/1.1\" 200 148 \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-12T09:16:41.605Z"}
+{"level":"error","message":"Error in recipe controller: Cannot populate path `comments` because it is not in your schema. Set the `strictPopulate` option to false to override.","timestamp":"2024-07-12T09:16:41.824Z"}
+{"level":"info","message":"::1 - - [12/Jul/2024:09:16:41 +0000] \"GET /api/recipes/668af805579b1bb29f24867a/comments HTTP/1.1\" 500 133 \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-12T09:16:41.826Z"}
+{"level":"info","message":"::1 - - [12/Jul/2024:09:16:41 +0000] \"GET /api/users/me HTTP/1.1\" 304 - \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-12T09:16:41.888Z"}
+{"level":"info","message":"::1 - - [12/Jul/2024:09:18:04 +0000] \"GET /api/users/me HTTP/1.1\" 304 - \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-12T09:18:04.760Z"}
+{"level":"error","message":"Error in recipe controller: Cannot populate path `comments` because it is not in your schema. Set the `strictPopulate` option to false to override.","timestamp":"2024-07-12T09:18:05.017Z"}
+{"level":"info","message":"::1 - - [12/Jul/2024:09:18:05 +0000] \"GET /api/recipes/668af805579b1bb29f24867a/comments HTTP/1.1\" 500 133 \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-12T09:18:05.019Z"}
+{"level":"info","message":"::1 - - [12/Jul/2024:09:18:05 +0000] \"GET /api/users/me HTTP/1.1\" 304 - \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-12T09:18:05.043Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2024-07-12T09:21:20.688Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2024-07-12T09:22:10.485Z"}

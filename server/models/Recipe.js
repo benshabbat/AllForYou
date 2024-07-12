@@ -76,7 +76,23 @@ const RecipeSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Recipe category is required'],
     enum: ['Appetizer', 'Main Course', 'Dessert', 'Beverage', 'Snack']
-  }
+  },
+  // Add the comments field to the schema
+  comments: [{
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+    content: {
+      type: String,
+      required: true
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
+  }]
 }, {
   timestamps: true,
   toJSON: { virtuals: true },

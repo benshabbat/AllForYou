@@ -210,8 +210,8 @@ export const getUserRecipes = async (req, res) => {
 export const getRecipeComments = async (req, res) => {
   try {
     const recipe = await Recipe.findById(req.params.id).populate({
-      path: 'comments',
-      populate: { path: 'user', select: 'username' }
+      path: 'comments.user',
+      select: 'username'
     });
     
     if (!recipe) {
