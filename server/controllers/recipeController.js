@@ -20,7 +20,6 @@ export const createRecipeValidation = [
   body('instructions').notEmpty().withMessage('הוראות ההכנה הן שדה חובה').trim().escape(),
 ];
 
-// יצירת מתכון חדש
 export const createRecipe = async (req, res) => {
   try {
     const newRecipe = new Recipe({
@@ -29,12 +28,22 @@ export const createRecipe = async (req, res) => {
     });
     const savedRecipe = await newRecipe.save();
     
-    // Clear the cache for getAllRecipes
-    await clearCache('recipes:*');
+    // Index the recipe in Elasticsearch
+    await indexRecipe(savedRecipe);
     
     res.status(201).json(savedRecipe);
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+};
+
+export const searchRecipesElastic = async (req, res) => {
+  try {
+    const { query } = req.query;
+    const results = await searchRecipes(query);
+    res.json(results);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
