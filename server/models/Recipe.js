@@ -3,19 +3,19 @@ import mongoose from 'mongoose';
 const RecipeSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'שם המתכון הוא שדה חובה'],
+    required: [true, 'Recipe name is required'],
     trim: true,
-    maxlength: [100, 'שם המתכון לא יכול לעלות על 100 תווים']
+    maxlength: [100, 'Recipe name cannot exceed 100 characters']
   },
   ingredients: {
     type: [String],
-    required: [true, 'רשימת המרכיבים היא שדה חובה'],
-    validate: [arr => arr.length > 0, 'יש להזין לפחות מרכיב אחד']
+    required: [true, 'Ingredients list is required'],
+    validate: [arr => arr.length > 0, 'At least one ingredient is required']
   },
   instructions: {
     type: String,
-    required: [true, 'הוראות ההכנה הן שדה חובה'],
-    minlength: [10, 'הוראות ההכנה חייבות להכיל לפחות 10 תווים']
+    required: [true, 'Cooking instructions are required'],
+    minlength: [10, 'Instructions should be at least 10 characters long']
   },
   allergens: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -28,7 +28,7 @@ const RecipeSchema = new mongoose.Schema({
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: [true, 'יש לציין את יוצר המתכון']
+    required: [true, 'Recipe creator must be specified']
   },
   createdAt: {
     type: Date,
@@ -43,7 +43,7 @@ const RecipeSchema = new mongoose.Schema({
       type: Number,
       min: 1,
       max: 5,
-      required: [true, 'יש לספק דירוג בין 1 ל-5']
+      required: [true, 'Rating must be between 1 and 5']
     }
   }],
   averageRating: {
@@ -51,6 +51,31 @@ const RecipeSchema = new mongoose.Schema({
     default: 0,
     min: 0,
     max: 5
+  },
+  difficulty: {
+    type: String,
+    enum: ['Easy', 'Medium', 'Hard'],
+    default: 'Medium'
+  },
+  preparationTime: {
+    type: Number,
+    required: [true, 'Preparation time is required'],
+    min: 1
+  },
+  cookingTime: {
+    type: Number,
+    required: [true, 'Cooking time is required'],
+    min: 1
+  },
+  servings: {
+    type: Number,
+    required: [true, 'Number of servings is required'],
+    min: 1
+  },
+  category: {
+    type: String,
+    required: [true, 'Recipe category is required'],
+    enum: ['Appetizer', 'Main Course', 'Dessert', 'Beverage', 'Snack']
   }
 }, {
   timestamps: true,
@@ -59,9 +84,35 @@ const RecipeSchema = new mongoose.Schema({
 });
 
 // Add index for better query performance
-RecipeSchema.index({ name: 'text' });
+RecipeSchema.index({ name: 'text', ingredients: 'text' });
 RecipeSchema.index({ createdBy: 1, createdAt: -1 });
 RecipeSchema.index({ allergens: 1 });
+RecipeSchema.index({ category: 1 });
+RecipeSchema.index({ difficulty: 1 });
+
+// Virtual for total time
+RecipeSchema.virtual('totalTime').get(function() {
+  return this.preparationTime + this.cookingTime;
+});
+
+// Method to calculate average rating
+RecipeSchema.methods.calculateAverageRating = function() {
+  if (this.ratings.length === 0) {
+    this.averageRating = 0;
+  } else {
+    const sum = this.ratings.reduce((acc, item) => acc + item.rating, 0);
+    this.averageRating = sum / this.ratings.length;
+  }
+  return this.averageRating;
+};
+
+// Pre-save hook to calculate average rating
+RecipeSchema.pre('save', function(next) {
+  if (this.isModified('ratings')) {
+    this.calculateAverageRating();
+  }
+  next();
+});
 
 const Recipe = mongoose.model('Recipe', RecipeSchema);
 
