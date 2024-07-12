@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
+import Recipe from '../models/Recipe.js';
 
 // פונקציית עזר ליצירת טוקן JWT
 const generateToken = (id) => {
@@ -78,5 +79,37 @@ export const getMe = async (req, res) => {
   } catch (error) {
     console.error('Get user error:', error);
     res.status(500).json({ message: 'שגיאה בקבלת פרטי המשתמש' });
+  }
+};
+
+export const toggleFavoriteRecipe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    const recipeId = req.params.recipeId;
+
+    const isFavorite = user.favorites.includes(recipeId);
+
+    if (isFavorite) {
+      // Remove from favorites
+      user.favorites = user.favorites.filter(id => id.toString() !== recipeId);
+    } else {
+      // Add to favorites
+      user.favorites.push(recipeId);
+    }
+
+    await user.save();
+
+    res.json({ success: true, isFavorite: !isFavorite });
+  } catch (error) {
+    res.status(500).json({ message: 'שגיאה בעדכון מתכונים מועדפים' });
+  }
+};
+
+export const getFavoriteRecipes = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).populate('favorites');
+    res.json(user.favorites);
+  } catch (error) {
+    res.status(500).json({ message: 'שגיאה בטעינת מתכונים מועדפים' });
   }
 };

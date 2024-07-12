@@ -1,5 +1,5 @@
 import express from 'express';
-import { register, login, getMe } from '../controllers/userController.js';
+import { register, login, getMe,toggleFavoriteRecipe,getFavoriteRecipes } from '../controllers/userController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -26,5 +26,8 @@ router.post('/login', login);
  * @access  Private
  */
 router.get('/me', protect, getMe);
+
+router.post('/favorites/:recipeId', protect, toggleFavoriteRecipe);
+router.get('/favorites', protect, getFavoriteRecipes);
 
 export default router;
