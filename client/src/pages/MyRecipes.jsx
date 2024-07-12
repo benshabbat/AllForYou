@@ -1,31 +1,47 @@
-import React, { useCallback } from 'react';
-import { useQuery } from 'react-query';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserRecipes } from '../store/slices/recipeSlice';
-import { useSelector } from 'react-redux';
 import RecipeCard from '../components/RecipeCard';
 import Loading from '../components/Loading';
 import ErrorMessage from '../components/ErrorMessage';
 import styles from './MyRecipes.module.css';
 
 const MyRecipes = () => {
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { data: userRecipes, isLoading, error } = useQuery(
-    ['userRecipes', user?.id],
-    () => fetchUserRecipes(user?.id),
-    { enabled: !!user?.id }
-  );
+  const [userRecipes, setUserRecipes] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const renderRecipes = useCallback(() => (
+  const loadRecipes = useCallback(async () => {
+    if (user?.id) {
+      try {
+        setIsLoading(true);
+        const recipes = await dispatch(fetchUserRecipes(user.id)).unwrap();
+        setUserRecipes(recipes);
+      } catch (err) {
+        setError(err.message || 'שגיאה בטעינת המתכונים');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  }, [dispatch, user?.id]);
+
+  useEffect(() => {
+    loadRecipes();
+  }, [loadRecipes]);
+
+  if (isLoading) return <Loading message="טוען את המתכונים שלך..." />;
+  if (error) return <ErrorMessage message={error} />;
+  if (!user) return <ErrorMessage message="משתמש לא מחובר" />;
+
+  const renderRecipes = () => (
     <div className={styles.recipeGrid}>
       {userRecipes.map(recipe => (
         <RecipeCard key={recipe._id} recipe={recipe} />
       ))}
     </div>
-  ), [userRecipes]);
-
-  if (isLoading) return <Loading message="טוען את המתכונים שלך..." />;
-  if (error) return <ErrorMessage message={`שגיאה בטעינת המתכונים: ${error.message}`} />;
-  if (!user) return <ErrorMessage message="משתמש לא מחובר" />;
+  );
 
   return (
     <div className={styles.myRecipesContainer}>

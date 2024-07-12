@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import RecipeCard from './RecipeCard';
 import styles from './UserRecipes.module.css';
 
-function UserRecipes({ recipes }) {
-  if (!recipes || recipes.length === 0) {
+function UserRecipes({ recipes = [] }) {
+  if (recipes.length === 0) {
     return <p className={styles.noRecipes}>עדיין לא הוספת מתכונים.</p>;
   }
 

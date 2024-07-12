@@ -1,12 +1,7 @@
-import React, { useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import {
-  fetchRecipeById,
-  deleteRecipe,
-  rateRecipe,
-  addComment,
-} from "../store/slices/recipeSlice";
+import api from '../services/api';
 import EditRecipe from "../components/EditRecipe";
 import RatingStars from "../components/RatingStars";
 import CommentSection from "../components/CommentSection";
@@ -16,41 +11,53 @@ function RecipeDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [isEditing, setIsEditing] = React.useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
-  const { data: recipe, isLoading, error } = useQuery(['recipe', id], () => fetchRecipeById(id));
+  const fetchRecipe = useCallback(() => api.get(`/recipes/${id}`).then(res => res.data), [id]);
 
-  const deleteMutation = useMutation(deleteRecipe, {
-    onSuccess: () => {
-      navigate('/recipes');
+  const { data: recipe, isLoading, error } = useQuery(['recipe', id], fetchRecipe);
+
+  const deleteMutation = useMutation(
+    () => api.delete(`/recipes/${id}`),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('recipes');
+        navigate('/recipes');
+      }
     }
-  });
+  );
 
-  const rateMutation = useMutation(rateRecipe, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['recipe', id]);
+  const rateMutation = useMutation(
+    (rating) => api.post(`/recipes/${id}/rate`, { rating }),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['recipe', id]);
+      }
     }
-  });
+  );
 
-  const commentMutation = useMutation(addComment, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['recipe', id]);
+  const commentMutation = useMutation(
+    (content) => api.post(`/recipes/${id}/comments`, { content }),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['recipe', id]);
+      }
     }
-  });
+  );
 
   const handleDelete = useCallback(() => {
     if (window.confirm("Are you sure you want to delete this recipe?")) {
-      deleteMutation.mutate(id);
+      deleteMutation.mutate();
     }
-  }, [deleteMutation, id]);
+  }, [deleteMutation]);
 
-  const handleRate = useCallback(async (rating) => {
-    await rateMutation.mutateAsync({ recipeId: id, rating });
-  }, [rateMutation, id]);
+  const handleRate = useCallback((rating) => {
+    rateMutation.mutate(rating);
+  }, [rateMutation]);
 
-  const handleAddComment = useCallback(async (content) => {
-    await commentMutation.mutateAsync({ recipeId: id, content });
-  }, [commentMutation, id]);
+  const handleAddComment = useCallback((content) => {
+    commentMutation.mutate(content);
+  }, [commentMutation]);
 
   if (isLoading) return <div className={styles.loading}>Loading...</div>;
   if (error) return <div className={styles.error}>Error: {error.message}</div>;
@@ -73,7 +80,7 @@ function RecipeDetails() {
           <section aria-labelledby="ingredients-heading">
             <h2 id="ingredients-heading">Ingredients:</h2>
             <ul>
-              {recipe.ingredients && recipe.ingredients.map((ingredient, index) => (
+              {recipe.ingredients?.map((ingredient, index) => (
                 <li key={index}>{ingredient.trim()}</li>
               ))}
             </ul>
@@ -82,7 +89,7 @@ function RecipeDetails() {
           <section aria-labelledby="instructions-heading">
             <h2 id="instructions-heading">Instructions:</h2>
             <ol>
-              {recipe.instructions && recipe.instructions.split('\n').map((instruction, index) => (
+              {recipe.instructions?.split('\n').map((instruction, index) => (
                 <li key={index}>{instruction.trim()}</li>
               ))}
             </ol>
@@ -91,7 +98,7 @@ function RecipeDetails() {
           <section aria-labelledby="allergens-heading">
             <h2 id="allergens-heading">Allergens:</h2>
             <div className={styles.allergenList}>
-              {recipe.allergens && recipe.allergens.map(allergen => (
+              {recipe.allergens?.map(allergen => (
                 <span key={allergen._id} className={styles.allergen}>
                   {allergen.icon} {allergen.name}
                 </span>

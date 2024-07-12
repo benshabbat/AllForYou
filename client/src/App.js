@@ -1,14 +1,15 @@
 import React, { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Provider, useDispatch, useSelector } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { store } from './store/index.js';
-import { loadUser, setInitialized, logout } from './store/slices/authSlice';
+import { loadUser, setInitialized } from './store/slices/authSlice';
 import Header from './components/Header';
 import Loading from './components/Loading';
 import PrivateRoute from './components/PrivateRoute';
 import NotFound from './components/NotFound';
 import ErrorBoundary from './components/ErrorBoundary';
+import { useAuth } from './hooks/useAuth';
 
 const queryClient = new QueryClient();
 
@@ -24,7 +25,7 @@ const RecipeDetails = lazy(() => import('./pages/RecipeDetails'));
 
 function AppContent() {
   const dispatch = useDispatch();
-  const { isInitialized } = useSelector((state) => state.auth);
+  const { isAuthenticated, isLoading } = useAuth();
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -38,7 +39,6 @@ function AppContent() {
       } catch (error) {
         console.error('Error during authentication initialization:', error);
         localStorage.removeItem('token');
-        dispatch(logout());
       } finally {
         dispatch(setInitialized());
       }
@@ -47,7 +47,7 @@ function AppContent() {
     initializeAuth();
   }, [dispatch]);
 
-  if (!isInitialized) {
+  if (isLoading) {
     return <Loading />;
   }
 

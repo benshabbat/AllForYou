@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useQuery } from 'react-query';
 import { fetchUserRecipes } from "../store/slices/recipeSlice";
 import UserInfo from "../components/UserInfo";
@@ -9,20 +9,19 @@ import ErrorMessage from "../components/ErrorMessage";
 import styles from "./UserProfile.module.css";
 
 function UserProfile() {
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { data: userRecipes, isLoading, error } = useQuery(
     ['userRecipes', user?._id],
-    () => fetchUserRecipes(user?._id),
-    { enabled: !!user?._id }
+    () => dispatch(fetchUserRecipes(user?._id)).unwrap(),
+    { 
+      enabled: !!user?._id,
+      select: (data) => Array.isArray(data) ? data : []
+    }
   );
 
-  // Show loading state
   if (isLoading) return <Loading message="טוען פרופיל..." />;
-
-  // Show error state
   if (error) return <ErrorMessage message={error.message} />;
-
-  // Redirect or show message if user is not logged in
   if (!user) return <ErrorMessage message="משתמש לא מחובר" />;
 
   return (
