@@ -9,13 +9,13 @@ const initialState = {
   error: null,
 };
 
-// פונקציות API לשימוש עם React Query
+// API functions for use with React Query
 export const fetchRecipes = async ({ page = 1, limit = 12, searchTerm = '', allergens = [], category = '' }) => {
   try {
     const response = await api.get('/recipes', {
       params: { page, limit, searchTerm, allergens: allergens.join(','), category }
     });
-    console.log('Fetched recipes:', response.data); // הוסף את זה לדיבוג
+    console.log('Fetched recipes:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching recipes:', error);
@@ -30,8 +30,8 @@ export const fetchRecipeById = createAsyncThunk(
       const response = await api.get(`/recipes/${id}`);
       return response.data;
     } catch (error) {
-      const message = error.response?.data?.message || 'שגיאה בטעינת המתכון';
-      return thunkAPI.rejectWithValue(message);
+      console.error('Error fetching recipe:', error);
+      return thunkAPI.rejectWithValue('Failed to fetch recipe. Please try again later.');
     }
   }
 );
@@ -47,6 +47,7 @@ export const fetchComments = async (recipeId) => {
     throw error;
   }
 };
+
 export const fetchUserRecipes = async (userId) => {
   try {
     const response = await api.get(`/recipes/user/${userId}`);
@@ -66,16 +67,17 @@ export const addComment = async ({ recipeId, content }) => {
   const response = await api.post(`/recipes/${recipeId}/comments`, { content });
   return response.data;
 };
+
 // Async Thunks
 export const addRecipe = createAsyncThunk(
   'recipes/addRecipe',
   async (recipeData, thunkAPI) => {
     try {
       const response = await api.post('/recipes', recipeData);
-      toast.success('המתכון נוסף בהצלחה');
+      toast.success('Recipe added successfully');
       return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'שגיאה בהוספת המתכון');
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Error adding recipe');
     }
   }
 );
@@ -85,10 +87,10 @@ export const updateRecipe = createAsyncThunk(
   async ({ id, recipeData }, thunkAPI) => {
     try {
       const response = await api.put(`/recipes/${id}`, recipeData);
-      toast.success('המתכון עודכן בהצלחה');
+      toast.success('Recipe updated successfully');
       return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'שגיאה בעדכון המתכון');
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Error updating recipe');
     }
   }
 );
@@ -98,10 +100,10 @@ export const deleteRecipe = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       await api.delete(`/recipes/${id}`);
-      toast.success('המתכון נמחק בהצלחה');
+      toast.success('Recipe deleted successfully');
       return id;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'שגיאה במחיקת המתכון');
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Error deleting recipe');
     }
   }
 );
@@ -113,11 +115,10 @@ export const toggleFavorite = createAsyncThunk(
       const response = await api.post(`/recipes/${recipeId}/favorite`);
       return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'שגיאה בעדכון מועדפים');
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Error updating favorites');
     }
   }
 );
-
 
 const recipeSlice = createSlice({
   name: 'recipes',

@@ -3,14 +3,15 @@ import React from 'react';
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, error: null, errorInfo: null };
   }
 
   static getDerivedStateFromError(error) {
-    return { hasError: true, error };
+    return { hasError: true };
   }
 
   componentDidCatch(error, errorInfo) {
+    this.setState({ error, errorInfo });
     console.error("Uncaught error:", error, errorInfo);
   }
 
@@ -18,9 +19,9 @@ class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <div>
-          <h1>משהו השתבש.</h1>
-          <p>{this.state.error?.message || 'שגיאה לא ידועה'}</p>
-          <button onClick={() => window.location.reload()}>נסה שוב</button>
+          <h1>Something went wrong.</h1>
+          <p>{this.state.error && this.state.error.toString()}</p>
+          <pre>{this.state.errorInfo && this.state.errorInfo.componentStack}</pre>
         </div>
       );
     }

@@ -1,12 +1,12 @@
-import React, { useState,useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useCallback } from "react";
+import { useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { useDispatch } from 'react-redux';
 import {
   fetchRecipeById,
   deleteRecipe,
   rateRecipe,
   addComment,
-  fetchComments,
 } from "../store/slices/recipeSlice";
 import EditRecipe from "../components/EditRecipe";
 import RatingStars from "../components/RatingStars";
@@ -15,16 +15,15 @@ import styles from "./RecipeDetails.module.css";
 
 function RecipeDetails() {
   const { id } = useParams();
-  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const queryClient = useQueryClient();
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = React.useState(false);
 
   const { data: recipe, isLoading, error } = useQuery(['recipe', id], () => fetchRecipeById(id));
-  const { data: comments } = useQuery(['comments', id], () => fetchComments(id));
 
   const deleteMutation = useMutation(deleteRecipe, {
     onSuccess: () => {
-      navigate('/recipes');
+      // Handle successful deletion (e.g., redirect to recipes list)
     }
   });
 
@@ -36,12 +35,12 @@ function RecipeDetails() {
 
   const commentMutation = useMutation(addComment, {
     onSuccess: () => {
-      queryClient.invalidateQueries(['comments', id]);
+      queryClient.invalidateQueries(['recipe', id]);
     }
   });
 
   const handleDelete = useCallback(() => {
-    if (window.confirm("האם אתה בטוח שברצונך למחוק מתכון זה?")) {
+    if (window.confirm("Are you sure you want to delete this recipe?")) {
       deleteMutation.mutate(id);
     }
   }, [deleteMutation, id]);
@@ -54,9 +53,9 @@ function RecipeDetails() {
     await commentMutation.mutateAsync({ recipeId: id, content });
   }, [commentMutation, id]);
 
-  if (isLoading) return <div className={styles.loading} aria-live="polite">טוען...</div>;
-  if (error) return <div className={styles.error} aria-live="assertive">שגיאה: {error.message}</div>;
-  if (!recipe) return <div className={styles.notFound} aria-live="assertive">מתכון לא נמצא</div>;
+  if (isLoading) return <div className={styles.loading}>Loading...</div>;
+  if (error) return <div className={styles.error}>Error: {error}</div>;
+  if (!recipe) return <div className={styles.notFound}>Recipe not found</div>;
 
   return (
     <article className={styles.recipeDetails}>
@@ -66,14 +65,14 @@ function RecipeDetails() {
         <>
           <h1>{recipe.name}</h1>
           <div className={styles.ratingSection}>
-            <RatingStars initialRating={recipe.averageRating} onRating={handleRate} />
-            <p>דירוג ממוצע: {recipe.averageRating.toFixed(1)}</p>
+            <RatingStars initialRating={recipe.averageRating || 0} onRating={handleRate} />
+            <p>Average rating: {recipe.averageRating?.toFixed(1) || 'Not rated'}</p>
           </div>
           
           <img src={recipe.image} alt={recipe.name} className={styles.recipeImage} />
 
           <section aria-labelledby="ingredients-heading">
-            <h2 id="ingredients-heading">רכיבים:</h2>
+            <h2 id="ingredients-heading">Ingredients:</h2>
             <ul>
               {recipe.ingredients.map((ingredient, index) => (
                 <li key={index}>{ingredient.trim()}</li>
@@ -82,7 +81,7 @@ function RecipeDetails() {
           </section>
 
           <section aria-labelledby="instructions-heading">
-            <h2 id="instructions-heading">הוראות הכנה:</h2>
+            <h2 id="instructions-heading">Instructions:</h2>
             <ol>
               {recipe.instructions.split('\n').map((instruction, index) => (
                 <li key={index}>{instruction.trim()}</li>
@@ -91,9 +90,9 @@ function RecipeDetails() {
           </section>
 
           <section aria-labelledby="allergens-heading">
-            <h2 id="allergens-heading">אלרגנים:</h2>
+            <h2 id="allergens-heading">Allergens:</h2>
             <div className={styles.allergenList}>
-              {recipe?.allergens?.map(allergen => (
+              {recipe.allergens?.map(allergen => (
                 <span key={allergen._id} className={styles.allergen}>
                   {allergen.icon} {allergen.name}
                 </span>
@@ -102,16 +101,16 @@ function RecipeDetails() {
           </section>
 
           <section aria-labelledby="alternatives-heading">
-            <h2 id="alternatives-heading">חלופות אפשריות:</h2>
+            <h2 id="alternatives-heading">Possible alternatives:</h2>
             <p>{recipe.alternatives}</p>
           </section>
 
           <div className={styles.actionButtons}>
-            <button onClick={() => setIsEditing(true)} aria-label="ערוך מתכון">ערוך מתכון</button>
-            <button onClick={handleDelete} aria-label="מחק מתכון">מחק מתכון</button>
+            <button onClick={() => setIsEditing(true)}>Edit Recipe</button>
+            <button onClick={handleDelete}>Delete Recipe</button>
           </div>
 
-          <CommentSection comments={comments} onAddComment={handleAddComment} />
+          <CommentSection comments={recipe.comments} onAddComment={handleAddComment} />
         </>
       )}
     </article>
