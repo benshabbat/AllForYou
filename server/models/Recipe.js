@@ -52,46 +52,16 @@ const RecipeSchema = new mongoose.Schema({
     min: 0,
     max: 5
   }
-  ,comments: [{
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true
-    },
-    content: {
-      type: String,
-      required: true
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now
-    }
-  }]
 }, {
   timestamps: true,
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
 });
 
-RecipeSchema.methods.calculateAverageRating = function() {
-  if (this.ratings.length === 0) {
-    this.averageRating = 0;
-  } else {
-    const sum = this.ratings.reduce((acc, item) => acc + item.rating, 0);
-    this.averageRating = Number((sum / this.ratings.length).toFixed(1));
-  }
-  return this.averageRating;
-};
-
-RecipeSchema.pre('save', function(next) {
-  if (this.isModified('ratings')) {
-    this.calculateAverageRating();
-  }
-  next();
-});
-
 // Add index for better query performance
 RecipeSchema.index({ name: 'text' });
+RecipeSchema.index({ createdBy: 1, createdAt: -1 });
+RecipeSchema.index({ allergens: 1 });
 
 const Recipe = mongoose.model('Recipe', RecipeSchema);
 
