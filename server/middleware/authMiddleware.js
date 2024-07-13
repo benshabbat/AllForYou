@@ -52,6 +52,43 @@ export const protect = async (req, res, next) => {
   }
 };
 
+export const optionalAuth = async (req, res, next) => {
+  let token;
+
+  try {
+    // Check for token in Authorization header
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+      token = req.headers.authorization.split(' ')[1];
+    }
+
+    if (!token) {
+      // If no token, just move to the next middleware
+      return next();
+    }
+
+    try {
+      // Verify token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      // Find user by id
+      const user = await User.findById(decoded.id).select('-password');
+
+      if (user) {
+        // If user found, add to request object
+        req.user = user;
+      }
+    } catch (error) {
+      // If token verification fails, log it but don't stop the request
+      logger.warn(`Optional auth token verification failed: ${error.message}`);
+    }
+
+    next();
+  } catch (error) {
+    logger.error(`Error in optional auth middleware: ${error.message}`);
+    next();
+  }
+};
+
 // Middleware to check user role
 export const authorize = (...roles) => {
   return (req, res, next) => {

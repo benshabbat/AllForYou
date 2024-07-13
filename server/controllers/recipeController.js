@@ -57,43 +57,39 @@ export const searchRecipesElastic = async (req, res) => {
 // Get all recipes
 export const getAllRecipes = async (req, res) => {
   try {
-    // Change: Use caching
-    const cacheKey = `recipes:${JSON.stringify(req.query)}`;
-    const cachedRecipes = await getCache(cacheKey);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const startIndex = (page - 1) * limit;
 
-    if (cachedRecipes) {
-      logger.info('Serving recipes from cache');
-      return res.json(JSON.parse(cachedRecipes));
-    }
-
-    const { keyword, category, allergens, difficulty } = req.query;
     let query = {};
 
-    if (keyword) {
-      query.name = { $regex: keyword, $options: 'i' };
-    }
-    if (category) {
-      query.category = category;
-    }
-    if (allergens) {
-      query.allergens = { $nin: allergens.split(',') };
-    }
-    if (difficulty) {
-      query.difficulty = difficulty;
+    // Add search functionality if needed
+    if (req.query.search) {
+      query.name = { $regex: req.query.search, $options: 'i' };
     }
 
-    const recipes = await Recipe.find(query).populate('allergens');
-    
-    // Change: Cache the results
-    await setCache(cacheKey, JSON.stringify(recipes), 300); // Cache for 5 minutes
-    logger.info('Recipes cached');
+    // If user is authenticated, we can add personalized queries here
+    if (req.user) {
+      // For example, maybe exclude recipes the user has already rated
+      // query.ratings = { $not: { $elemMatch: { user: req.user._id } } };
+    }
 
-    res.json(recipes);
+    const totalRecipes = await Recipe.countDocuments(query);
+    const recipes = await Recipe.find(query)
+      .limit(limit)
+      .skip(startIndex)
+      .sort({ createdAt: -1 });
+
+    res.json({
+      recipes,
+      currentPage: page,
+      totalPages: Math.ceil(totalRecipes / limit),
+      totalRecipes
+    });
   } catch (error) {
-    handleError(res, error);
+    res.status(500).json({ message: 'Error fetching recipes', error: error.message });
   }
 };
-
 // Get a specific recipe
 export const getRecipe = async (req, res) => {
   try {
