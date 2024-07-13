@@ -14,9 +14,13 @@ function RecipeList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchParams, setSearchParams] = useState({});
 
+  const fetchRecipesQuery = useCallback((page, params) => {
+    return fetchRecipes({ page, limit: RECIPES_PER_PAGE, ...params });
+  }, []);
+
   const { data, isLoading, error } = useQuery(
     ['recipes', currentPage, searchParams],
-    () => fetchRecipes({ page: currentPage, limit: RECIPES_PER_PAGE, ...searchParams }),
+    () => fetchRecipesQuery(currentPage, searchParams),
     { keepPreviousData: true }
   );
 
@@ -29,8 +33,8 @@ function RecipeList() {
     setCurrentPage(page);
   }, []);
 
-  const recipes = useMemo(() => Array.isArray(data) ? data : data?.recipes || [], [data]);
-  const totalRecipes = useMemo(() => typeof data?.totalRecipes === 'number' ? data.totalRecipes : recipes.length, [data, recipes]);
+  const recipes = useMemo(() => data?.recipes || [], [data]);
+  const totalRecipes = useMemo(() => data?.totalRecipes || 0, [data]);
 
   const recipeCards = useMemo(() => (
     recipes.map((recipe) => (
@@ -40,21 +44,22 @@ function RecipeList() {
 
   if (isLoading) return <Loading message="טוען מתכונים..." />;
   if (error) return <ErrorMessage message={error.message || 'שגיאה בטעינת המתכונים'} />;
-  if (recipes.length === 0) return <p className={styles.noRecipes}>לא נמצאו מתכונים.</p>;
 
   return (
     <div className={styles.recipeListContainer}>
       <h1 className={styles.title}>המתכונים שלנו</h1>
       <AdvancedSearch onSearch={handleSearch} />
-      <div className={styles.recipeGrid}>
-        {recipeCards}
-      </div>
-      {recipes.length > 0 && (
-        <Pagination 
-          currentPage={currentPage}
-          totalPages={Math.ceil(totalRecipes / RECIPES_PER_PAGE)}
-          onPageChange={handlePageChange}
-        />
+      {recipes.length === 0 ? (
+        <p className={styles.noRecipes}>לא נמצאו מתכונים.</p>
+      ) : (
+        <>
+          <div className={styles.recipeGrid}>{recipeCards}</div>
+          <Pagination 
+            currentPage={currentPage}
+            totalPages={Math.ceil(totalRecipes / RECIPES_PER_PAGE)}
+            onPageChange={handlePageChange}
+          />
+        </>
       )}
     </div>
   );
