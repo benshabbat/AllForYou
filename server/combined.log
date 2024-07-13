@@ -112,3 +112,4 @@
 {"level":"info","message":"::1 - - [13/Jul/2024:19:15:05 +0000] \"GET /api/users/me HTTP/1.1\" 401 42 \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-13T19:15:05.144Z"}
 {"level":"error","message":"Token verification failed: jwt expired","timestamp":"2024-07-13T19:15:05.148Z"}
 {"level":"info","message":"::1 - - [13/Jul/2024:19:15:05 +0000] \"GET /api/users/me HTTP/1.1\" 401 42 \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-13T19:15:05.149Z"}
+{"level":"info","message":"::1 - - [13/Jul/2024:19:17:01 +0000] \"GET /api/allergens HTTP/1.1\" 304 - \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-13T19:17:01.582Z"}

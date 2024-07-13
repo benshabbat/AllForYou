@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useQuery } from 'react-query';
 import { fetchRecipes } from '../store/slices/recipeSlice';
 import RecipeCard from '../components/RecipeCard';
@@ -11,16 +12,22 @@ import styles from './RecipeList.module.css';
 const RECIPES_PER_PAGE = 12;
 
 function RecipeList() {
+  const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchParams, setSearchParams] = useState({});
 
-  const fetchRecipesQuery = useCallback((page, params) => {
-    return fetchRecipes({ page, limit: RECIPES_PER_PAGE, ...params });
-  }, []);
+  const fetchRecipesQuery = useCallback(async ({ page, params }) => {
+    try {
+      const result = await dispatch(fetchRecipes({ page, limit: RECIPES_PER_PAGE, ...params })).unwrap();
+      return result;
+    } catch (error) {
+      throw new Error(error.message || 'שגיאה בטעינת המתכונים');
+    }
+  }, [dispatch]);
 
   const { data, isLoading, error } = useQuery(
     ['recipes', currentPage, searchParams],
-    () => fetchRecipesQuery(currentPage, searchParams),
+    () => fetchRecipesQuery({ page: currentPage, params: searchParams }),
     { keepPreviousData: true }
   );
 
@@ -43,7 +50,7 @@ function RecipeList() {
   ), [recipes]);
 
   if (isLoading) return <Loading message="טוען מתכונים..." />;
-  if (error) return <ErrorMessage message={error.message || 'שגיאה בטעינת המתכונים'} />;
+  if (error) return <ErrorMessage message={error.message} />;
 
   return (
     <div className={styles.recipeListContainer}>
