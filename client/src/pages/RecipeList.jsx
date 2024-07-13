@@ -18,7 +18,12 @@ function RecipeList() {
 
   const fetchRecipesQuery = useCallback(async ({ page, params }) => {
     try {
-      const result = await dispatch(fetchRecipes({ page, limit: RECIPES_PER_PAGE, ...params })).unwrap();
+      const result = await dispatch(fetchRecipes({ 
+        page, 
+        limit: RECIPES_PER_PAGE, 
+        ...params,
+        allergens: params.allergens?.join(',') // Convert allergens array to comma-separated string
+      })).unwrap();
       return result;
     } catch (error) {
       throw new Error(error.message || 'שגיאה בטעינת המתכונים');

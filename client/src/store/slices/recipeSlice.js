@@ -11,10 +11,10 @@ const initialState = {
 
 export const fetchRecipes = createAsyncThunk(
   'recipes/fetchRecipes',
-  async ({ page = 1, limit = 12, searchTerm = '', allergens = [], category = '' }, thunkAPI) => {
+  async ({ page = 1, limit = 12, keyword = '', allergens = '', category = '', difficulty = '' }, thunkAPI) => {
     try {
       const response = await api.get('/recipes', {
-        params: { page, limit, searchTerm, allergens: allergens.join(','), category }
+        params: { page, limit, keyword, allergens, category, difficulty }
       });
       return response.data;
     } catch (error) {
@@ -46,6 +46,7 @@ export const fetchUserRecipes = createAsyncThunk(
     }
   }
 );
+
 export const rateRecipe = createAsyncThunk(
   'recipes/rateRecipe',
   async ({ recipeId, rating }, thunkAPI) => {

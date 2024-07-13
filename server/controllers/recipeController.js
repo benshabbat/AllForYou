@@ -1,60 +1,12 @@
-import { body } from 'express-validator';
-import { validate } from '../middleware/validate.js';
 import Recipe from '../models/Recipe.js';
-
-// Change: Import new utilities
 import logger from '../utils/logger.js';
-import { getCache, setCache, clearCache } from '../utils/cache.js';
-import { indexRecipe, searchRecipes } from '../utils/elasticsearch.js';
 
 // Helper function for error handling
 const handleError = (res, error, statusCode = 500) => {
-  // Change: Use logger instead of console.error
   logger.error(`Error in recipe controller: ${error.message}`);
   res.status(statusCode).json({ message: error.message || 'Server error' });
 };
 
-// Validation definitions
-export const createRecipeValidation = [
-  body('name').notEmpty().withMessage('Recipe name is required').trim().escape(),
-  body('ingredients').isArray().withMessage('Ingredients must be an array')
-    .custom((value) => value.every((item) => typeof item === 'string')).withMessage('Each ingredient must be a string'),
-  body('instructions').notEmpty().withMessage('Instructions are required').trim().escape(),
-];
-
-export const createRecipe = async (req, res) => {
-  try {
-    const newRecipe = new Recipe({
-      ...req.body,
-      createdBy: req.user._id
-    });
-    const savedRecipe = await newRecipe.save();
-    
-    // Change: Index the recipe in Elasticsearch
-    await indexRecipe(savedRecipe);
-    
-    // Change: Log new recipe creation
-    logger.info(`New recipe created: ${savedRecipe._id}`);
-    
-    res.status(201).json(savedRecipe);
-  } catch (error) {
-    // Change: Use handleError function
-    handleError(res, error, 400);
-  }
-};
-
-// Change: New function for Elasticsearch recipe search
-export const searchRecipesElastic = async (req, res) => {
-  try {
-    const { query } = req.query;
-    const results = await searchRecipes(query);
-    res.json(results);
-  } catch (error) {
-    handleError(res, error);
-  }
-};
-
-// Get all recipes
 export const getAllRecipes = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -63,19 +15,34 @@ export const getAllRecipes = async (req, res) => {
 
     let query = {};
 
-    // Add search functionality if needed
-    if (req.query.search) {
-      query.name = { $regex: req.query.search, $options: 'i' };
+    // Keyword search
+    if (req.query.keyword) {
+      query.$or = [
+        { name: { $regex: req.query.keyword, $options: 'i' } },
+        { ingredients: { $regex: req.query.keyword, $options: 'i' } },
+        { instructions: { $regex: req.query.keyword, $options: 'i' } }
+      ];
     }
 
-    // If user is authenticated, we can add personalized queries here
-    if (req.user) {
-      // For example, maybe exclude recipes the user has already rated
-      // query.ratings = { $not: { $elemMatch: { user: req.user._id } } };
+    // Category filter
+    if (req.query.category) {
+      query.category = req.query.category;
+    }
+
+    // Difficulty filter
+    if (req.query.difficulty) {
+      query.difficulty = req.query.difficulty;
+    }
+
+    // Allergens filter
+    if (req.query.allergens) {
+      const allergenIds = req.query.allergens.split(',');
+      query.allergens = { $nin: allergenIds };
     }
 
     const totalRecipes = await Recipe.countDocuments(query);
     const recipes = await Recipe.find(query)
+      .populate('allergens')
       .limit(limit)
       .skip(startIndex)
       .sort({ createdAt: -1 });
@@ -87,10 +54,11 @@ export const getAllRecipes = async (req, res) => {
       totalRecipes
     });
   } catch (error) {
+    logger.error('Error fetching recipes:', error);
     res.status(500).json({ message: 'Error fetching recipes', error: error.message });
   }
 };
-// Get a specific recipe
+
 export const getRecipe = async (req, res) => {
   try {
     const recipe = await Recipe.findById(req.params.id).populate('createdBy', 'username');
@@ -103,7 +71,20 @@ export const getRecipe = async (req, res) => {
   }
 };
 
-// Update a recipe
+export const createRecipe = async (req, res) => {
+  try {
+    const newRecipe = new Recipe({
+      ...req.body,
+      createdBy: req.user._id
+    });
+    const savedRecipe = await newRecipe.save();
+    logger.info(`New recipe created: ${savedRecipe._id}`);
+    res.status(201).json(savedRecipe);
+  } catch (error) {
+    handleError(res, error, 400);
+  }
+};
+
 export const updateRecipe = async (req, res) => {
   try {
     const updatedRecipe = await Recipe.findByIdAndUpdate(
@@ -114,41 +95,26 @@ export const updateRecipe = async (req, res) => {
     if (!updatedRecipe) {
       return res.status(404).json({ message: 'Recipe not found' });
     }
-    
-    // Change: Update Elasticsearch index
-    await indexRecipe(updatedRecipe);
-    
-    // Change: Clear cache for the updated recipe
-    await clearCache(`recipe:${updatedRecipe._id}`);
-    
     logger.info(`Recipe updated: ${updatedRecipe._id}`);
-    
     res.json(updatedRecipe);
   } catch (error) {
     handleError(res, error, 400);
   }
 };
 
-// Delete a recipe
 export const deleteRecipe = async (req, res) => {
   try {
     const deletedRecipe = await Recipe.findByIdAndDelete(req.params.id);
     if (!deletedRecipe) {
       return res.status(404).json({ message: 'Recipe not found' });
     }
-    
-    // Change: Clear cache for the deleted recipe
-    await clearCache(`recipe:${req.params.id}`);
-    
     logger.info(`Recipe deleted: ${req.params.id}`);
-    
     res.json({ message: 'Recipe deleted successfully' });
   } catch (error) {
     handleError(res, error);
   }
 };
 
-// Rate a recipe
 export const rateRecipe = async (req, res) => {
   try {
     const recipe = await Recipe.findById(req.params.id);
@@ -174,21 +140,13 @@ export const rateRecipe = async (req, res) => {
     recipe.calculateAverageRating();
     await recipe.save();
     
-    // Change: Update Elasticsearch index
-    await indexRecipe(recipe);
-    
-    // Change: Clear cache for the rated recipe
-    await clearCache(`recipe:${recipe._id}`);
-    
     logger.info(`Recipe rated: ${recipe._id}, rating: ${rating}`);
-
     res.json({ averageRating: recipe.averageRating });
   } catch (error) {
     handleError(res, error);
   }
 };
 
-// Get recipes for a specific user
 export const getUserRecipes = async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -202,7 +160,6 @@ export const getUserRecipes = async (req, res) => {
   }
 };
 
-// Get comments for a specific recipe
 export const getRecipeComments = async (req, res) => {
   try {
     const recipe = await Recipe.findById(req.params.id).populate({
@@ -224,7 +181,6 @@ export const getRecipeComments = async (req, res) => {
   }
 };
 
-// Add a comment to a recipe
 export const addRecipeComment = async (req, res) => {
   try {
     const { content } = req.body;
@@ -242,11 +198,7 @@ export const addRecipeComment = async (req, res) => {
     recipe.comments.push(newComment);
     await recipe.save();
     
-    // Change: Clear cache for the recipe with new comment
-    await clearCache(`recipe:${recipe._id}`);
-    
     logger.info(`New comment added to recipe: ${recipe._id}`);
-    
     res.status(201).json(newComment);
   } catch (error) {
     handleError(res, error, 400);
