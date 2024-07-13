@@ -1,11 +1,16 @@
 import express from 'express';
-import { getAllergens, createAllergen } from '../controllers/allergenController.js';
+import { getAllergens, getAllergenById, createAllergen, updateAllergen, deleteAllergen } from '../controllers/allergenController.js';
+import { protect, authorize } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/', getAllergens);
-router.post('/', createAllergen);
+router.route('/')
+  .get(getAllergens)
+  .post(protect, authorize('admin'), createAllergen);
 
-// ... Add other routes for CRUD operations ...
+router.route('/:id')
+  .get(getAllergenById)
+  .put(protect, authorize('admin'), updateAllergen)
+  .delete(protect, authorize('admin'), deleteAllergen);
 
 export default router;
