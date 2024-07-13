@@ -5,8 +5,11 @@ import api from '../../services/api';
 const initialState = {
   userRecipes: [],
   favorites: [],
+  allergens: [],
   isLoading: false,
   error: null,
+  allergensLoading: false,
+  allergensError: null,
 };
 
 export const fetchRecipes = createAsyncThunk(
@@ -122,6 +125,18 @@ export const toggleFavorite = createAsyncThunk(
   }
 );
 
+export const fetchAllergens = createAsyncThunk(
+  'recipes/fetchAllergens',
+  async (_, thunkAPI) => {
+    try {
+      const response = await api.get('/allergens');
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch allergens');
+    }
+  }
+);
+
 const recipeSlice = createSlice({
   name: 'recipes',
   initialState,
@@ -176,6 +191,17 @@ const recipeSlice = createSlice({
       .addCase(fetchUserRecipes.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
+      })
+      .addCase(fetchAllergens.pending, (state) => {
+        state.allergensLoading = true;
+      })
+      .addCase(fetchAllergens.fulfilled, (state, action) => {
+        state.allergensLoading = false;
+        state.allergens = action.payload;
+      })
+      .addCase(fetchAllergens.rejected, (state, action) => {
+        state.allergensLoading = false;
+        state.allergensError = action.payload;
       });
   },
 });
