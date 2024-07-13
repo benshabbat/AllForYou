@@ -1,25 +1,28 @@
-import React, { useState, useCallback } from "react";
-import { GiPeanut, GiMilkCarton, GiWheat } from "react-icons/gi";
-import { FaEgg } from "react-icons/fa";
+import React, { useState, useCallback, useEffect } from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAllergens } from '../store/slices/recipeSlice';
 import styles from "./AdvancedSearch.module.css";
-import { useQuery } from 'react-query';
-import { fetchAllergens } from '../api/allergens';
 
 const difficultyLevels = ['קל', 'בינוני', 'מאתגר'];
 const categories = ['עיקריות', 'קינוחים', 'סלטים', 'מרקים'];
 
 function AdvancedSearch({ onSearch }) {
+  const dispatch = useDispatch();
+  const { allergens, allergensLoading, allergensError } = useSelector(state => state.recipes);
   const [searchParams, setSearchParams] = useState({
     keyword: '',
     category: '',
     allergens: [],
     difficulty: '',
   });
-  const { data: allergens } = useQuery('allergens', fetchAllergens);
+
+  useEffect(() => {
+    dispatch(fetchAllergens());
+  }, [dispatch]);
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
-    setSearchParams((prev) => ({
+    setSearchParams(prev => ({
       ...prev,
       [name]: value,
     }));
@@ -83,19 +86,25 @@ function AdvancedSearch({ onSearch }) {
       <div className={styles.allergenGroup}>
         <span className={styles.allergenLabel}>סנן אלרגנים:</span>
         <div className={styles.allergenButtons}>
-          {allergens?.map((allergen) => (
-            <button
-              key={allergen._id}
-              type="button"
-              onClick={() => handleAllergenToggle(allergen._id)}
-              className={`${styles.allergenButton} ${
-                searchParams.allergens.includes(allergen._id) ? styles.active : ''
-              }`}
-            >
-              {allergen.icon && <span className={styles.allergenIcon}>{allergen.icon}</span>}
-              <span>{allergen.name}</span>
-            </button>
-          ))}
+          {allergensLoading ? (
+            <p>טוען אלרגנים...</p>
+          ) : allergensError ? (
+            <p>שגיאה בטעינת אלרגנים: {allergensError}</p>
+          ) : (
+            allergens.map((allergen) => (
+              <button
+                key={allergen._id}
+                type="button"
+                onClick={() => handleAllergenToggle(allergen._id)}
+                className={`${styles.allergenButton} ${
+                  searchParams.allergens.includes(allergen._id) ? styles.active : ''
+                }`}
+              >
+                {allergen.icon && <span className={styles.allergenIcon}>{allergen.icon}</span>}
+                <span>{allergen.hebrewName}</span>
+              </button>
+            ))
+          )}
         </div>
       </div>
 
