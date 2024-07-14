@@ -79,7 +79,9 @@ function RecipeDetails() {
           
           {recipe.image && <img src={recipe.image} alt={recipe.name} className={styles.recipeImage} />}
 
-          <AllergenWarning allergens={recipe.allergens} />
+          {recipe.allergens && recipe.allergens.length > 0 && (
+            <AllergenWarning allergens={recipe.allergens} />
+          )}
 
           <section aria-labelledby="ingredients-heading">
             <h2 id="ingredients-heading">Ingredients:</h2>

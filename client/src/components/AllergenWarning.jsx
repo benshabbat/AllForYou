@@ -31,7 +31,11 @@ AllergenWarning.propTypes = {
       name: PropTypes.string.isRequired,
       icon: PropTypes.string.isRequired
     })
-  ).isRequired
+  )
+};
+
+AllergenWarning.defaultProps = {
+  allergens: []
 };
 
 export default AllergenWarning;
