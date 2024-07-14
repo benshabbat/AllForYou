@@ -22,6 +22,7 @@ const AllergenList = () => {
           <li key={allergen._id} className={styles.allergenItem}>
             <span className={styles.allergenIcon}>{allergen.icon}</span>
             <span className={styles.allergenName}>{allergen.hebrewName}</span>
+            <span className={styles.allergenDescription}>{allergen.description}</span>
           </li>
         ))}
       </ul>
