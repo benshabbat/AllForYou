@@ -241,3 +241,6 @@
 {"level":"info","message":"Server running on port 5000","timestamp":"2024-07-14T14:23:36.281Z"}
 {"level":"info","message":"Server running on port 5000","timestamp":"2024-07-14T14:27:55.321Z"}
 {"level":"info","message":"Server running on port 5000","timestamp":"2024-07-14T14:29:31.093Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2024-07-14T16:03:30.144Z"}
+{"level":"info","message":"::1 - - [14/Jul/2024:16:05:05 +0000] \"GET /api/recipes?page=1&limit=12&keyword=&allergens=&category=&difficulty= HTTP/1.1\" 304 - \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-14T16:05:05.355Z"}
+{"level":"info","message":"::1 - - [14/Jul/2024:16:05:09 +0000] \"GET /api/recipes?page=1&limit=12&keyword=&allergens=&category=&difficulty= HTTP/1.1\" 304 - \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-14T16:05:09.555Z"}
