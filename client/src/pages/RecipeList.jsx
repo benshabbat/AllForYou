@@ -1,61 +1,27 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
-import { useQuery } from 'react-query';
-import { fetchRecipes } from '../store/slices/recipeSlice';
+import React from 'react';
 import RecipeCard from '../components/RecipeCard';
 import AdvancedSearch from '../components/AdvancedSearch';
 import Pagination from '../components/Pagination';
 import Loading from '../components/Loading';
 import ErrorMessage from '../components/ErrorMessage';
+import { useRecipeList } from '../hooks/useRecipeList';
 import styles from './RecipeList.module.css';
 
 const RECIPES_PER_PAGE = 12;
 
-function RecipeList() {
-  const dispatch = useDispatch();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchParams, setSearchParams] = useState({});
-
-  const fetchRecipesQuery = useCallback(async ({ page, params }) => {
-    try {
-      const result = await dispatch(fetchRecipes({ 
-        page, 
-        limit: RECIPES_PER_PAGE, 
-        ...params,
-        allergens: params.allergens?.join(',') // Convert allergens array to comma-separated string
-      })).unwrap();
-      return result;
-    } catch (error) {
-      throw new Error(error.message || 'שגיאה בטעינת המתכונים');
-    }
-  }, [dispatch]);
-
-  const { data, isLoading, error } = useQuery(
-    ['recipes', currentPage, searchParams],
-    () => fetchRecipesQuery({ page: currentPage, params: searchParams }),
-    { keepPreviousData: true }
-  );
-
-  const handleSearch = useCallback((params) => {
-    setSearchParams(params);
-    setCurrentPage(1);
-  }, []);
-
-  const handlePageChange = useCallback((page) => {
-    setCurrentPage(page);
-  }, []);
-
-  const recipes = useMemo(() => data?.recipes || [], [data]);
-  const totalRecipes = useMemo(() => data?.totalRecipes || 0, [data]);
-
-  const recipeCards = useMemo(() => (
-    recipes.map((recipe) => (
-      <RecipeCard key={recipe._id} recipe={recipe} />
-    ))
-  ), [recipes]);
+const RecipeList = () => {
+  const {
+    recipes,
+    totalRecipes,
+    currentPage,
+    isLoading,
+    error,
+    handleSearch,
+    handlePageChange,
+  } = useRecipeList(RECIPES_PER_PAGE);
 
   if (isLoading) return <Loading message="טוען מתכונים..." />;
-  if (error) return <ErrorMessage message={error.message} />;
+  if (error) return <ErrorMessage message={error} />;
 
   return (
     <div className={styles.recipeListContainer}>
@@ -65,7 +31,13 @@ function RecipeList() {
         <p className={styles.noRecipes}>לא נמצאו מתכונים.</p>
       ) : (
         <>
-          <div className={styles.recipeGrid}>{recipeCards}</div>
+          <div className={styles.recipeGrid} role="list" aria-label="רשימת מתכונים">
+            {recipes.map((recipe) => (
+              <div key={recipe._id} role="listitem">
+                <RecipeCard recipe={recipe} />
+              </div>
+            ))}
+          </div>
           <Pagination 
             currentPage={currentPage}
             totalPages={Math.ceil(totalRecipes / RECIPES_PER_PAGE)}
@@ -75,6 +47,6 @@ function RecipeList() {
       )}
     </div>
   );
-}
+};
 
 export default React.memo(RecipeList);

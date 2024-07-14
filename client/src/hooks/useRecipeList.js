@@ -3,11 +3,15 @@ import { useDispatch } from 'react-redux';
 import { useQuery } from 'react-query';
 import { fetchRecipes } from '../store/slices/recipeSlice';
 
-/**
- * Custom hook for managing recipe list state and data fetching
- * @param {number} recipesPerPage - Number of recipes to display per page
- * @returns {Object} Recipe list state and handlers
- */
+// interface Recipe {
+//   _id: string;
+//   // Add other recipe properties here
+// }
+
+// interface SearchParams {
+//   // Define the structure of your search params
+// }
+
 export const useRecipeList = (recipesPerPage) => {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
