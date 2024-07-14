@@ -46,14 +46,6 @@ const AllergenSchema = new mongoose.Schema({
   alternatives: {
     type: [String],
     validate: [arrayLimit, 'מספר החלופות לא יכול לעלות על 20']
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
   }
 }, {
   timestamps: true
@@ -65,16 +57,5 @@ function arrayLimit(val) {
 
 // Add text index for better search performance
 AllergenSchema.index({ name: 'text', hebrewName: 'text', description: 'text', commonNames: 'text' });
-
-// Pre-save hook to update the 'updatedAt' field
-AllergenSchema.pre('save', function(next) {
-  this.updatedAt = Date.now();
-  next();
-});
-
-// Virtual for getting the age of the allergen document
-AllergenSchema.virtual('age').get(function() {
-  return Math.floor((Date.now() - this.createdAt) / (1000 * 60 * 60 * 24));
-});
 
 export default mongoose.model('Allergen', AllergenSchema);
