@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllergens } from '../store/slices/recipeSlice';
+import AllergenIcon from './AllergenIcon';
 import styles from "./AdvancedSearch.module.css";
 
 const difficultyLevels = ['קל', 'בינוני', 'מאתגר'];
@@ -100,7 +101,7 @@ function AdvancedSearch({ onSearch }) {
                   searchParams.allergens.includes(allergen._id) ? styles.active : ''
                 }`}
               >
-                {allergen.icon && <span className={styles.allergenIcon}>{allergen.icon}</span>}
+                <AllergenIcon allergen={allergen} size="small" />
                 <span>{allergen.hebrewName}</span>
               </button>
             ))

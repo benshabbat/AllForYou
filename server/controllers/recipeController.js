@@ -40,6 +40,14 @@ export const getAllRecipes = async (req, res) => {
       query.allergens = { $nin: allergenIds };
     }
 
+    // User allergen preferences
+    if (req.user && req.user.allergenPreferences) {
+      query.allergens = { 
+        $nin: req.user.allergenPreferences,
+        ...query.allergens 
+      };
+    }
+
     const totalRecipes = await Recipe.countDocuments(query);
     const recipes = await Recipe.find(query)
       .populate('allergens')

@@ -25,6 +25,10 @@ const UserSchema = new mongoose.Schema({
     minlength: [6, 'הסיסמה חייבת להכיל לפחות 6 תווים'],
     select: false
   },
+  allergenPreferences: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Allergen'
+  }],
   favorites: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Recipe'
