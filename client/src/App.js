@@ -22,6 +22,7 @@ const Login = lazy(() => import('./pages/Login'));
 const UserProfile = lazy(() => import('./pages/UserProfile'));
 const MyRecipes = lazy(() => import('./pages/MyRecipes'));
 const RecipeDetails = lazy(() => import('./pages/RecipeDetails'));
+const UserSettings = lazy(() => import('./pages/UserSettings'));
 
 function AppContent() {
   const dispatch = useDispatch();
@@ -65,6 +66,7 @@ function AppContent() {
             <Route path="/add-recipe" element={<PrivateRoute><AddRecipe /></PrivateRoute>} />
             <Route path="/profile" element={<PrivateRoute><UserProfile /></PrivateRoute>} />
             <Route path="/my-recipes" element={<PrivateRoute><MyRecipes /></PrivateRoute>} />
+            <Route path="/settings" element={<PrivateRoute><UserSettings /></PrivateRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
