@@ -62,7 +62,7 @@ const RecipeCard = React.memo(({ recipe }) => {
         <RatingStars initialRating={recipe.averageRating || 0} readOnly={true} />
         <p className={styles.recipeDescription}>{recipe.description}</p>
         <div className={styles.allergenIcons} aria-label="אלרגנים">
-          {recipe.allergens.map(allergen => (
+          {recipe?.allergens?.map(allergen => (
             <AllergenIcon key={allergen._id} allergen={allergen} size="small" />
           ))}
         </div>

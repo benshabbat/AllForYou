@@ -5,6 +5,8 @@ import api from '../services/api';
 import EditRecipe from "../components/EditRecipe";
 import RatingStars from "../components/RatingStars";
 import CommentSection from "../components/CommentSection";
+import AllergenWarning from "../components/AllergenWarning";
+import IngredientSubstitution from "../components/IngredientSubstitution";
 import styles from "./RecipeDetails.module.css";
 
 function RecipeDetails() {
@@ -77,11 +79,16 @@ function RecipeDetails() {
           
           {recipe.image && <img src={recipe.image} alt={recipe.name} className={styles.recipeImage} />}
 
+          <AllergenWarning allergens={recipe.allergens} />
+
           <section aria-labelledby="ingredients-heading">
             <h2 id="ingredients-heading">Ingredients:</h2>
             <ul>
               {recipe.ingredients?.map((ingredient, index) => (
-                <li key={index}>{ingredient.trim()}</li>
+                <li key={index}>
+                  {ingredient.trim()}
+                  <IngredientSubstitution ingredient={ingredient} />
+                </li>
               ))}
             </ul>
           </section>
@@ -95,20 +102,12 @@ function RecipeDetails() {
             </ol>
           </section>
 
-          <section aria-labelledby="allergens-heading">
-            <h2 id="allergens-heading">Allergens:</h2>
-            <div className={styles.allergenList}>
-              {recipe.allergens?.map(allergen => (
-                <span key={allergen._id} className={styles.allergen}>
-                  {allergen.icon} {allergen.name}
-                </span>
-              ))}
-            </div>
-          </section>
-
-          <section aria-labelledby="alternatives-heading">
-            <h2 id="alternatives-heading">Possible alternatives:</h2>
-            <p>{recipe.alternatives}</p>
+          <section aria-labelledby="nutrition-heading">
+            <h2 id="nutrition-heading">Nutrition Information:</h2>
+            <p>Calories: {recipe.nutritionInfo?.calories || 'N/A'}</p>
+            <p>Protein: {recipe.nutritionInfo?.protein || 'N/A'}g</p>
+            <p>Carbohydrates: {recipe.nutritionInfo?.carbohydrates || 'N/A'}g</p>
+            <p>Fat: {recipe.nutritionInfo?.fat || 'N/A'}g</p>
           </section>
 
           <div className={styles.actionButtons}>

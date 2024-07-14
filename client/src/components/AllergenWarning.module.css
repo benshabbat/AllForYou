@@ -1,0 +1,71 @@
+.allergenWarning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .allergenWarning h3 {
+    color: #856404;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 18px;
+  }
+  
+  .allergenWarning p {
+    color: #856404;
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+  
+  .allergenWarning ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-bottom: 0;
+  }
+  
+  .allergenWarning li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  
+  .allergenWarning li span {
+    margin-left: 10px;
+    font-size: 16px;
+    color: #856404;
+  }
+  
+  /* אנימציה */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .allergenWarning {
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  /* נגישות */
+  .allergenWarning:focus-within {
+    outline: 2px solid #856404;
+    outline-offset: 2px;
+  }
+  
+  /* התאמה למסכים קטנים */
+  @media (max-width: 600px) {
+    .allergenWarning {
+      padding: 10px;
+    }
+  
+    .allergenWarning h3 {
+      font-size: 16px;
+    }
+  
+    .allergenWarning p,
+    .allergenWarning li span {
+      font-size: 14px;
+    }
+  }
