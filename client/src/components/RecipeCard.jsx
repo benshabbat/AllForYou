@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toggleFavorite } from '../store/slices/recipeSlice';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import RatingStars from './RatingStars';
+import AllergenIcon from './AllergenIcon';
 import styles from './RecipeCard.module.css';
 
 const RecipeCard = React.memo(({ recipe }) => {
@@ -57,14 +58,12 @@ const RecipeCard = React.memo(({ recipe }) => {
         </button>
       </div>
       <div className={styles.recipeContent}>
-      <h3 className={styles.recipeTitle}>{recipe.name}</h3>
+        <h3 className={styles.recipeTitle}>{recipe.name}</h3>
         <RatingStars initialRating={recipe.averageRating || 0} readOnly={true} />
         <p className={styles.recipeDescription}>{recipe.description}</p>
         <div className={styles.allergenIcons} aria-label="אלרגנים">
-          {recipe?.allergens?.map(allergen => (
-            <span key={allergen._id} className={styles.allergenIcon} title={allergen.name} role="img" aria-label={allergen.name}>
-              {allergen.icon}
-            </span>
+          {recipe.allergens.map(allergen => (
+            <AllergenIcon key={allergen._id} allergen={allergen} size="small" />
           ))}
         </div>
         <Link to={`/recipe/${recipe._id}`} className={styles.viewRecipeButton}>
