@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUserAllergenPreferences } from '../store/slices/userSlice';
 import { fetchAllergens } from '../store/slices/allergenSlice';
-import AllergenIcon from './AllergenIcon';
+import AllergenIcon from '../components/AllergenIcon';
 import styles from './UserSettings.module.css';
 
 const UserSettings = () => {
