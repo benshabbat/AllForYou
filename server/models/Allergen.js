@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const AllergenSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'שם האלרגן הוא שדה חובה'],
+    required: [true, 'שם האלרגן באנגלית הוא שדה חובה'],
     unique: true,
     trim: true,
     maxlength: [50, 'שם האלרגן לא יכול להיות ארוך מ-50 תווים']
@@ -24,38 +24,41 @@ const AllergenSchema = new mongoose.Schema({
     required: [true, 'תיאור האלרגן הוא שדה חובה'],
     maxlength: [500, 'תיאור האלרגן לא יכול להיות ארוך מ-500 תווים']
   },
-  commonNames: {
+  symptoms: {
     type: [String],
-    validate: [arrayLimit, 'מספר השמות הנפוצים לא יכול לעלות על 10']
+    required: [true, 'יש לציין לפחות תסמין אחד'],
+    validate: [arrayLimit, 'מספר התסמינים לא יכול לעלות על 10']
+  },
+  avoidList: {
+    type: [String],
+    required: [true, 'יש לציין לפחות מאכל אחד להימנעות'],
+    validate: [arrayLimit, 'מספר המאכלים להימנעות לא יכול לעלות על 20']
+  },
+  alternatives: {
+    type: [String],
+    validate: [arrayLimit, 'מספר החלופות לא יכול לעלות על 10']
   },
   severity: {
     type: String,
     enum: ['Low', 'Medium', 'High'],
     default: 'Medium'
   },
-  symptoms: {
-    type: [String],
-    required: [true, 'יש לציין לפחות תסמין אחד'],
-    validate: [arrayLimit, 'מספר התסמינים לא יכול לעלות על 20']
+  createdAt: {
+    type: Date,
+    default: Date.now
   },
-  avoidList: {
-    type: [String],
-    required: [true, 'יש לציין לפחות מאכל אחד להימנעות'],
-    validate: [arrayLimit, 'מספר המאכלים להימנעות לא יכול לעלות על 50']
-  },
-  alternatives: {
-    type: [String],
-    validate: [arrayLimit, 'מספר החלופות לא יכול לעלות על 20']
+  updatedAt: {
+    type: Date,
+    default: Date.now
   }
 }, {
   timestamps: true
 });
 
 function arrayLimit(val) {
-  return val.length <= 50;
+  return val.length <= 20;
 }
 
-// Add text index for better search performance
-AllergenSchema.index({ name: 'text', hebrewName: 'text', description: 'text', commonNames: 'text' });
+AllergenSchema.index({ name: 'text', hebrewName: 'text', description: 'text' });
 
 export default mongoose.model('Allergen', AllergenSchema);
