@@ -71,6 +71,14 @@ function Header() {
               >
                 פרופיל
               </NavLink>
+              <NavLink
+                to="/settings"
+                className={({ isActive }) =>
+                  isActive ? styles.activeLink : styles.navLink
+                }
+              >
+                הגדרות
+              </NavLink>
               <button onClick={handleLogout} className={styles.logoutButton}>
                 התנתק
               </button>
