@@ -3,7 +3,22 @@ import { validateAllergen } from '../utils/validators.js';
 
 export const getAllergens = async (req, res) => {
   try {
-    const allergens = await Allergen.find();
+    const { name, severity } = req.query;
+    let query = {};
+
+    if (name) {
+      query.$or = [
+        { name: { $regex: name, $options: 'i' } },
+        { hebrewName: { $regex: name, $options: 'i' } },
+        { commonNames: { $in: [new RegExp(name, 'i')] } }
+      ];
+    }
+
+    if (severity) {
+      query.severity = severity;
+    }
+
+    const allergens = await Allergen.find(query);
     res.json(allergens);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -44,7 +59,7 @@ export const updateAllergen = async (req, res) => {
   }
 
   try {
-    const updatedAllergen = await Allergen.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updatedAllergen = await Allergen.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!updatedAllergen) {
       return res.status(404).json({ message: 'Allergen not found' });
     }
@@ -61,6 +76,20 @@ export const deleteAllergen = async (req, res) => {
       return res.status(404).json({ message: 'Allergen not found' });
     }
     res.json({ message: 'Allergen deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const searchAllergens = async (req, res) => {
+  try {
+    const { query } = req.query;
+    const allergens = await Allergen.find(
+      { $text: { $search: query } },
+      { score: { $meta: "textScore" } }
+    ).sort({ score: { $meta: "textScore" } });
+
+    res.json(allergens);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
