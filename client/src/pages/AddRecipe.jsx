@@ -3,11 +3,11 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useQuery } from "react-query";
-import { fetchAllergens } from "../services/allergenService";
 import FormField from "../components/FormField";
 import AllergenSelection from "../components/AllergenSelection";
 import { useAddRecipe } from "../hooks/useAddRecipe";
 import styles from "./AddRecipe.module.css";
+import allergenService from '../services/allergenService';
 
 const recipeSchema = yup.object().shape({
   name: yup.string().required("שם המתכון הוא שדה חובה"),
@@ -31,7 +31,7 @@ const AddRecipe = () => {
   });
 
   const mutation = useAddRecipe();
-  const { data: allergens, isLoading: allergensLoading, error: allergensError } = useQuery("allergens", fetchAllergens);
+  const { data: allergens, isLoading: allergensLoading, error: allergensError } = useQuery("allergens", allergenService.fetchAllergens);
 
   const onSubmit = (data) => {
     const formattedData = {
