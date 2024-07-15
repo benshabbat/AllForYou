@@ -23,6 +23,8 @@ const RecipeList = () => {
   if (isLoading) return <Loading message="טוען מתכונים..." />;
   if (error) return <ErrorMessage message={error} />;
 
+  const totalPages = Math.ceil(totalRecipes / RECIPES_PER_PAGE);
+
   return (
     <div className={styles.recipeListContainer}>
       <h1 className={styles.title}>המתכונים שלנו</h1>
@@ -31,16 +33,10 @@ const RecipeList = () => {
         <p className={styles.noRecipes}>לא נמצאו מתכונים.</p>
       ) : (
         <>
-          <div className={styles.recipeGrid} role="list" aria-label="רשימת מתכונים">
-            {recipes.map((recipe) => (
-              <div key={recipe._id} role="listitem">
-                <RecipeCard recipe={recipe} />
-              </div>
-            ))}
-          </div>
+          <RecipeGrid recipes={recipes} />
           <Pagination 
             currentPage={currentPage}
-            totalPages={Math.ceil(totalRecipes / RECIPES_PER_PAGE)}
+            totalPages={totalPages}
             onPageChange={handlePageChange}
           />
         </>
@@ -48,5 +44,15 @@ const RecipeList = () => {
     </div>
   );
 };
+
+const RecipeGrid = ({ recipes }) => (
+  <div className={styles.recipeGrid} role="list" aria-label="רשימת מתכונים">
+    {recipes.map((recipe) => (
+      <div key={recipe._id} role="listitem">
+        <RecipeCard recipe={recipe} />
+      </div>
+    ))}
+  </div>
+);
 
 export default React.memo(RecipeList);
