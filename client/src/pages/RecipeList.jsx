@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { RECIPES_PER_PAGE } from '../constants';
 import RecipeCard from '../components/RecipeCard';
 import AllergenFilter from '../components/AllergenFilter';
 import AdvancedSearch from '../components/AdvancedSearch';
-import Pagination from '../components/Pagination';
 import Loading from '../components/Loading';
 import ErrorMessage from '../components/ErrorMessage';
 import { useRecipeList } from '../hooks/useRecipeList';
@@ -16,15 +15,26 @@ const RecipeList = () => {
   const { allergens } = useAllergens();
   const {
     recipes,
-    totalRecipes,
-    currentPage,
+    hasMore,
     isLoading,
     error,
     handleSearch,
-    handlePageChange,
+    fetchNextPage,
   } = useRecipeList(RECIPES_PER_PAGE);
 
   const filteredRecipes = useRecipeFilter(recipes, allergenFilter);
+
+  const observer = useRef();
+  const lastRecipeElementRef = useCallback(node => {
+    if (isLoading) return;
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        fetchNextPage();
+      }
+    });
+    if (node) observer.current.observe(node);
+  }, [isLoading, hasMore, fetchNextPage]);
 
   const handleFilterChange = useCallback((selectedAllergens) => {
     setAllergenFilter(selectedAllergens);
@@ -38,10 +48,7 @@ const RecipeList = () => {
     handleSearch({ allergens: allergenFilter });
   }, [allergenFilter, handleSearch]);
 
-  if (isLoading) return <Loading message="Loading recipes..." />;
   if (error) return <ErrorMessage message={error} />;
-
-  const totalPages = Math.ceil(totalRecipes / RECIPES_PER_PAGE);
 
   return (
     <div className={styles.recipeListContainer}>
@@ -51,23 +58,17 @@ const RecipeList = () => {
       {filteredRecipes.length === 0 ? (
         <p className={styles.noRecipes}>No recipes found matching your criteria.</p>
       ) : (
-        <>
-          <RecipeGrid recipes={filteredRecipes} />
-          <Pagination 
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-        </>
+        <RecipeGrid recipes={filteredRecipes} lastRecipeElementRef={lastRecipeElementRef} />
       )}
+      {isLoading && <Loading message="Loading more recipes..." />}
     </div>
   );
 };
 
-const RecipeGrid = React.memo(({ recipes }) => (
+const RecipeGrid = React.memo(({ recipes, lastRecipeElementRef }) => (
   <div className={styles.recipeGrid} role="list" aria-label="Recipe list">
-    {recipes.map((recipe) => (
-      <div key={recipe._id} role="listitem">
+    {recipes.map((recipe, index) => (
+      <div key={recipe._id} ref={index === recipes.length - 1 ? lastRecipeElementRef : null} role="listitem">
         <RecipeCard recipe={recipe} />
       </div>
     ))}

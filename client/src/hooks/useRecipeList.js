@@ -1,23 +1,19 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { useQuery } from 'react-query';
 import { fetchRecipes } from '../store/slices/recipeSlice';
-
-// interface Recipe {
-//   _id: string;
-//   // Add other recipe properties here
-// }
-
-// interface SearchParams {
-//   // Define the structure of your search params
-// }
 
 export const useRecipeList = (recipesPerPage) => {
   const dispatch = useDispatch();
-  const [currentPage, setCurrentPage] = useState(1);
+  const [recipes, setRecipes] = useState([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [searchParams, setSearchParams] = useState({});
 
   const fetchRecipesQuery = useCallback(async ({ page, params }) => {
+    setIsLoading(true);
+    setError(null);
     try {
       const result = await dispatch(fetchRecipes({ 
         page, 
@@ -27,35 +23,43 @@ export const useRecipeList = (recipesPerPage) => {
       })).unwrap();
       return result;
     } catch (error) {
-      throw new Error(error.message || 'שגיאה בטעינת המתכונים');
+      setError(error.message || 'שגיאה בטעינת המתכונים');
+      return null;
+    } finally {
+      setIsLoading(false);
     }
   }, [dispatch, recipesPerPage]);
 
-  const { data, isLoading, error } = useQuery(
-    ['recipes', currentPage, searchParams],
-    () => fetchRecipesQuery({ page: currentPage, params: searchParams }),
-    { keepPreviousData: true }
-  );
-
   const handleSearch = useCallback((params) => {
     setSearchParams(params);
-    setCurrentPage(1);
+    setPage(1);
+    setRecipes([]);
+    setHasMore(true);
   }, []);
 
-  const handlePageChange = useCallback((page) => {
-    setCurrentPage(page);
-  }, []);
+  const fetchNextPage = useCallback(() => {
+    if (!isLoading && hasMore) {
+      setPage(prevPage => prevPage + 1);
+    }
+  }, [isLoading, hasMore]);
 
-  const recipes = useMemo(() => data?.recipes || [], [data]);
-  const totalRecipes = useMemo(() => data?.totalRecipes || 0, [data]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await fetchRecipesQuery({ page, params: searchParams });
+      if (result) {
+        setRecipes(prevRecipes => [...prevRecipes, ...result.recipes]);
+        setHasMore(result.recipes.length === recipesPerPage);
+      }
+    };
+    fetchData();
+  }, [page, searchParams, fetchRecipesQuery, recipesPerPage]);
 
   return {
     recipes,
-    totalRecipes,
-    currentPage,
+    hasMore,
     isLoading,
     error,
     handleSearch,
-    handlePageChange,
+    fetchNextPage,
   };
 };
