@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
+import React from "react";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useMutation, useQueryClient, useQuery } from "react-query";
@@ -7,9 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { addRecipe } from "../store/slices/recipeSlice";
 import { fetchAllergens } from "../services/allergenService";
 import { toast } from "react-toastify";
-import AllergenIcon from "../components/AllergenIcon";
+import FormField from "../components/FormField";
 import styles from "./AddRecipe.module.css";
-
 
 const recipeSchema = yup.object().shape({
   name: yup.string().required("שם המתכון הוא שדה חובה"),
@@ -17,9 +16,20 @@ const recipeSchema = yup.object().shape({
   ingredients: yup.string().required("רשימת המרכיבים היא שדה חובה"),
   instructions: yup.string().required("הוראות ההכנה הן שדה חובה"),
   prepTime: yup.number().positive().integer().required("זמן הכנה הוא שדה חובה"),
-  cookTime: yup.number().positive().integer().required("זמן בישול הוא שדה חובה"),
-  servings: yup.number().positive().integer().required("מספר מנות הוא שדה חובה"),
-  difficulty: yup.string().oneOf(["easy", "medium", "hard"]).required("רמת קושי היא שדה חובה"),
+  cookTime: yup
+    .number()
+    .positive()
+    .integer()
+    .required("זמן בישול הוא שדה חובה"),
+  servings: yup
+    .number()
+    .positive()
+    .integer()
+    .required("מספר מנות הוא שדה חובה"),
+  difficulty: yup
+    .string()
+    .oneOf(["easy", "medium", "hard"])
+    .required("רמת קושי היא שדה חובה"),
   allergens: yup.array().of(yup.string()),
   alternatives: yup.string(),
 });
@@ -27,7 +37,7 @@ const recipeSchema = yup.object().shape({
 const useAddRecipeMutation = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  
+
   return useMutation(addRecipe, {
     onSuccess: () => {
       queryClient.invalidateQueries("recipes");
@@ -41,7 +51,11 @@ const useAddRecipeMutation = () => {
 };
 
 const AddRecipe = () => {
-  const { control, handleSubmit, formState: { errors } } = useForm({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(recipeSchema),
     defaultValues: {
       allergens: [],
@@ -49,7 +63,11 @@ const AddRecipe = () => {
   });
 
   const mutation = useAddRecipeMutation();
-  const { data: allergens, isLoading: allergensLoading, error: allergensError } = useQuery("allergens", fetchAllergens);
+  const {
+    data: allergens,
+    isLoading: allergensLoading,
+    error: allergensError,
+  } = useQuery("allergens", fetchAllergens);
 
   useEffect(() => {
     console.log("Allergens loaded:", allergens);
@@ -65,7 +83,8 @@ const AddRecipe = () => {
   };
 
   if (allergensLoading) return <div>טוען אלרגנים...</div>;
-  if (allergensError) return <div>שגיאה בטעינת אלרגנים: {allergensError.message}</div>;
+  if (allergensError)
+    return <div>שגיאה בטעינת אלרגנים: {allergensError.message}</div>;
 
   return (
     <div className={styles.addRecipeContainer}>
@@ -133,7 +152,7 @@ const AddRecipe = () => {
             { value: "hard", label: "קשה" },
           ]}
         />
-     <AllergenSelection
+        <AllergenSelection
           name="allergens"
           control={control}
           label="אלרגנים"
@@ -152,30 +171,6 @@ const AddRecipe = () => {
     </div>
   );
 };
-
-const FormField = ({ name, control, label, error, as = "input", options = [], ...rest }) => (
-  <Controller
-    name={name}
-    control={control}
-    render={({ field }) => (
-      <div className={styles.formGroup}>
-        <label htmlFor={name}>{label}</label>
-        {as === "textarea" ? (
-          <textarea {...field} id={name} {...rest} />
-        ) : as === "select" ? (
-          <select {...field} id={name} {...rest}>
-            {options.map(option => (
-              <option key={option.value} value={option.value}>{option.label}</option>
-            ))}
-          </select>
-        ) : (
-          <input {...field} id={name} {...rest} />
-        )}
-        {error && <span className={styles.error}>{error.message}</span>}
-      </div>
-    )}
-  />
-);
 
 const AllergenSelection = ({ name, control, label, error, allergens }) => (
   <Controller
@@ -213,13 +208,8 @@ const AllergenSelection = ({ name, control, label, error, allergens }) => (
   />
 );
 
-
 const SubmitButton = ({ isLoading }) => (
-  <button
-    type="submit"
-    className={styles.submitButton}
-    disabled={isLoading}
-  >
+  <button type="submit" className={styles.submitButton} disabled={isLoading}>
     {isLoading ? "מוסיף מתכון..." : "הוסף מתכון"}
   </button>
 );
