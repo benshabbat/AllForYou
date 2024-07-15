@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { RECIPES_PER_PAGE } from '../constants';
 import RecipeCard from '../components/RecipeCard';
 import AllergenFilter from '../components/AllergenFilter';
 import AdvancedSearch from '../components/AdvancedSearch';
@@ -9,7 +10,6 @@ import { useRecipeList } from '../hooks/useRecipeList';
 import { useAllergens } from '../hooks/useAllergens';
 import styles from './RecipeList.module.css';
 
-const RECIPES_PER_PAGE = 12;
 
 const RecipeList = () => {
   const [allergenFilter, setAllergenFilter] = useState([]);
