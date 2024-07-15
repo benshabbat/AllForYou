@@ -50,16 +50,6 @@ const allergenSeedData = [
       severity: "High"
     },
     {
-      name: "Shellfish",
-      hebrewName: "פירות ים",
-      icon: "🦐",
-      description: "אלרגיה לפירות ים היא אחת האלרגיות הנפוצות ביותר אצל מבוגרים.",
-      symptoms: ["פריחה", "נפיחות בפה", "קשיי נשימה"],
-      avoidList: ["סרטנים", "לובסטר", "צדפות", "קלמארי"],
-      alternatives: ["דגים (אם אין אלרגיה)", "טופו", "פטריות"],
-      severity: "High"
-    },
-    {
       name: "Soy",
       hebrewName: "סויה",
       icon: "🫘",
