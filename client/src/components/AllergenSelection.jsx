@@ -9,23 +9,24 @@ const AllergenSelection = ({ name, control, label, error, allergens }) => (
     control={control}
     render={({ field }) => (
       <div className={styles.formGroup}>
-        <label className={styles.label}>{label}</label>
-        <div className={styles.allergenGrid}>
+        <label>{label}</label>
+        <div className={styles.checkboxGroup}>
           {allergens.map((allergen) => (
-            <button
-              key={allergen._id}
-              type="button"
-              className={`${styles.allergenButton} ${field.value.includes(allergen._id) ? styles.selected : ''}`}
-              onClick={() => {
-                const updatedAllergens = field.value.includes(allergen._id)
-                  ? field.value.filter(id => id !== allergen._id)
-                  : [...field.value, allergen._id];
-                field.onChange(updatedAllergens);
-              }}
-            >
+            <label key={allergen._id} className={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                value={allergen._id}
+                checked={field.value.includes(allergen._id)}
+                onChange={(e) => {
+                  const updatedAllergens = e.target.checked
+                    ? [...field.value, allergen._id]
+                    : field.value.filter((id) => id !== allergen._id);
+                  field.onChange(updatedAllergens);
+                }}
+              />
               <AllergenIcon allergen={allergen} size="small" />
-              <span className={styles.allergenName}>{allergen.hebrewName}</span>
-            </button>
+              <span>{allergen.hebrewName}</span>
+            </label>
           ))}
         </div>
         {error && <span className={styles.error}>{error.message}</span>}
