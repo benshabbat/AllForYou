@@ -1,30 +1,53 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { toggleFavorite } from '../store/slices/recipeSlice';
+import { useState, useCallback, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
+import { useQuery } from 'react-query';
+import { fetchRecipes } from '../store/slices/recipeSlice';
 
-export const useRecipeCard = (recipe) => {
+const initialSearchParams = {};
+
+export const useRecipeList = (recipesPerPage) => {
   const dispatch = useDispatch();
-  const favorites = useSelector(state => state.recipes.favorites);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchParams, setSearchParams] = useState(initialSearchParams);
 
-  useEffect(() => {
-    setIsFavorite(favorites.includes(recipe._id));
-  }, [favorites, recipe._id]);
-
-  const handleFavoriteClick = useCallback((e) => {
-    e.preventDefault();
-    dispatch(toggleFavorite(recipe._id));
-  }, [dispatch, recipe._id]);
-
-  const handleKeyPress = useCallback((e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      handleFavoriteClick(e);
+  const fetchRecipesQuery = useCallback(async ({ page, params }) => {
+    try {
+      const queryParams = {
+        page,
+        limit: recipesPerPage,
+        ...params,
+        allergens: params.allergens?.join(','),
+      };
+      return await dispatch(fetchRecipes(queryParams)).unwrap();
+    } catch (error) {
+      throw new Error(error.message || 'שגיאה בטעינת המתכונים');
     }
-  }, [handleFavoriteClick]);
+  }, [dispatch, recipesPerPage]);
+
+  const queryKey = ['recipes', currentPage, searchParams];
+  const queryFn = () => fetchRecipesQuery({ page: currentPage, params: searchParams });
+
+  const { data, isLoading, error } = useQuery(queryKey, queryFn, {
+    keepPreviousData: true,
+  });
+
+  const handleSearch = useCallback((params) => {
+    setSearchParams(params);
+    setCurrentPage(1);
+  }, []);
+
+  const handlePageChange = useCallback(setCurrentPage, []);
+
+  const recipes = useMemo(() => data?.recipes || [], [data]);
+  const totalRecipes = useMemo(() => data?.totalRecipes || 0, [data]);
 
   return {
-    isFavorite,
-    handleFavoriteClick,
-    handleKeyPress
+    recipes,
+    totalRecipes,
+    currentPage,
+    isLoading,
+    error,
+    handleSearch,
+    handlePageChange,
   };
 };
