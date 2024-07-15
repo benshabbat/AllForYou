@@ -9,6 +9,7 @@ import ErrorMessage from '../components/ErrorMessage';
 import { useRecipeList } from '../hooks/useRecipeList';
 import { useAllergens } from '../hooks/useAllergens';
 import styles from './RecipeList.module.css';
+import { useRecipeFilter } from '../hooks/useRecipeFilter';
 
 
 const RecipeList = () => {
@@ -24,10 +25,8 @@ const RecipeList = () => {
     handlePageChange,
   } = useRecipeList(RECIPES_PER_PAGE);
 
-  const filteredRecipes = recipes.filter(recipe => 
-    allergenFilter.length === 0 || 
-    !recipe.allergens.some(allergen => allergenFilter.includes(allergen._id))
-  );
+  
+  const filteredRecipes = useRecipeFilter(recipes, allergenFilter);
 
   const handleFilterChange = (selectedAllergens) => {
     setAllergenFilter(selectedAllergens);
