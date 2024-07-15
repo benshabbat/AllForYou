@@ -1,26 +1,78 @@
 .allergenIcon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background-color: #f0f0f0;
-    margin: 0 4px;
-  }
-  
-  .small {
-    width: 24px;
-    height: 24px;
-    font-size: 14px;
-  }
-  
-  .medium {
-    width: 32px;
-    height: 32px;
-    font-size: 18px;
-  }
-  
-  .large {
-    width: 48px;
-    height: 48px;
-    font-size: 24px;
-  }
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.allergenIcon:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.small {
+  width: 24px;
+  height: 24px;
+  font-size: 14px;
+}
+
+.medium {
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+}
+
+.large {
+  width: 48px;
+  height: 48px;
+  font-size: 24px;
+}
+
+.tooltipContent {
+  max-width: 200px;
+}
+
+.tooltipContent h4 {
+  margin: 0 0 5px;
+  font-size: 16px;
+}
+
+.tooltipContent p {
+  margin: 0 0 5px;
+  font-size: 14px;
+}
+
+.severity {
+  font-weight: bold;
+}
+
+.low {
+  color: #4caf50;
+}
+
+.medium {
+  color: #ff9800;
+}
+
+.high {
+  color: #f44336;
+}
+
+/* Accessibility */
+.allergenIcon:focus {
+  outline: 2px solid #4a90e2;
+  outline-offset: 2px;
+}
+
+/* Animation for tooltip */
+@keyframes tooltipFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+[data-tooltip-content] {
+  animation: tooltipFadeIn 0.2s ease-out;
+}

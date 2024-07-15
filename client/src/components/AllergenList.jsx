@@ -1,28 +1,25 @@
 import React from 'react';
-import { useQuery } from 'react-query';
-import api from '../services/api';
+import PropTypes from 'prop-types';
+import AllergenIcon from './AllergenIcon';
 import styles from './AllergenList.module.css';
 
-const fetchAllergens = async () => {
-  const response = await api.get('/allergens');
-  return response.data;
-};
-
-const AllergenList = () => {
-  const { data: allergens, isLoading, error } = useQuery('allergens', fetchAllergens);
-
-  if (isLoading) return <div>טוען אלרגנים...</div>;
-  if (error) return <div>שגיאה בטעינת אלרגנים: {error.message}</div>;
+const AllergenList = ({ allergens, showTooltips = true }) => {
+  if (!allergens || allergens.length === 0) {
+    return null;
+  }
 
   return (
-    <div className={styles.allergenList}>
-      <h2>רשימת אלרגנים</h2>
-      <ul>
+    <div className={styles.allergenList} aria-labelledby="allergens-title">
+      <h4 id="allergens-title" className={styles.allergenTitle}>Allergens:</h4>
+      <ul className={styles.allergenIcons}>
         {allergens.map(allergen => (
           <li key={allergen._id} className={styles.allergenItem}>
-            <span className={styles.allergenIcon}>{allergen.icon}</span>
+            <AllergenIcon 
+              allergen={allergen} 
+              size="small" 
+              showTooltip={showTooltips}
+            />
             <span className={styles.allergenName}>{allergen.hebrewName}</span>
-            <span className={styles.allergenDescription}>{allergen.description}</span>
           </li>
         ))}
       </ul>
@@ -30,4 +27,18 @@ const AllergenList = () => {
   );
 };
 
-export default AllergenList;
+AllergenList.propTypes = {
+  allergens: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      hebrewName: PropTypes.string.isRequired,
+      icon: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+      severity: PropTypes.oneOf(['Low', 'Medium', 'High'])
+    })
+  ).isRequired,
+  showTooltips: PropTypes.bool
+};
+
+export default React.memo(AllergenList);

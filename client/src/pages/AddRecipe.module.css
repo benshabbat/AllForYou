@@ -83,6 +83,9 @@
     text-align: center;
     margin-top: 10px;
   }
+
+
+  
   
   @media (max-width: 768px) {
     .addRecipeContainer {
@@ -110,3 +113,97 @@
   .addRecipeContainer {
     animation: fadeIn 0.5s ease-out;
   }
+
+  .allergenGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.allergenCheckbox {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.allergenCheckbox:hover {
+  background-color: #f0f0f0;
+}
+
+.allergenCheckbox input {
+  margin-right: 5px;
+}
+
+.allergenCheckbox span {
+  margin-left: 5px;
+  font-size: 0.9rem;
+}
+
+/* Accessibility */
+.allergenCheckbox:focus-within {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Animation */
+@keyframes checkboxPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.allergenCheckbox input:checked + span {
+  animation: checkboxPop 0.3s ease;
+}
+.allergenGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.allergenCheckbox {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.allergenCheckbox:hover {
+  background-color: #f0f0f0;
+}
+
+.allergenCheckbox input {
+  margin-right: 5px;
+}
+
+.allergenCheckbox span {
+  margin-left: 5px;
+  font-size: 0.9rem;
+}
+
+/* Accessibility */
+.allergenCheckbox:focus-within {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Animation */
+@keyframes checkboxPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.allergenCheckbox input:checked + span {
+  animation: checkboxPop 0.3s ease;
+}
+

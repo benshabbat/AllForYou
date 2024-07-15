@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useMutation, useQueryClient, useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { addRecipe } from "../store/slices/recipeSlice";
-import { fetchAllergens } from "../services/allergenService"; // וודא שזה הנתיב הנכון
+import { fetchAllergens } from "../services/allergenService";
 import { toast } from "react-toastify";
+import AllergenIcon from "../components/AllergenIcon";
 import styles from "./AddRecipe.module.css";
+
 
 const recipeSchema = yup.object().shape({
   name: yup.string().required("שם המתכון הוא שדה חובה"),
@@ -49,11 +51,16 @@ const AddRecipe = () => {
   const mutation = useAddRecipeMutation();
   const { data: allergens, isLoading: allergensLoading, error: allergensError } = useQuery("allergens", fetchAllergens);
 
+  useEffect(() => {
+    console.log("Allergens loaded:", allergens);
+  }, [allergens]);
+
   const onSubmit = (data) => {
     const formattedData = {
       ...data,
       ingredients: data.ingredients.split("\n"),
     };
+    console.log("Submitting recipe:", formattedData);
     mutation.mutate(formattedData);
   };
 
@@ -70,7 +77,7 @@ const AddRecipe = () => {
           label="שם המתכון"
           error={errors.name}
         />
-<FormField
+        <FormField
           name="description"
           control={control}
           label="תיאור קצר"
@@ -126,7 +133,7 @@ const AddRecipe = () => {
             { value: "hard", label: "קשה" },
           ]}
         />
-        <AllergensField
+     <AllergenSelection
           name="allergens"
           control={control}
           label="אלרגנים"
@@ -170,16 +177,16 @@ const FormField = ({ name, control, label, error, as = "input", options = [], ..
   />
 );
 
-const AllergensField = ({ name, control, label, error, allergens }) => (
+const AllergenSelection = ({ name, control, label, error, allergens }) => (
   <Controller
     name={name}
     control={control}
     render={({ field }) => (
       <div className={styles.formGroup}>
         <label>{label}</label>
-        <div className={styles.checkboxGroup}>
+        <div className={styles.allergenGrid}>
           {allergens.map((allergen) => (
-            <label key={allergen._id} className={styles.checkboxLabel}>
+            <label key={allergen._id} className={styles.allergenCheckbox}>
               <input
                 type="checkbox"
                 value={allergen._id}
@@ -191,7 +198,12 @@ const AllergensField = ({ name, control, label, error, allergens }) => (
                   field.onChange(updatedAllergens);
                 }}
               />
-              {allergen.name}
+              {allergen.icon ? (
+                <AllergenIcon allergen={allergen} size="small" />
+              ) : (
+                <span>{allergen.name}</span>
+              )}
+              <span>{allergen.hebrewName}</span>
             </label>
           ))}
         </div>
@@ -200,6 +212,7 @@ const AllergensField = ({ name, control, label, error, allergens }) => (
     )}
   />
 );
+
 
 const SubmitButton = ({ isLoading }) => (
   <button
