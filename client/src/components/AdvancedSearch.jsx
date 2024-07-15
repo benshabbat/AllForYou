@@ -1,121 +1,133 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useCallback } from "react";
+import { useDispatch } from 'react-redux';
 import { fetchAllergens } from '../store/slices/recipeSlice';
 import AllergenIcon from './AllergenIcon';
+import { useAllergens } from '../hooks/useAllergens';
+import { useSearchForm } from '../hooks/useSearchForm';
 import styles from "./AdvancedSearch.module.css";
 
 const difficultyLevels = ['קל', 'בינוני', 'מאתגר'];
 const categories = ['עיקריות', 'קינוחים', 'סלטים', 'מרקים'];
 
-function AdvancedSearch({ onSearch }) {
+const AdvancedSearch = ({ onSearch }) => {
   const dispatch = useDispatch();
-  const { allergens, allergensLoading, allergensError } = useSelector(state => state.recipes);
-  const [searchParams, setSearchParams] = useState({
-    keyword: '',
-    category: '',
-    allergens: [],
-    difficulty: '',
-  });
+  const { allergens, allergensLoading, allergensError } = useAllergens();
+  const { searchParams, handleChange, handleAllergenToggle, handleSubmit } = useSearchForm(onSearch);
 
-  useEffect(() => {
+  React.useEffect(() => {
     dispatch(fetchAllergens());
   }, [dispatch]);
 
-  const handleChange = useCallback((e) => {
-    const { name, value } = e.target;
-    setSearchParams(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-  }, []);
-
-  const handleAllergenToggle = useCallback((allergenId) => {
-    setSearchParams(prev => ({
-      ...prev,
-      allergens: prev.allergens.includes(allergenId)
-        ? prev.allergens.filter(id => id !== allergenId)
-        : [...prev.allergens, allergenId]
-    }));
-  }, []);
-
-  const handleSubmit = useCallback((e) => {
-    e.preventDefault();
-    onSearch(searchParams);
-  }, [onSearch, searchParams]);
-
   return (
     <form onSubmit={handleSubmit} className={styles.searchForm}>
-      <div className={styles.inputsContainer}>
-        <div className={styles.inputGroup}>
-          <input
-            type="text"
-            name="keyword"
-            value={searchParams.keyword}
-            onChange={handleChange}
-            placeholder="חיפוש לפי מילת מפתח"
-            className={styles.input}
-          />
-        </div>
-        <div className={styles.inputGroup}>
-          <select
-            name="category"
-            value={searchParams.category}
-            onChange={handleChange}
-            className={styles.select}
-          >
-            <option value="">כל הקטגוריות</option>
-            {categories.map(category => (
-              <option key={category} value={category}>{category}</option>
-            ))}
-          </select>
-        </div>
-        <div className={styles.inputGroup}>
-          <select
-            name="difficulty"
-            value={searchParams.difficulty}
-            onChange={handleChange}
-            className={styles.select}
-          >
-            <option value="">כל רמות הקושי</option>
-            {difficultyLevels.map(level => (
-              <option key={level} value={level}>{level}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <div className={styles.allergenGroup}>
-        <span className={styles.allergenLabel}>סנן אלרגנים:</span>
-        <div className={styles.allergenButtons}>
-          {allergensLoading ? (
-            <p>טוען אלרגנים...</p>
-          ) : allergensError ? (
-            <p>שגיאה בטעינת אלרגנים: {allergensError}</p>
-          ) : (
-            allergens.map((allergen) => (
-              <button
-                key={allergen._id}
-                type="button"
-                onClick={() => handleAllergenToggle(allergen._id)}
-                className={`${styles.allergenButton} ${
-                  searchParams.allergens.includes(allergen._id) ? styles.active : ''
-                }`}
-              >
-                <AllergenIcon allergen={allergen} size="small" />
-                <span>{allergen.hebrewName}</span>
-              </button>
-            ))
-          )}
-        </div>
-      </div>
-
-      <div className={styles.searchButtonContainer}>
-        <button type="submit" className={styles.searchButton}>
-          חיפוש
-        </button>
-      </div>
+      <SearchInputs 
+        searchParams={searchParams} 
+        handleChange={handleChange} 
+        categories={categories}
+        difficultyLevels={difficultyLevels}
+      />
+      <AllergenSelection 
+        allergens={allergens} 
+        selectedAllergens={searchParams.allergens}
+        onAllergenToggle={handleAllergenToggle}
+        isLoading={allergensLoading}
+        error={allergensError}
+      />
+      <SearchButton />
     </form>
   );
-}
+};
+
+const SearchInputs = ({ searchParams, handleChange, categories, difficultyLevels }) => (
+  <div className={styles.inputsContainer}>
+    <InputGroup 
+      name="keyword"
+      value={searchParams.keyword}
+      onChange={handleChange}
+      placeholder="חיפוש לפי מילת מפתח"
+    />
+    <SelectGroup 
+      name="category"
+      value={searchParams.category}
+      onChange={handleChange}
+      options={[{ value: "", label: "כל הקטגוריות" }, ...categories.map(c => ({ value: c, label: c }))]}
+    />
+    <SelectGroup 
+      name="difficulty"
+      value={searchParams.difficulty}
+      onChange={handleChange}
+      options={[{ value: "", label: "כל רמות הקושי" }, ...difficultyLevels.map(d => ({ value: d, label: d }))]}
+    />
+  </div>
+);
+
+const InputGroup = ({ name, value, onChange, placeholder }) => (
+  <div className={styles.inputGroup}>
+    <input
+      type="text"
+      name={name}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      className={styles.input}
+    />
+  </div>
+);
+
+const SelectGroup = ({ name, value, onChange, options }) => (
+  <div className={styles.inputGroup}>
+    <select
+      name={name}
+      value={value}
+      onChange={onChange}
+      className={styles.select}
+    >
+      {options.map(option => (
+        <option key={option.value} value={option.value}>{option.label}</option>
+      ))}
+    </select>
+  </div>
+);
+
+const AllergenSelection = ({ allergens, selectedAllergens, onAllergenToggle, isLoading, error }) => (
+  <div className={styles.allergenGroup}>
+    <span className={styles.allergenLabel}>סנן אלרגנים:</span>
+    <div className={styles.allergenButtons}>
+      {isLoading ? (
+        <p>טוען אלרגנים...</p>
+      ) : error ? (
+        <p>שגיאה בטעינת אלרגנים: {error}</p>
+      ) : (
+        allergens.map((allergen) => (
+          <AllergenButton 
+            key={allergen._id}
+            allergen={allergen}
+            isSelected={selectedAllergens.includes(allergen._id)}
+            onToggle={() => onAllergenToggle(allergen._id)}
+          />
+        ))
+      )}
+    </div>
+  </div>
+);
+
+const AllergenButton = ({ allergen, isSelected, onToggle }) => (
+  <button
+    type="button"
+    onClick={onToggle}
+    className={`${styles.allergenButton} ${isSelected ? styles.active : ''}`}
+  >
+    <AllergenIcon allergen={allergen} size="small" />
+    <span>{allergen.hebrewName}</span>
+  </button>
+);
+
+const SearchButton = () => (
+  <div className={styles.searchButtonContainer}>
+    <button type="submit" className={styles.searchButton}>
+      חיפוש
+    </button>
+  </div>
+);
 
 export default React.memo(AdvancedSearch);
