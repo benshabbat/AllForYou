@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { RECIPES_PER_PAGE } from '../constants';
 import RecipeCard from '../components/RecipeCard';
 import AllergenFilter from '../components/AllergenFilter';
@@ -10,7 +10,6 @@ import { useRecipeList } from '../hooks/useRecipeList';
 import { useAllergens } from '../hooks/useAllergens';
 import styles from './RecipeList.module.css';
 import { useRecipeFilter } from '../hooks/useRecipeFilter';
-
 
 const RecipeList = () => {
   const [allergenFilter, setAllergenFilter] = useState([]);
@@ -25,16 +24,15 @@ const RecipeList = () => {
     handlePageChange,
   } = useRecipeList(RECIPES_PER_PAGE);
 
-  
   const filteredRecipes = useRecipeFilter(recipes, allergenFilter);
 
-  const handleFilterChange = (selectedAllergens) => {
+  const handleFilterChange = useCallback((selectedAllergens) => {
     setAllergenFilter(selectedAllergens);
-  };
+  }, []);
 
-  const handleSearchWithAllergens = (searchParams) => {
+  const handleSearchWithAllergens = useCallback((searchParams) => {
     handleSearch({ ...searchParams, allergens: allergenFilter });
-  };
+  }, [handleSearch, allergenFilter]);
 
   useEffect(() => {
     handleSearch({ allergens: allergenFilter });
@@ -66,7 +64,7 @@ const RecipeList = () => {
   );
 };
 
-const RecipeGrid = ({ recipes }) => (
+const RecipeGrid = React.memo(({ recipes }) => (
   <div className={styles.recipeGrid} role="list" aria-label="Recipe list">
     {recipes.map((recipe) => (
       <div key={recipe._id} role="listitem">
@@ -74,6 +72,6 @@ const RecipeGrid = ({ recipes }) => (
       </div>
     ))}
   </div>
-);
+));
 
 export default React.memo(RecipeList);
