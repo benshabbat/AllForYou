@@ -137,6 +137,18 @@ export const fetchAllergens = createAsyncThunk(
   }
 );
 
+export const fetchFavorites = createAsyncThunk(
+  'recipes/fetchFavorites',
+  async (_, thunkAPI) => {
+    try {
+      const response = await api.get('/users/favorites');
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch favorites');
+    }
+  }
+);
+
 const recipeSlice = createSlice({
   name: 'recipes',
   initialState,
@@ -202,6 +214,17 @@ const recipeSlice = createSlice({
       .addCase(fetchAllergens.rejected, (state, action) => {
         state.allergensLoading = false;
         state.allergensError = action.payload;
+      })
+      .addCase(fetchFavorites.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchFavorites.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.favorites = action.payload;
+      })
+      .addCase(fetchFavorites.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
       });
   },
 });
