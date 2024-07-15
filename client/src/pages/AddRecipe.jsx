@@ -1,49 +1,32 @@
-import React,{useCallback} from "react";
+import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient, useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { addRecipe } from "../store/slices/recipeSlice";
+import { fetchAllergens } from "../services/allergenService"; // וודא שזה הנתיב הנכון
 import { toast } from "react-toastify";
 import styles from "./AddRecipe.module.css";
 
-const schema = yup.object().shape({
+const recipeSchema = yup.object().shape({
   name: yup.string().required("שם המתכון הוא שדה חובה"),
   description: yup.string().required("תיאור קצר הוא שדה חובה"),
   ingredients: yup.string().required("רשימת המרכיבים היא שדה חובה"),
   instructions: yup.string().required("הוראות ההכנה הן שדה חובה"),
   prepTime: yup.number().positive().integer().required("זמן הכנה הוא שדה חובה"),
-  cookTime: yup
-    .number()
-    .positive()
-    .integer()
-    .required("זמן בישול הוא שדה חובה"),
-  servings: yup
-    .number()
-    .positive()
-    .integer()
-    .required("מספר מנות הוא שדה חובה"),
-  difficulty: yup
-    .string()
-    .oneOf(["easy", "medium", "hard"])
-    .required("רמת קושי היא שדה חובה"),
-  allergens: yup.string(),
+  cookTime: yup.number().positive().integer().required("זמן בישול הוא שדה חובה"),
+  servings: yup.number().positive().integer().required("מספר מנות הוא שדה חובה"),
+  difficulty: yup.string().oneOf(["easy", "medium", "hard"]).required("רמת קושי היא שדה חובה"),
+  allergens: yup.array().of(yup.string()),
   alternatives: yup.string(),
 });
 
-function AddRecipe() {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(schema),
-  });
-
-  const navigate = useNavigate();
+const useAddRecipeMutation = () => {
   const queryClient = useQueryClient();
-  const mutation = useMutation(addRecipe, {
+  const navigate = useNavigate();
+  
+  return useMutation(addRecipe, {
     onSuccess: () => {
       queryClient.invalidateQueries("recipes");
       toast.success("המתכון נוסף בהצלחה");
@@ -53,195 +36,179 @@ function AddRecipe() {
       toast.error(`שגיאה בהוספת המתכון: ${error.message}`);
     },
   });
+};
 
-  const onSubmit = useCallback((data) => {
+const AddRecipe = () => {
+  const { control, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(recipeSchema),
+    defaultValues: {
+      allergens: [],
+    },
+  });
+
+  const mutation = useAddRecipeMutation();
+  const { data: allergens, isLoading: allergensLoading, error: allergensError } = useQuery("allergens", fetchAllergens);
+
+  const onSubmit = (data) => {
     const formattedData = {
       ...data,
       ingredients: data.ingredients.split("\n"),
-      allergens: data.allergens
-        ? data.allergens.split(",").map((item) => item.trim())
-        : [],
     };
     mutation.mutate(formattedData);
-  }, [mutation]);
+  };
 
+  if (allergensLoading) return <div>טוען אלרגנים...</div>;
+  if (allergensError) return <div>שגיאה בטעינת אלרגנים: {allergensError.message}</div>;
 
   return (
     <div className={styles.addRecipeContainer}>
       <h2 className={styles.title}>הוספת מתכון חדש</h2>
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-        <Controller
+        <FormField
           name="name"
           control={control}
-          render={({ field }) => (
-            <div className={styles.formGroup}>
-              <label htmlFor="name">שם המתכון</label>
-              <input {...field} id="name" type="text" />
-              {errors.name && (
-                <span className={styles.error}>{errors.name.message}</span>
-              )}
-            </div>
-          )}
+          label="שם המתכון"
+          error={errors.name}
         />
-
-        <Controller
+<FormField
           name="description"
           control={control}
-          render={({ field }) => (
-            <div className={styles.formGroup}>
-              <label htmlFor="description">תיאור קצר</label>
-              <textarea {...field} id="description" />
-              {errors.description && (
-                <span className={styles.error}>
-                  {errors.description.message}
-                </span>
-              )}
-            </div>
-          )}
+          label="תיאור קצר"
+          error={errors.description}
+          as="textarea"
         />
-
-        <Controller
+        <FormField
           name="ingredients"
           control={control}
-          render={({ field }) => (
-            <div className={styles.formGroup}>
-              <label htmlFor="ingredients">מרכיבים (כל מרכיב בשורה חדשה)</label>
-              <textarea {...field} id="ingredients" />
-              {errors.ingredients && (
-                <span className={styles.error}>
-                  {errors.ingredients.message}
-                </span>
-              )}
-            </div>
-          )}
+          label="מרכיבים (כל מרכיב בשורה חדשה)"
+          error={errors.ingredients}
+          as="textarea"
         />
-
-        <Controller
+        <FormField
           name="instructions"
           control={control}
-          render={({ field }) => (
-            <div className={styles.formGroup}>
-              <label htmlFor="instructions">הוראות הכנה</label>
-              <textarea {...field} id="instructions" />
-              {errors.instructions && (
-                <span className={styles.error}>
-                  {errors.instructions.message}
-                </span>
-              )}
-            </div>
-          )}
+          label="הוראות הכנה"
+          error={errors.instructions}
+          as="textarea"
         />
-
         <div className={styles.formRow}>
-          <Controller
+          <FormField
             name="prepTime"
             control={control}
-            render={({ field }) => (
-              <div className={styles.formGroup}>
-                <label htmlFor="prepTime">זמן הכנה (דקות)</label>
-                <input {...field} id="prepTime" type="number" />
-                {errors.prepTime && (
-                  <span className={styles.error}>
-                    {errors.prepTime.message}
-                  </span>
-                )}
-              </div>
-            )}
+            label="זמן הכנה (דקות)"
+            error={errors.prepTime}
+            type="number"
           />
-
-          <Controller
+          <FormField
             name="cookTime"
             control={control}
-            render={({ field }) => (
-              <div className={styles.formGroup}>
-                <label htmlFor="cookTime">זמן בישול (דקות)</label>
-                <input {...field} id="cookTime" type="number" />
-                {errors.cookTime && (
-                  <span className={styles.error}>
-                    {errors.cookTime.message}
-                  </span>
-                )}
-              </div>
-            )}
+            label="זמן בישול (דקות)"
+            error={errors.cookTime}
+            type="number"
           />
-
-          <Controller
+          <FormField
             name="servings"
             control={control}
-            render={({ field }) => (
-              <div className={styles.formGroup}>
-                <label htmlFor="servings">מספר מנות</label>
-                <input {...field} id="servings" type="number" />
-                {errors.servings && (
-                  <span className={styles.error}>
-                    {errors.servings.message}
-                  </span>
-                )}
-              </div>
-            )}
+            label="מספר מנות"
+            error={errors.servings}
+            type="number"
           />
         </div>
-
-        <Controller
+        <FormField
           name="difficulty"
           control={control}
-          render={({ field }) => (
-            <div className={styles.formGroup}>
-              <label htmlFor="difficulty">רמת קושי</label>
-              <select {...field} id="difficulty">
-                <option value="easy">קל</option>
-                <option value="medium">בינוני</option>
-                <option value="hard">קשה</option>
-              </select>
-              {errors.difficulty && (
-                <span className={styles.error}>
-                  {errors.difficulty.message}
-                </span>
-              )}
-            </div>
-          )}
+          label="רמת קושי"
+          error={errors.difficulty}
+          as="select"
+          options={[
+            { value: "easy", label: "קל" },
+            { value: "medium", label: "בינוני" },
+            { value: "hard", label: "קשה" },
+          ]}
         />
-
-        <Controller
+        <AllergensField
           name="allergens"
           control={control}
-          render={({ field }) => (
-            <div className={styles.formGroup}>
-              <label htmlFor="allergens">אלרגנים (מופרדים בפסיקים)</label>
-              <input {...field} id="allergens" type="text" />
-              {errors.allergens && (
-                <span className={styles.error}>{errors.allergens.message}</span>
-              )}
-            </div>
-          )}
+          label="אלרגנים"
+          error={errors.allergens}
+          allergens={allergens || []}
         />
-
-        <Controller
+        <FormField
           name="alternatives"
           control={control}
-          render={({ field }) => (
-            <div className={styles.formGroup}>
-              <label htmlFor="alternatives">חלופות</label>
-              <textarea {...field} id="alternatives" />
-              {errors.alternatives && (
-                <span className={styles.error}>
-                  {errors.alternatives.message}
-                </span>
-              )}
-            </div>
-          )}
+          label="חלופות"
+          error={errors.alternatives}
+          as="textarea"
         />
-
-        <button
-          type="submit"
-          className={styles.submitButton}
-          disabled={mutation.isLoading}
-        >
-          {mutation.isLoading ? "מוסיף מתכון..." : "הוסף מתכון"}
-        </button>
+        <SubmitButton isLoading={mutation.isLoading} />
       </form>
     </div>
   );
-}
+};
+
+const FormField = ({ name, control, label, error, as = "input", options = [], ...rest }) => (
+  <Controller
+    name={name}
+    control={control}
+    render={({ field }) => (
+      <div className={styles.formGroup}>
+        <label htmlFor={name}>{label}</label>
+        {as === "textarea" ? (
+          <textarea {...field} id={name} {...rest} />
+        ) : as === "select" ? (
+          <select {...field} id={name} {...rest}>
+            {options.map(option => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
+          </select>
+        ) : (
+          <input {...field} id={name} {...rest} />
+        )}
+        {error && <span className={styles.error}>{error.message}</span>}
+      </div>
+    )}
+  />
+);
+
+const AllergensField = ({ name, control, label, error, allergens }) => (
+  <Controller
+    name={name}
+    control={control}
+    render={({ field }) => (
+      <div className={styles.formGroup}>
+        <label>{label}</label>
+        <div className={styles.checkboxGroup}>
+          {allergens.map((allergen) => (
+            <label key={allergen._id} className={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                value={allergen._id}
+                checked={field.value.includes(allergen._id)}
+                onChange={(e) => {
+                  const updatedAllergens = e.target.checked
+                    ? [...field.value, allergen._id]
+                    : field.value.filter((id) => id !== allergen._id);
+                  field.onChange(updatedAllergens);
+                }}
+              />
+              {allergen.name}
+            </label>
+          ))}
+        </div>
+        {error && <span className={styles.error}>{error.message}</span>}
+      </div>
+    )}
+  />
+);
+
+const SubmitButton = ({ isLoading }) => (
+  <button
+    type="submit"
+    className={styles.submitButton}
+    disabled={isLoading}
+  >
+    {isLoading ? "מוסיף מתכון..." : "הוסף מתכון"}
+  </button>
+);
 
 export default React.memo(AddRecipe);
