@@ -1,7 +1,8 @@
 import React, { useEffect, lazy, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Provider, useDispatch } from 'react-redux';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { store } from './store/index.js';
 import { loadUser, setInitialized } from './store/slices/authSlice';
 import Header from './components/Header';
@@ -28,6 +29,7 @@ const FavoritesPage = lazy(() => import('./pages/FavoritesPage'));
 function AppContent() {
   const dispatch = useDispatch();
   const { isLoading } = useAuth();
+  const location = useLocation();
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -54,26 +56,28 @@ function AppContent() {
   }
 
   return (
-    <Router>
-      <ErrorBoundary>
-        <Header />
-        <Suspense fallback={<Loading />}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/recipes" element={<RecipeList />} />
-            <Route path="/recipe/:id" element={<RecipeDetails />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/add-recipe" element={<PrivateRoute><AddRecipe /></PrivateRoute>} />
-            <Route path="/profile" element={<PrivateRoute><UserProfile /></PrivateRoute>} />
-            <Route path="/my-recipes" element={<PrivateRoute><MyRecipes /></PrivateRoute>} />
-            <Route path="/settings" element={<PrivateRoute><UserSettings /></PrivateRoute>} />
-            <Route path="/favorites" element={<PrivateRoute><FavoritesPage /></PrivateRoute>} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
-      </ErrorBoundary>
-    </Router>
+    <ErrorBoundary>
+      <Header />
+      <TransitionGroup>
+        <CSSTransition key={location.pathname} classNames="fade" timeout={300}>
+          <Suspense fallback={<Loading />}>
+            <Routes location={location}>
+              <Route path="/" element={<Home />} />
+              <Route path="/recipes" element={<RecipeList />} />
+              <Route path="/recipe/:id" element={<RecipeDetails />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/add-recipe" element={<PrivateRoute><AddRecipe /></PrivateRoute>} />
+              <Route path="/profile" element={<PrivateRoute><UserProfile /></PrivateRoute>} />
+              <Route path="/my-recipes" element={<PrivateRoute><MyRecipes /></PrivateRoute>} />
+              <Route path="/settings" element={<PrivateRoute><UserSettings /></PrivateRoute>} />
+              <Route path="/favorites" element={<PrivateRoute><FavoritesPage /></PrivateRoute>} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
+        </CSSTransition>
+      </TransitionGroup>
+    </ErrorBoundary>
   );
 }
 
@@ -81,7 +85,9 @@ function App() {
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        <AppContent />
+        <Router>
+          <AppContent />
+        </Router>
       </QueryClientProvider>
     </Provider>
   );
