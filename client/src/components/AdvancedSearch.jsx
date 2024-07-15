@@ -1,13 +1,12 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { useDispatch } from 'react-redux';
 import { fetchAllergens } from '../store/slices/recipeSlice';
 import AllergenIcon from './AllergenIcon';
 import { useAllergens } from '../hooks/useAllergens';
 import { useSearchForm } from '../hooks/useSearchForm';
+import SearchInputs from '../components/SearchInputs';
+import { CATEGORIES, DIFFICULTY_LEVELS } from '../constants';
 import styles from "./AdvancedSearch.module.css";
-
-const difficultyLevels = ['קל', 'בינוני', 'מאתגר'];
-const categories = ['עיקריות', 'קינוחים', 'סלטים', 'מרקים'];
 
 const AdvancedSearch = ({ onSearch }) => {
   const dispatch = useDispatch();
@@ -23,8 +22,8 @@ const AdvancedSearch = ({ onSearch }) => {
       <SearchInputs 
         searchParams={searchParams} 
         handleChange={handleChange} 
-        categories={categories}
-        difficultyLevels={difficultyLevels}
+        categories={CATEGORIES}
+        difficultyLevels={DIFFICULTY_LEVELS}
       />
       <AllergenSelection 
         allergens={allergens} 
@@ -38,28 +37,7 @@ const AdvancedSearch = ({ onSearch }) => {
   );
 };
 
-const SearchInputs = ({ searchParams, handleChange, categories, difficultyLevels }) => (
-  <div className={styles.inputsContainer}>
-    <InputGroup 
-      name="keyword"
-      value={searchParams.keyword}
-      onChange={handleChange}
-      placeholder="חיפוש לפי מילת מפתח"
-    />
-    <SelectGroup 
-      name="category"
-      value={searchParams.category}
-      onChange={handleChange}
-      options={[{ value: "", label: "כל הקטגוריות" }, ...categories.map(c => ({ value: c, label: c }))]}
-    />
-    <SelectGroup 
-      name="difficulty"
-      value={searchParams.difficulty}
-      onChange={handleChange}
-      options={[{ value: "", label: "כל רמות הקושי" }, ...difficultyLevels.map(d => ({ value: d, label: d }))]}
-    />
-  </div>
-);
+
 
 const InputGroup = ({ name, value, onChange, placeholder }) => (
   <div className={styles.inputGroup}>
