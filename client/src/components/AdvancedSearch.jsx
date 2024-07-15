@@ -38,35 +38,6 @@ const AdvancedSearch = ({ onSearch }) => {
 };
 
 
-
-const InputGroup = ({ name, value, onChange, placeholder }) => (
-  <div className={styles.inputGroup}>
-    <input
-      type="text"
-      name={name}
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      className={styles.input}
-    />
-  </div>
-);
-
-const SelectGroup = ({ name, value, onChange, options }) => (
-  <div className={styles.inputGroup}>
-    <select
-      name={name}
-      value={value}
-      onChange={onChange}
-      className={styles.select}
-    >
-      {options.map(option => (
-        <option key={option.value} value={option.value}>{option.label}</option>
-      ))}
-    </select>
-  </div>
-);
-
 const AllergenSelection = ({ allergens, selectedAllergens, onAllergenToggle, isLoading, error }) => (
   <div className={styles.allergenGroup}>
     <span className={styles.allergenLabel}>סנן אלרגנים:</span>

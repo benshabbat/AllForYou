@@ -26,7 +26,7 @@ const UserSettings = lazy(() => import('./pages/UserSettings'));
 
 function AppContent() {
   const dispatch = useDispatch();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isLoading } = useAuth();
 
   useEffect(() => {
     const initializeAuth = async () => {

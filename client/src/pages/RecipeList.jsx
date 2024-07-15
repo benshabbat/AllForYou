@@ -38,7 +38,7 @@ const RecipeList = () => {
 
   useEffect(() => {
     handleSearch({ allergens: allergenFilter });
-  }, [allergenFilter]);
+  }, [allergenFilter, handleSearch]);
 
   if (isLoading) return <Loading message="Loading recipes..." />;
   if (error) return <ErrorMessage message={error} />;
