@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import RatingStars from './RatingStars';
@@ -6,8 +6,12 @@ import AllergenIcon from './AllergenIcon';
 import { useRecipeCard } from '../hooks/useRecipeCard';
 import styles from './RecipeCard.module.css';
 
-const RecipeCard = ({ recipe }) => {
+const RecipeCard = React.memo(({ recipe }) => {
   const { isFavorite, imageLoaded, handleFavoriteClick, handleKeyPress } = useRecipeCard(recipe);
+
+  const allergenList = useMemo(() => (
+    <AllergenList allergens={recipe.allergens} />
+  ), [recipe.allergens]);
 
   return (
     <div className={styles.recipeCard} role="article">
@@ -21,14 +25,14 @@ const RecipeCard = ({ recipe }) => {
         <h3 className={styles.recipeTitle}>{recipe.name}</h3>
         <RatingStars initialRating={recipe.averageRating || 0} readOnly={true} />
         <p className={styles.recipeDescription}>{recipe.description}</p>
-        <AllergenList allergens={recipe.allergens} />
+        {allergenList}
         <Link to={`/recipe/${recipe._id}`} className={styles.viewRecipeButton}>
           צפה במתכון
         </Link>
       </div>
     </div>
   );
-};
+});
 
 const RecipeImage = ({ image, name, imageLoaded }) => (
   <div className={styles.imageContainer}>
