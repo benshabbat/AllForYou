@@ -139,3 +139,30 @@ export const updateAllergenPreferences = async (req, res) => {
     res.status(500).json({ message: 'שגיאה בעדכון העדפות האלרגנים' });
   }
 };
+
+export const updateUserProfile = async (req, res) => {
+  try {
+    const { username, email, bio } = req.body;
+    
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'משתמש לא נמצא' });
+    }
+
+    if (username) user.username = username;
+    if (email) user.email = email;
+    if (bio !== undefined) user.bio = bio;
+
+    await user.save();
+
+    // שליחת המשתמש המעודכן בחזרה, ללא הסיסמה
+    const userResponse = user.toObject();
+    delete userResponse.password;
+
+    res.json({ message: 'פרופיל המשתמש עודכן בהצלחה', user: userResponse });
+  } catch (error) {
+    console.error('Update user profile error:', error);
+    res.status(500).json({ message: 'שגיאה בעדכון פרופיל המשתמש' });
+  }
+};

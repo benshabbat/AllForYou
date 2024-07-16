@@ -1,6 +1,14 @@
-import express from 'express';
-import { register, login, getMe,toggleFavoriteRecipe,getFavoriteRecipes } from '../controllers/userController.js';
-import { protect } from '../middleware/authMiddleware.js';
+import express from "express";
+import {
+  register,
+  login,
+  getMe,
+  toggleFavoriteRecipe,
+  getFavoriteRecipes,
+  updateAllergenPreferences,
+  updateUserProfile,
+} from "../controllers/userController.js";
+import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -10,7 +18,7 @@ const router = express.Router();
  * @access  Public
  * @body    { username, email, password }
  */
-router.post('/register', register);
+router.post("/register", register);
 
 /**
  * @route   POST /api/users/login
@@ -18,16 +26,18 @@ router.post('/register', register);
  * @access  Public
  * @body    { email, password }
  */
-router.post('/login', login);
+router.post("/login", login);
 
 /**
  * @route   GET /api/users/me
  * @desc    Get current user's profile
  * @access  Private
  */
-router.get('/me', protect, getMe);
+router.get("/me", protect, getMe);
 
-router.post('/favorites/:recipeId', protect, toggleFavoriteRecipe);
-router.get('/favorites', protect, getFavoriteRecipes);
+router.post("/favorites/:recipeId", protect, toggleFavoriteRecipe);
+router.get("/favorites", protect, getFavoriteRecipes);
 
+router.put("/allergen-preferences", protect, updateAllergenPreferences);
+router.put("/profile", protect, updateUserProfile);
 export default router;

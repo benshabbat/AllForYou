@@ -10,18 +10,25 @@ const AllergenList = ({ allergens, showTooltips = true }) => {
 
   return (
     <div className={styles.allergenList} aria-labelledby="allergens-title">
-      <h4 id="allergens-title" className={styles.allergenTitle}>Allergens:</h4>
+      <h4 id="allergens-title" className={styles.allergenTitle}>אלרגנים:</h4>
       <ul className={styles.allergenIcons}>
-        {allergens.map(allergen => (
-          <li key={allergen._id} className={styles.allergenItem}>
-            <AllergenIcon 
-              allergen={allergen} 
-              size="small" 
-              showTooltip={showTooltips}
-            />
-            <span className={styles.allergenName}>{allergen.hebrewName}</span>
-          </li>
-        ))}
+        {allergens.map(allergen => {
+          // בדיקה אם allergen הוא מחרוזת או אובייקט
+          const allergenObject = typeof allergen === 'string' 
+            ? { _id: allergen, name: allergen, hebrewName: allergen } 
+            : allergen;
+          
+          return (
+            <li key={allergenObject._id} className={styles.allergenItem}>
+              <AllergenIcon 
+                allergen={allergenObject} 
+                size="small" 
+                showTooltip={showTooltips}
+              />
+              <span className={styles.allergenName}>{allergenObject.hebrewName}</span>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
@@ -29,14 +36,17 @@ const AllergenList = ({ allergens, showTooltips = true }) => {
 
 AllergenList.propTypes = {
   allergens: PropTypes.arrayOf(
-    PropTypes.shape({
-      _id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      hebrewName: PropTypes.string.isRequired,
-      icon: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
-      severity: PropTypes.oneOf(['Low', 'Medium', 'High'])
-    })
+    PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.shape({
+        _id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        hebrewName: PropTypes.string.isRequired,
+        icon: PropTypes.string,
+        description: PropTypes.string,
+        severity: PropTypes.oneOf(['Low', 'Medium', 'High'])
+      })
+    ])
   ).isRequired,
   showTooltips: PropTypes.bool
 };

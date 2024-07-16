@@ -50,6 +50,7 @@ export const fetchUserRecipes = createAsyncThunk(
   }
 );
 
+
 export const rateRecipe = createAsyncThunk(
   'recipes/rateRecipe',
   async ({ recipeId, rating }, thunkAPI) => {

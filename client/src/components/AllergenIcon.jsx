@@ -4,8 +4,13 @@ import { Tooltip } from 'react-tooltip';
 import styles from './AllergenIcon.module.css';
 
 const AllergenIcon = ({ allergen, size = 'medium', showTooltip = true }) => {
+  // בדיקה אם allergen הוא מחרוזת או אובייקט
+  const allergenObject = typeof allergen === 'string' 
+    ? { _id: allergen, name: allergen, hebrewName: allergen, icon: '❓' } 
+    : allergen;
+
   const iconClass = `${styles.allergenIcon} ${styles[size]}`;
-  const iconId = `allergen-icon-${allergen._id}`;
+  const iconId = `allergen-icon-${allergenObject._id}`;
 
   return (
     <>
@@ -13,19 +18,19 @@ const AllergenIcon = ({ allergen, size = 'medium', showTooltip = true }) => {
         id={iconId}
         className={iconClass} 
         role="img" 
-        aria-label={`${allergen.name} allergen`}
-        data-tooltip-id={showTooltip ? `tooltip-${allergen._id}` : undefined}
+        aria-label={`${allergenObject.name} allergen`}
+        data-tooltip-id={showTooltip ? `tooltip-${allergenObject._id}` : undefined}
       >
-        {allergen.icon}
+        {allergenObject.icon || '❓'}
       </span>
       {showTooltip && (
-        <Tooltip id={`tooltip-${allergen._id}`} place="top" effect="solid">
+        <Tooltip id={`tooltip-${allergenObject._id}`} place="top" effect="solid">
           <div className={styles.tooltipContent}>
-            <h4>{allergen.hebrewName} ({allergen.name})</h4>
-            <p>{allergen.description}</p>
-            {allergen.severity && (
+            <h4>{allergenObject.hebrewName} ({allergenObject.name})</h4>
+            <p>{allergenObject.description || 'אין תיאור'}</p>
+            {allergenObject.severity && (
               <p className={styles.severity}>
-                Severity: <span className={styles[allergen.severity.toLowerCase()]}>{allergen.severity}</span>
+                חומרה: <span className={styles[allergenObject.severity.toLowerCase()]}>{allergenObject.severity}</span>
               </p>
             )}
           </div>
@@ -36,14 +41,17 @@ const AllergenIcon = ({ allergen, size = 'medium', showTooltip = true }) => {
 };
 
 AllergenIcon.propTypes = {
-  allergen: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    hebrewName: PropTypes.string.isRequired,
-    icon: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-    severity: PropTypes.oneOf(['Low', 'Medium', 'High'])
-  }).isRequired,
+  allergen: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      hebrewName: PropTypes.string.isRequired,
+      icon: PropTypes.string,
+      description: PropTypes.string,
+      severity: PropTypes.oneOf(['Low', 'Medium', 'High'])
+    })
+  ]).isRequired,
   size: PropTypes.oneOf(['small', 'medium', 'large']),
   showTooltip: PropTypes.bool
 };

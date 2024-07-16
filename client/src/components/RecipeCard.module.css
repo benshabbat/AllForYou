@@ -7,6 +7,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  direction: rtl;
 }
 
 .recipeCard:hover {
@@ -20,6 +21,7 @@
   overflow: hidden;
   border-radius: var(--border-radius) var(--border-radius) 0 0;
   margin-bottom: 15px;
+  position: relative;
 }
 
 .recipeImage {
@@ -36,6 +38,22 @@
   justify-content: center;
   background-color: #f0f0f0;
   color: #666;
+}
+
+.favoriteButton {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
+  border-radius: 50%;
+  padding: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.favoriteButton:hover {
+  background-color: rgba(255, 255, 255, 1);
 }
 
 .recipeContent {
@@ -56,25 +74,29 @@
   flex-grow: 1;
 }
 
-.recipeDetails {
+.recipeInfo {
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
   font-size: 0.9rem;
 }
 
-.allergenIcons {
+.recipeInfo span {
   display: flex;
-  gap: 5px;
-  margin-top: 10px;
+  align-items: center;
 }
 
-.allergenIcon {
-  font-size: 20px;
-  color: #555;
+.recipeInfo svg {
+  margin-left: 5px;
 }
 
-.viewRecipeButton {
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.viewRecipeButton, .editRecipeButton {
   display: inline-block;
   background-color: var(--primary-color);
   color: white;
@@ -85,6 +107,14 @@
   text-align: center;
 }
 
-.viewRecipeButton:hover {
+.viewRecipeButton:hover, .editRecipeButton:hover {
   background-color: #3a7bd5;
+}
+
+.editRecipeButton {
+  background-color: #4CAF50;
+}
+
+.editRecipeButton:hover {
+  background-color: #45a049;
 }

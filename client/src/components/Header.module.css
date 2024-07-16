@@ -1,10 +1,11 @@
 .header {
-  background: linear-gradient(135deg, #6dd5ed, #2193b0); /* שינוי הגרדיאנט לגוונים פחות רוויים */
-  padding: 1.5rem 0; /* הגדלת המרווח העליון והתחתון */
+  background: linear-gradient(135deg, #6dd5ed, #2193b0);
+  padding: 1.5rem 0;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 1000;
+  direction: rtl;
 }
 
 .container {
@@ -13,19 +14,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 1.5rem; /* הגדלת המרווח האופקי */
+  padding: 0 1.5rem;
 }
 
-/* עיצוב הלוגו */
 .logo {
   display: flex;
   align-items: center;
   color: #ffffff;
-  font-size: 1.6rem; /* הגדלת גודל הלוגו */
+  font-size: 1.6rem;
   font-weight: bold;
   text-decoration: none;
   transition: transform 0.3s ease;
-  margin-right: 1rem; /* הוספת מרווח ימני לאיקון הלוגו */
+  margin-left: 1rem;
 }
 
 .logo:hover {
@@ -33,52 +33,51 @@
 }
 
 .logoIcon {
-  font-size: 2.2rem; /* הגדלת גודל האיקון */
+  font-size: 2.2rem;
+  margin-left: 0.5rem;
 }
 
-/* עיצוב התפריט */
 .nav {
   display: flex;
-  gap: 1.2rem; /* הגדלת המרווח בין הפריטים בתפריט */
+  gap: 1.2rem;
 }
 
 .navLink {
   color: #ffffff;
   text-decoration: none;
-  padding: 0.6rem 1.2rem; /* הגדלת המרווחים בתפריט */
+  padding: 0.6rem 1.2rem;
   border-radius: 20px;
   transition: all 0.3s ease;
   font-weight: 500;
 }
 
 .navLink:hover, .activeLink {
-  background-color: rgba(255, 255, 255, 0.2); /* שינוי הרקע בעת מעבר עם העכבר */
+  background-color: rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
-  color: #f1f1f1; /* שינוי צבע הטקסט בעת מעבר עם העכבר */
+  color: #f1f1f1;
 }
 
 .activeLink {
   font-weight: bold;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: rgba(255, 255, 255, 0.3); /* הוספת רקע עם שקיפות מעט יותר גבוהה */
-  color: #fff; /* שינוי צבע הטקסט ללבן */
-  padding: 0.6rem 1.4rem; /* הגדלת מרווחי הפריט הפעיל בתפריט */
+  background-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+  padding: 0.6rem 1.4rem;
   border-radius: 20px;
   transition: all 0.3s ease;
 }
 
 .activeLink:hover {
-  background-color: rgba(255, 255, 255, 0.4); /* הגברת שקיפות הרקע בעת מעבר עם העכבר */
+  background-color: rgba(255, 255, 255, 0.4);
   transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* הגברת הצל בעת מעבר עם העכבר */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* כפתור התנתקות */
 .logoutButton {
   background-color: #ff6b6b;
   color: #ffffff;
   border: none;
-  padding: 0.6rem 1.2rem; /* הגדלת המרווחים בכפתור */
+  padding: 0.6rem 1.2rem;
   border-radius: 20px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -91,7 +90,6 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* אנימציה לכפתורים */
 @keyframes pulse {
   0% { transform: scale(1); }
   50% { transform: scale(1.05); }
@@ -102,7 +100,6 @@
   animation: pulse 0.5s ease-in-out;
 }
 
-/* התאמה למסכים קטנים */
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
@@ -120,7 +117,6 @@
   }
 }
 
-/* נגישות */
 .navLink:focus, .logoutButton:focus, .logo:focus {
   outline: 2px solid #ffffff;
   outline-offset: 2px;

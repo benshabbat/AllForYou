@@ -21,7 +21,8 @@ export const getAllergens = async (req, res) => {
     const allergens = await Allergen.find(query);
     res.json(allergens);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Error fetching allergens:', error);
+    res.status(500).json({ message: 'שגיאה בטעינת האלרגנים', error: error.message });
   }
 };
 
@@ -120,5 +121,22 @@ export const getAllergensBySymptom = async (req, res) => {
     res.json(allergens);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+export const getAllergensByIds = async (req, res) => {
+  try {
+    const { ids } = req.query;
+    if (!ids) {
+      return res.status(400).json({ message: 'יש לספק רשימת מזהים של אלרגנים' });
+    }
+
+    const allergenIds = ids.split(',');
+    const allergens = await Allergen.find({ _id: { $in: allergenIds } });
+
+    res.json(allergens);
+  } catch (error) {
+    console.error('Error fetching allergens by IDs:', error);
+    res.status(500).json({ message: 'שגיאה בטעינת האלרגנים', error: error.message });
   }
 };

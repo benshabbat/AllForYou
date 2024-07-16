@@ -37,7 +37,7 @@ const RecipeCard = ({ recipe, isOwner }) => {
       <div className={styles.recipeContent}>
         <h3 className={styles.recipeTitle}>{recipe.name}</h3>
         <div className={styles.recipeInfo}>
-          <span><FaClock /> {totalTime || 'N/A'} דקות</span>
+          <span><FaClock /> {totalTime || 'לא זמין'} דקות</span>
           <span><FaUtensils /> {recipe.difficulty}</span>
         </div>
         <RatingStars initialRating={recipe.averageRating} readOnly={true} />

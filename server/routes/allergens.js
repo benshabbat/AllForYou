@@ -1,5 +1,14 @@
 import express from 'express';
-import { getAllergens, getAllergenById, createAllergen, updateAllergen, deleteAllergen, searchAllergens, getAllergensBySymptom } from '../controllers/allergenController.js';
+import { 
+  getAllergens, 
+  getAllergenById, 
+  createAllergen, 
+  updateAllergen, 
+  deleteAllergen, 
+  searchAllergens, 
+  getAllergensBySymptom,
+  getAllergensByIds  // יש להוסיף פונקציה זו לקונטרולר
+} from '../controllers/allergenController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -13,6 +22,9 @@ router.route('/search')
 
 router.route('/symptom/:symptom')
   .get(getAllergensBySymptom);
+
+router.route('/byIds')
+  .get(getAllergensByIds); 
 
 router.route('/:id')
   .get(getAllergenById)

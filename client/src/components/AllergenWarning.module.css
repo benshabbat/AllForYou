@@ -1,71 +1,97 @@
 .allergenWarning {
-    background-color: #fff3cd;
-    border: 1px solid #ffeeba;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .allergenWarning h3 {
-    color: #856404;
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 18px;
-  }
-  
-  .allergenWarning p {
-    color: #856404;
-    margin-bottom: 10px;
-    font-size: 16px;
-  }
-  
-  .allergenWarning ul {
-    list-style-type: none;
-    padding-left: 0;
-    margin-bottom: 0;
-  }
-  
-  .allergenWarning li {
-    display: flex;
-    align-items: center;
-    margin-bottom: 5px;
-  }
-  
-  .allergenWarning li span {
-    margin-left: 10px;
-    font-size: 16px;
-    color: #856404;
-  }
-  
-  /* אנימציה */
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  
+  background-color: #fff3cd;
+  border: 2px solid #ffeeba;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.allergenWarning:hover {
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.warningTitle {
+  color: #856404;
+  font-size: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.warningIcon {
+  font-size: 1.8rem;
+  margin-left: 10px;
+}
+
+.warningDescription {
+  color: #856404;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+}
+
+.allergenList {
+  list-style-type: none;
+  padding-right: 0;
+  margin-bottom: 20px;
+}
+
+.allergenItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 8px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.allergenItem:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.allergenName {
+  margin-right: 10px;
+  font-size: 1.1rem;
+  color: #5a4203;
+}
+
+.warningFooter {
+  color: #856404;
+  font-style: italic;
+  margin-bottom: 0;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
   .allergenWarning {
-    animation: fadeIn 0.3s ease-out;
+    padding: 15px;
   }
-  
-  /* נגישות */
-  .allergenWarning:focus-within {
-    outline: 2px solid #856404;
-    outline-offset: 2px;
+
+  .warningTitle {
+    font-size: 1.3rem;
   }
-  
-  /* התאמה למסכים קטנים */
-  @media (max-width: 600px) {
-    .allergenWarning {
-      padding: 10px;
-    }
-  
-    .allergenWarning h3 {
-      font-size: 16px;
-    }
-  
-    .allergenWarning p,
-    .allergenWarning li span {
-      font-size: 14px;
-    }
+
+  .warningDescription, .allergenName {
+    font-size: 1rem;
   }
+}
+
+/* Accessibility */
+.allergenWarning:focus-within {
+  outline: 3px solid #856404;
+  outline-offset: 2px;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.allergenWarning {
+  animation: fadeIn 0.4s ease-out;
+}

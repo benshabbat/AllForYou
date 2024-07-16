@@ -51,11 +51,6 @@ function Login() {
     }
   };
 
-  // TODO: Implement password visibility toggle
-  // const togglePasswordVisibility = () => {
-  //   setShowPassword(!showPassword);
-  // };
-
   return (
     <div className={styles.authContainer}>
       <form onSubmit={handleSubmit} className={styles.authForm}>
@@ -85,7 +80,6 @@ function Login() {
             className={errors.password ? styles.inputError : ''}
           />
           {errors.password && <span className={styles.errorMessage}>{errors.password}</span>}
-          {/* TODO: Add "Forgot Password" link */}
         </div>
 
         <div className={styles.formGroup}>

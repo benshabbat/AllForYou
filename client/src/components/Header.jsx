@@ -1,4 +1,4 @@
-import React,{useCallback} from 'react';
+import React from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
@@ -10,10 +10,10 @@ function Header() {
   const navigate = useNavigate();
   const { user, isInitialized } = useSelector((state) => state.auth);
 
-  const handleLogout = useCallback(() => {
+  const handleLogout = () => {
     dispatch(logout());
     navigate('/');
-  }, [dispatch, navigate]);
+  };
 
   if (!isInitialized) {
     return null;
@@ -28,55 +28,24 @@ function Header() {
         </Link>
 
         <nav className={styles.nav}>
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              isActive ? styles.activeLink : styles.navLink
-            }
-            end
-          >
+          <NavLink to="/" className={({ isActive }) => isActive ? styles.activeLink : styles.navLink} end>
             דף הבית
           </NavLink>
-          <NavLink
-            to="/recipes"
-            className={({ isActive }) =>
-              isActive ? styles.activeLink : styles.navLink
-            }
-          >
+          <NavLink to="/recipes" className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}>
             מתכונים
           </NavLink>
           {user ? (
             <>
-              <NavLink
-                to="/add-recipe"
-                className={({ isActive }) =>
-                  isActive ? styles.activeLink : styles.navLink
-                }
-              >
+              <NavLink to="/add-recipe" className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}>
                 הוסף מתכון
               </NavLink>
-              <NavLink
-                to="/my-recipes"
-                className={({ isActive }) =>
-                  isActive ? styles.activeLink : styles.navLink
-                }
-              >
+              <NavLink to="/my-recipes" className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}>
                 המתכונים שלי
               </NavLink>
-              <NavLink
-                to="/profile"
-                className={({ isActive }) =>
-                  isActive ? styles.activeLink : styles.navLink
-                }
-              >
+              <NavLink to="/profile" className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}>
                 פרופיל
               </NavLink>
-              <NavLink
-                to="/settings"
-                className={({ isActive }) =>
-                  isActive ? styles.activeLink : styles.navLink
-                }
-              >
+              <NavLink to="/settings" className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}>
                 הגדרות
               </NavLink>
               <button onClick={handleLogout} className={styles.logoutButton}>
@@ -85,20 +54,10 @@ function Header() {
             </>
           ) : (
             <>
-              <NavLink
-                to="/login"
-                className={({ isActive }) =>
-                  isActive ? styles.activeLink : styles.navLink
-                }
-              >
+              <NavLink to="/login" className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}>
                 התחבר
               </NavLink>
-              <NavLink
-                to="/register"
-                className={({ isActive }) =>
-                  isActive ? styles.activeLink : styles.navLink
-                }
-              >
+              <NavLink to="/register" className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}>
                 הרשם
               </NavLink>
             </>
@@ -109,4 +68,4 @@ function Header() {
   );
 }
 
-export default React.memo(Header);
+export default Header;
