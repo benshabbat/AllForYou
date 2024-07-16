@@ -1,4 +1,4 @@
-import React, { useEffect, lazy, Suspense } from 'react';
+import React, { useEffect, lazy, Suspense, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Provider, useDispatch } from 'react-redux';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -30,6 +30,7 @@ function AppContent() {
   const dispatch = useDispatch();
   const { isLoading } = useAuth();
   const location = useLocation();
+  const nodeRef = useRef(null);
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -59,22 +60,29 @@ function AppContent() {
     <ErrorBoundary>
       <Header />
       <TransitionGroup>
-        <CSSTransition key={location.pathname} classNames="fade" timeout={300}>
-          <Suspense fallback={<Loading />}>
-            <Routes location={location}>
-              <Route path="/" element={<Home />} />
-              <Route path="/recipes" element={<RecipeList />} />
-              <Route path="/recipe/:id" element={<RecipeDetails />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/add-recipe" element={<PrivateRoute><AddRecipe /></PrivateRoute>} />
-              <Route path="/profile" element={<PrivateRoute><UserProfile /></PrivateRoute>} />
-              <Route path="/my-recipes" element={<PrivateRoute><MyRecipes /></PrivateRoute>} />
-              <Route path="/settings" element={<PrivateRoute><UserSettings /></PrivateRoute>} />
-              <Route path="/favorites" element={<PrivateRoute><FavoritesPage /></PrivateRoute>} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
+        <CSSTransition
+          key={location.pathname}
+          classNames="fade"
+          timeout={300}
+          nodeRef={nodeRef}
+        >
+          <div ref={nodeRef}>
+            <Suspense fallback={<Loading />}>
+              <Routes location={location}>
+                <Route path="/" element={<Home />} />
+                <Route path="/recipes" element={<RecipeList />} />
+                <Route path="/recipe/:id" element={<RecipeDetails />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/add-recipe" element={<PrivateRoute><AddRecipe /></PrivateRoute>} />
+                <Route path="/profile" element={<PrivateRoute><UserProfile /></PrivateRoute>} />
+                <Route path="/my-recipes" element={<PrivateRoute><MyRecipes /></PrivateRoute>} />
+                <Route path="/settings" element={<PrivateRoute><UserSettings /></PrivateRoute>} />
+                <Route path="/favorites" element={<PrivateRoute><FavoritesPage /></PrivateRoute>} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </div>
         </CSSTransition>
       </TransitionGroup>
     </ErrorBoundary>

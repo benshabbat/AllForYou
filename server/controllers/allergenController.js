@@ -83,11 +83,39 @@ export const deleteAllergen = async (req, res) => {
 
 export const searchAllergens = async (req, res) => {
   try {
-    const { query } = req.query;
-    const allergens = await Allergen.find(
-      { $text: { $search: query } },
-      { score: { $meta: "textScore" } }
-    ).sort({ score: { $meta: "textScore" } });
+    const { query, severity, symptom } = req.query;
+    let searchQuery = {};
+
+    if (query) {
+      searchQuery.$or = [
+        { name: { $regex: query, $options: 'i' } },
+        { hebrewName: { $regex: query, $options: 'i' } },
+        { description: { $regex: query, $options: 'i' } }
+      ];
+    }
+
+    if (severity) {
+      searchQuery.severity = severity;
+    }
+
+    if (symptom) {
+      searchQuery.symptoms = { $regex: symptom, $options: 'i' };
+    }
+
+    const allergens = await Allergen.find(searchQuery)
+      .select('name hebrewName icon description symptoms avoidList alternatives severity');
+
+    res.json(allergens);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getAllergensBySymptom = async (req, res) => {
+  try {
+    const { symptom } = req.params;
+    const allergens = await Allergen.find({ symptoms: { $regex: symptom, $options: 'i' } })
+      .select('name hebrewName icon description symptoms avoidList alternatives severity');
 
     res.json(allergens);
   } catch (error) {
