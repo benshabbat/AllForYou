@@ -1,5 +1,5 @@
-import React, { useEffect, lazy } from 'react';
-import { BrowserRouter as Router, Routes, useLocation } from 'react-router-dom';
+import React, { useEffect, lazy, Suspense } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Provider, useDispatch } from 'react-redux';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
@@ -7,10 +7,10 @@ import { store } from './store/index.js';
 import { loadUser, setInitialized } from './store/slices/authSlice';
 import Header from './components/Header';
 import Loading from './components/Loading';
+import PrivateRoute from './components/PrivateRoute';
 import NotFound from './components/NotFound';
 import ErrorBoundary from './components/ErrorBoundary';
 import { useAuth } from './hooks/useAuth';
-import AppRoute from './components/AppRoute';
 
 const queryClient = new QueryClient();
 
@@ -25,19 +25,6 @@ const MyRecipes = lazy(() => import('./pages/MyRecipes'));
 const RecipeDetails = lazy(() => import('./pages/RecipeDetails'));
 const UserSettings = lazy(() => import('./pages/UserSettings'));
 const FavoritesPage = lazy(() => import('./pages/FavoritesPage'));
-
-const routes = [
-  { path: '/', component: Home },
-  { path: '/recipes', component: RecipeList },
-  { path: '/recipe/:id', component: RecipeDetails },
-  { path: '/register', component: Register },
-  { path: '/login', component: Login },
-  { path: '/add-recipe', component: AddRecipe, isPrivate: true },
-  { path: '/profile', component: UserProfile, isPrivate: true },
-  { path: '/my-recipes', component: MyRecipes, isPrivate: true },
-  { path: '/settings', component: UserSettings, isPrivate: true },
-  { path: '/favorites', component: FavoritesPage, isPrivate: true },
-];
 
 function AppContent() {
   const dispatch = useDispatch();
@@ -73,17 +60,21 @@ function AppContent() {
       <Header />
       <TransitionGroup>
         <CSSTransition key={location.pathname} classNames="fade" timeout={300}>
-          <Routes location={location}>
-            {routes.map((route) => (
-              <AppRoute
-                key={route.path}
-                path={route.path}
-                component={route.component}
-                isPrivate={route.isPrivate}
-              />
-            ))}
-            <AppRoute path="*" component={NotFound} />
-          </Routes>
+          <Suspense fallback={<Loading />}>
+            <Routes location={location}>
+              <Route path="/" element={<Home />} />
+              <Route path="/recipes" element={<RecipeList />} />
+              <Route path="/recipe/:id" element={<RecipeDetails />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/add-recipe" element={<PrivateRoute><AddRecipe /></PrivateRoute>} />
+              <Route path="/profile" element={<PrivateRoute><UserProfile /></PrivateRoute>} />
+              <Route path="/my-recipes" element={<PrivateRoute><MyRecipes /></PrivateRoute>} />
+              <Route path="/settings" element={<PrivateRoute><UserSettings /></PrivateRoute>} />
+              <Route path="/favorites" element={<PrivateRoute><FavoritesPage /></PrivateRoute>} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
         </CSSTransition>
       </TransitionGroup>
     </ErrorBoundary>

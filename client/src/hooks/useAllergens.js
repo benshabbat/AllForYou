@@ -1,7 +1,11 @@
-import { useSelector } from 'react-redux';
+import { useQuery } from 'react-query';
+import api from '../services/api';
 
 export const useAllergens = () => {
-  const { allergens, isLoading: allergensLoading, error: allergensError } = useSelector(state => state.recipes);
+  const { data: allergens, isLoading, error } = useQuery('allergens', async () => {
+    const response = await api.get('/allergens');
+    return response.data;
+  });
 
-  return { allergens, allergensLoading, allergensError };
+  return { allergens, isLoading, error };
 };

@@ -1,82 +1,54 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import { useDispatch } from 'react-redux';
 import { fetchAllergens } from '../store/slices/recipeSlice';
-import AllergenIcon from './AllergenIcon';
+import AllergenFilter from './AllergenFilter';
 import { useAllergens } from '../hooks/useAllergens';
 import { useSearchForm } from '../hooks/useSearchForm';
-import SearchInputs from '../components/SearchInputs';
+import SearchInputs from './SearchInputs';
 import { CATEGORIES, DIFFICULTY_LEVELS } from '../constants';
 import styles from "./AdvancedSearch.module.css";
 
 const AdvancedSearch = ({ onSearch }) => {
   const dispatch = useDispatch();
-  const { allergens, allergensLoading, allergensError } = useAllergens();
-  const { searchParams, handleChange, handleAllergenToggle, handleSubmit } = useSearchForm(onSearch);
+  const { allergens, isLoading: allergensLoading, error: allergensError } = useAllergens();
+  const { searchParams, handleChange, handleSubmit } = useSearchForm(onSearch);
+  const [selectedAllergens, setSelectedAllergens] = useState([]);
 
   React.useEffect(() => {
     dispatch(fetchAllergens());
   }, [dispatch]);
 
+  const handleAllergenChange = useCallback((allergenIds) => {
+    setSelectedAllergens(allergenIds);
+  }, []);
+
+  const handleSearchSubmit = useCallback((e) => {
+    e.preventDefault();
+    handleSubmit({ ...searchParams, allergens: selectedAllergens });
+  }, [handleSubmit, searchParams, selectedAllergens]);
+
   return (
-    <form onSubmit={handleSubmit} className={styles.searchForm}>
+    <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
       <SearchInputs 
         searchParams={searchParams} 
         handleChange={handleChange} 
         categories={CATEGORIES}
         difficultyLevels={DIFFICULTY_LEVELS}
       />
-      <AllergenSelection 
-        allergens={allergens} 
-        selectedAllergens={searchParams.allergens}
-        onAllergenToggle={handleAllergenToggle}
+      <AllergenFilter 
+        allergens={allergens}
+        selectedAllergens={selectedAllergens}
+        onFilterChange={handleAllergenChange}
         isLoading={allergensLoading}
         error={allergensError}
       />
-      <SearchButton />
+      <div className={styles.searchButtonContainer}>
+        <button type="submit" className={styles.searchButton}>
+          חיפוש
+        </button>
+      </div>
     </form>
   );
 };
-
-
-const AllergenSelection = ({ allergens, selectedAllergens, onAllergenToggle, isLoading, error }) => (
-  <div className={styles.allergenGroup}>
-    <span className={styles.allergenLabel}>סנן אלרגנים:</span>
-    <div className={styles.allergenButtons}>
-      {isLoading ? (
-        <p>טוען אלרגנים...</p>
-      ) : error ? (
-        <p>שגיאה בטעינת אלרגנים: {error}</p>
-      ) : (
-        allergens.map((allergen) => (
-          <AllergenButton 
-            key={allergen._id}
-            allergen={allergen}
-            isSelected={selectedAllergens.includes(allergen._id)}
-            onToggle={() => onAllergenToggle(allergen._id)}
-          />
-        ))
-      )}
-    </div>
-  </div>
-);
-
-const AllergenButton = ({ allergen, isSelected, onToggle }) => (
-  <button
-    type="button"
-    onClick={onToggle}
-    className={`${styles.allergenButton} ${isSelected ? styles.active : ''}`}
-  >
-    <AllergenIcon allergen={allergen} size="small" />
-    <span>{allergen.hebrewName}</span>
-  </button>
-);
-
-const SearchButton = () => (
-  <div className={styles.searchButtonContainer}>
-    <button type="submit" className={styles.searchButton}>
-      חיפוש
-    </button>
-  </div>
-);
 
 export default React.memo(AdvancedSearch);

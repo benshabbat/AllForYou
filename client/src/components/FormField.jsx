@@ -6,6 +6,7 @@ const FormField = ({ name, control, label, error, as = "input", options = [], ..
   <Controller
     name={name}
     control={control}
+    defaultValue=""  // הוספנו ערך ברירת מחדל
     render={({ field }) => (
       <div className={styles.formGroup}>
         <label htmlFor={name}>{label}</label>
@@ -13,6 +14,7 @@ const FormField = ({ name, control, label, error, as = "input", options = [], ..
           <textarea {...field} id={name} {...rest} />
         ) : as === "select" ? (
           <select {...field} id={name} {...rest}>
+            <option value="">בחר</option>  // הוספנו אפשרות ריקה כברירת מחדל
             {options.map(option => (
               <option key={option.value} value={option.value}>{option.label}</option>
             ))}
@@ -27,4 +29,3 @@ const FormField = ({ name, control, label, error, as = "input", options = [], ..
 );
 
 export default FormField;
-

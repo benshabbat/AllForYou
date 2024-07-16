@@ -3,19 +3,25 @@ import mongoose from 'mongoose';
 const RecipeSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'Recipe name is required'],
+    required: [true, 'שם המתכון הוא שדה חובה'],
     trim: true,
-    maxlength: [100, 'Recipe name cannot exceed 100 characters']
+    maxlength: [100, 'שם המתכון לא יכול לעלות על 100 תווים']
+  },
+  description: {
+    type: String,
+    required: [true, 'תיאור המתכון הוא שדה חובה'],
+    trim: true,
+    maxlength: [500, 'תיאור המתכון לא יכול לעלות על 500 תווים']
   },
   ingredients: {
     type: [String],
-    required: [true, 'Ingredients list is required'],
-    validate: [arr => arr.length > 0, 'At least one ingredient is required']
+    required: [true, 'רשימת המרכיבים היא שדה חובה'],
+    validate: [arr => arr.length > 0, 'יש להזין לפחות מרכיב אחד']
   },
   instructions: {
     type: String,
-    required: [true, 'Cooking instructions are required'],
-    minlength: [10, 'Instructions should be at least 10 characters long']
+    required: [true, 'הוראות ההכנה הן שדה חובה'],
+    minlength: [10, 'הוראות ההכנה חייבות להכיל לפחות 10 תווים']
   },
   allergens: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -28,11 +34,7 @@ const RecipeSchema = new mongoose.Schema({
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: [true, 'Recipe creator must be specified']
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
+    required: [true, 'יוצר המתכון הוא שדה חובה']
   },
   ratings: [{
     user: {
@@ -43,7 +45,7 @@ const RecipeSchema = new mongoose.Schema({
       type: Number,
       min: 1,
       max: 5,
-      required: [true, 'Rating must be between 1 and 5']
+      required: [true, 'הדירוג חייב להיות בין 1 ל-5']
     }
   }],
   averageRating: {
@@ -55,43 +57,28 @@ const RecipeSchema = new mongoose.Schema({
   difficulty: {
     type: String,
     enum: ['Easy', 'Medium', 'Hard'],
-    default: 'Medium'
-  },
-  preparationTime: {
-    type: Number,
-    required: [true, 'Preparation time is required'],
-    min: 1
-  },
-  cookingTime: {
-    type: Number,
-    required: [true, 'Cooking time is required'],
-    min: 1
-  },
-  servings: {
-    type: Number,
-    required: [true, 'Number of servings is required'],
-    min: 1
+    required: [true, 'רמת הקושי היא שדה חובה']
   },
   category: {
     type: String,
-    required: [true, 'Recipe category is required'],
-    enum: ['Appetizer', 'Main Course', 'Dessert', 'Beverage', 'Snack']
+    enum: ['Appetizer', 'Main Course', 'Dessert', 'Beverage', 'Snack'],
+    required: [true, 'קטגוריית המתכון היא שדה חובה']
   },
-  comments: [{
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true
-    },
-    content: {
-      type: String,
-      required: true
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now
-    }
-  }],
+  preparationTime: {
+    type: Number,
+    required: [true, 'זמן ההכנה הוא שדה חובה'],
+    min: [1, 'זמן ההכנה חייב להיות לפחות דקה אחת']
+  },
+  cookingTime: {
+    type: Number,
+    required: [true, 'זמן הבישול הוא שדה חובה'],
+    min: [0, 'זמן הבישול לא יכול להיות שלילי']
+  },
+  servings: {
+    type: Number,
+    required: [true, 'מספר המנות הוא שדה חובה'],
+    min: [1, 'מספר המנות חייב להיות לפחות 1']
+  },
   nutritionInfo: {
     calories: {
       type: Number,
@@ -109,6 +96,10 @@ const RecipeSchema = new mongoose.Schema({
       type: Number,
       min: 0
     }
+  },
+  image: {
+    type: String,
+    default: ''
   }
 }, {
   timestamps: true,
@@ -116,36 +107,43 @@ const RecipeSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 
-// Add index for better query performance
-RecipeSchema.index({ name: 'text', ingredients: 'text' });
-RecipeSchema.index({ createdBy: 1, createdAt: -1 });
-RecipeSchema.index({ allergens: 1 });
-RecipeSchema.index({ category: 1 });
-RecipeSchema.index({ difficulty: 1 });
-
-// Virtual for total time
+// וירטואל לזמן כולל
 RecipeSchema.virtual('totalTime').get(function() {
   return this.preparationTime + this.cookingTime;
 });
 
-// Method to calculate average rating
+// וירטואל לתגובות
+RecipeSchema.virtual('comments', {
+  ref: 'Comment',
+  localField: '_id',
+  foreignField: 'recipe'
+});
+
+// מתודה לחישוב דירוג ממוצע
 RecipeSchema.methods.calculateAverageRating = function() {
   if (this.ratings.length === 0) {
     this.averageRating = 0;
   } else {
     const sum = this.ratings.reduce((acc, item) => acc + item.rating, 0);
-    this.averageRating = sum / this.ratings.length;
+    this.averageRating = parseFloat((sum / this.ratings.length).toFixed(1));
   }
   return this.averageRating;
 };
 
-// Pre-save hook to calculate average rating
+// הוק pre-save לחישוב דירוג ממוצע
 RecipeSchema.pre('save', function(next) {
   if (this.isModified('ratings')) {
     this.calculateAverageRating();
   }
   next();
 });
+
+// אינדקסים
+RecipeSchema.index({ name: 'text', ingredients: 'text' });
+RecipeSchema.index({ createdBy: 1, createdAt: -1 });
+RecipeSchema.index({ allergens: 1 });
+RecipeSchema.index({ category: 1 });
+RecipeSchema.index({ difficulty: 1 });
 
 const Recipe = mongoose.model('Recipe', RecipeSchema);
 

@@ -1,92 +1,42 @@
-.formGroup {
-    margin-bottom: 20px;
-  }
-  
-  .label {
-    display: block;
-    margin-bottom: 10px;
-    font-weight: bold;
-    color: #333;
-  }
-  
-  .checkboxGroup {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  
-  .checkboxLabel {
-    display: flex;
-    align-items: center;
-    padding: 8px 12px;
-    background-color: #f0f0f0;
-    border: 1px solid #ddd;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .checkboxLabel:hover {
-    background-color: #e0e0e0;
-  }
-  
-  .checkboxLabel input {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-    height: 0;
-    width: 0;
-  }
-  
-  .checkboxLabel input:checked + span {
-    font-weight: bold;
-  }
-  
-  .checkboxLabel input:checked + span::before {
-    content: '✓';
-    margin-right: 5px;
-    color: #4a90e2;
-  }
-  
-  .allergenIcon {
-    margin-right: 5px;
-  }
-  
-  .error {
-    color: #e74c3c;
-    font-size: 14px;
-    margin-top: 5px;
-  }
-  
-  /* Accessibility */
-  .checkboxLabel:focus-within {
-    outline: 2px solid #4a90e2;
-    outline-offset: 2px;
-  }
-  
-  /* Animation */
-  @keyframes scaleIn {
-    from { transform: scale(0.9); }
-    to { transform: scale(1); }
-  }
-  
-  .checkboxLabel input:checked + span {
-    animation: scaleIn 0.2s ease-out;
-  }
-  
-  /* Responsive design */
-  @media (max-width: 768px) {
-    .checkboxGroup {
-      justify-content: center;
-    }
-    
-    .checkboxLabel {
-      flex-basis: calc(50% - 10px);
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .checkboxLabel {
-      flex-basis: 100%;
-    }
-  }
+.allergenSelection {
+  margin-bottom: 20px;
+}
+
+.label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.allergenGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.allergenItem {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.allergenItem:hover {
+  background-color: #f0f0f0;
+}
+
+.allergenItem input {
+  margin-right: 5px;
+}
+
+.allergenItem span {
+  margin-left: 5px;
+}
+
+.error {
+  color: red;
+  font-size: 0.8em;
+  margin-top: 5px;
+}

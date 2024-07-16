@@ -5,3 +5,17 @@
 {"level":"error","message":"Token verification failed: jwt expired","timestamp":"2024-07-13T19:15:05.148Z"}
 {"level":"error","message":"Token verification failed: jwt expired","timestamp":"2024-07-15T16:50:55.992Z"}
 {"level":"error","message":"Token verification failed: jwt expired","timestamp":"2024-07-15T16:50:56.002Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"aafa0308-2ac8-4520-94ad-bcb97a361f8b\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-15T21:01:33.270Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"aafa0308-2ac8-4520-94ad-bcb97a361f8b\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-15T21:01:34.438Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"aafa0308-2ac8-4520-94ad-bcb97a361f8b\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-15T21:01:36.576Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"aafa0308-2ac8-4520-94ad-bcb97a361f8b\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-15T21:01:40.777Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"aafa0308-2ac8-4520-94ad-bcb97a361f8b\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-15T21:01:48.087Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"dac21a9d-d8d1-4e70-ad99-aacbc25d7ed2\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-15T21:01:57.464Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"dac21a9d-d8d1-4e70-ad99-aacbc25d7ed2\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-15T21:01:58.601Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"dac21a9d-d8d1-4e70-ad99-aacbc25d7ed2\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-15T21:02:00.743Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"dac21a9d-d8d1-4e70-ad99-aacbc25d7ed2\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-15T21:02:04.817Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"dac21a9d-d8d1-4e70-ad99-aacbc25d7ed2\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-15T21:02:05.964Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"dac21a9d-d8d1-4e70-ad99-aacbc25d7ed2\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-15T21:02:08.112Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"dac21a9d-d8d1-4e70-ad99-aacbc25d7ed2\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-15T21:02:12.305Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"dac21a9d-d8d1-4e70-ad99-aacbc25d7ed2\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-15T21:02:21.165Z"}
+{"level":"error","message":"Error in recipe controller: Recipe validation failed: difficulty: `בינוני` is not a valid enum value for path `difficulty`., category: `קינוחים` is not a valid enum value for path `category`.","timestamp":"2024-07-16T07:34:07.916Z"}

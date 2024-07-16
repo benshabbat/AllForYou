@@ -1,65 +1,40 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { fetchRecipes } from '../store/slices/recipeSlice';
+import { fetchRecipes as fetchRecipesAction } from '../store/slices/recipeSlice';
 
 export const useRecipeList = (recipesPerPage) => {
   const dispatch = useDispatch();
+  const [currentPage, setCurrentPage] = useState(1);
   const [recipes, setRecipes] = useState([]);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [totalRecipes, setTotalRecipes] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [searchParams, setSearchParams] = useState({});
 
-  const fetchRecipesQuery = useCallback(async ({ page, params }) => {
+  const fetchRecipes = useCallback(async (params) => {
     setIsLoading(true);
     setError(null);
     try {
-      const result = await dispatch(fetchRecipes({ 
-        page, 
+      const result = await dispatch(fetchRecipesAction({ 
+        page: currentPage, 
         limit: recipesPerPage, 
-        ...params,
-        allergens: params.allergens?.join(',')
+        ...params
       })).unwrap();
-      return result;
-    } catch (error) {
-      setError(error.message || 'שגיאה בטעינת המתכונים');
-      return null;
+      setRecipes(result.recipes);
+      setTotalRecipes(result.totalRecipes);
+    } catch (err) {
+      setError(err.message || 'שגיאה בטעינת המתכונים');
     } finally {
       setIsLoading(false);
     }
-  }, [dispatch, recipesPerPage]);
-
-  const handleSearch = useCallback((params) => {
-    setSearchParams(params);
-    setPage(1);
-    setRecipes([]);
-    setHasMore(true);
-  }, []);
-
-  const fetchNextPage = useCallback(() => {
-    if (!isLoading && hasMore) {
-      setPage(prevPage => prevPage + 1);
-    }
-  }, [isLoading, hasMore]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const result = await fetchRecipesQuery({ page, params: searchParams });
-      if (result) {
-        setRecipes(prevRecipes => [...prevRecipes, ...result.recipes]);
-        setHasMore(result.recipes.length === recipesPerPage);
-      }
-    };
-    fetchData();
-  }, [page, searchParams, fetchRecipesQuery, recipesPerPage]);
+  }, [dispatch, currentPage, recipesPerPage]);
 
   return {
     recipes,
-    hasMore,
+    totalRecipes,
+    currentPage,
     isLoading,
     error,
-    handleSearch,
-    fetchNextPage,
+    fetchRecipes,
+    setCurrentPage
   };
 };
