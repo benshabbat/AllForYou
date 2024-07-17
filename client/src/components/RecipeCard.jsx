@@ -33,38 +33,30 @@ const RecipeCard = ({ recipe }) => {
     }
   };
 
-  const renderRecipeImage = () => (
-    <div className={styles.imageContainer}>
-      {recipe.image ? (
-        <img src={recipe.image} alt={recipe.name} className={styles.recipeImage} />
-      ) : (
-        <div className={styles.imagePlaceholder}>אין תמונה זמינה</div>
-      )}
-      <button 
-        className={styles.favoriteButton} 
-        onClick={handleFavoriteClick}
-        aria-label={recipe.isFavorite ? "הסר ממועדפים" : "הוסף למועדפים"}
-      >
-        {recipe.isFavorite ? <FaHeart color="red" /> : <FaRegHeart />}
-      </button>
-    </div>
-  );
-
-  const renderRecipeInfo = () => (
-    <div className={styles.recipeInfo}>
-      <span><FaClock /> {recipe.totalTime} דקות</span>
-      <span><FaUtensils /> {translateDifficulty(recipe.difficulty)}</span>
-      <span><FaUsers /> {recipe.servings} מנות</span>
-    </div>
-  );
-
   return (
     <div className={styles.recipeCard}>
       <Link to={`/recipe/${recipe._id}`} className={styles.recipeLink}>
-        {renderRecipeImage()}
+        <div className={styles.imageContainer}>
+          {recipe.image ? (
+            <img src={recipe.image} alt={recipe.name} className={styles.recipeImage} />
+          ) : (
+            <div className={styles.imagePlaceholder}>אין תמונה זמינה</div>
+          )}
+          <button 
+            className={styles.favoriteButton} 
+            onClick={handleFavoriteClick}
+            aria-label={recipe.isFavorite ? "הסר ממועדפים" : "הוסף למועדפים"}
+          >
+            {recipe.isFavorite ? <FaHeart color="red" /> : <FaRegHeart />}
+          </button>
+        </div>
         <div className={styles.recipeContent}>
           <h3 className={styles.recipeTitle}>{recipe.name}</h3>
-          {renderRecipeInfo()}
+          <div className={styles.recipeInfo}>
+            <span><FaClock /> {recipe.totalTime} דקות</span>
+            <span><FaUtensils /> {translateDifficulty(recipe.difficulty)}</span>
+            <span><FaUsers /> {recipe.servings} מנות</span>
+          </div>
           <RatingStars rating={recipe.averageRating} readOnly={true} />
           <p className={styles.recipeDescription}>{recipe.description}</p>
           <AllergenList allergens={recipe.allergens} />
