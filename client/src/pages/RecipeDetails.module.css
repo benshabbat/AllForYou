@@ -1,90 +1,154 @@
 .recipeDetails {
   max-width: 800px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 40px 20px;
 }
 
-.loading, .error, .notFound {
+.recipeHeader {
   text-align: center;
-  padding: 20px;
-  font-size: 18px;
+  margin-bottom: 30px;
 }
 
-.error {
-  color: #ff0000;
-}
-
-.ratingSection {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 20px;
+.recipeTitle {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 10px;
 }
 
 .recipeImage {
   width: 100%;
   max-height: 400px;
   object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 20px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.recipeInfo {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  margin: 10px;
+}
+
+.infoIcon {
+  font-size: 1.5rem;
+  margin-right: 10px;
+  color: #4a90e2;
+}
+
+.sectionTitle {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #4a90e2;
+  padding-bottom: 5px;
+}
+
+.ingredientsList, .instructionsList {
+  list-style-type: none;
+  padding: 0;
+}
+
+.ingredientsList li, .instructionsList li {
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+}
+
+.instructionsList li {
+  counter-increment: step-counter;
+}
+
+.instructionsList li::before {
+  content: counter(step-counter);
+  margin-right: 10px;
+  background-color: #4a90e2;
+  color: white;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 50%;
 }
 
 .actionButtons {
   display: flex;
-  justify-content: flex-start;
-  gap: 10px;
-  margin-top: 20px;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 30px;
 }
 
-.actionButtons button {
+.actionButton {
   padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
 }
 
-.actionButtons button:hover {
-  background-color: #0056b3;
+.editButton {
+  background-color: #4a90e2;
+  color: white;
 }
 
-section {
-  margin-bottom: 30px;
+.deleteButton {
+  background-color: #e74c3c;
+  color: white;
 }
 
-h2 {
-  color: #333;
-  border-bottom: 2px solid #007bff;
-  padding-bottom: 5px;
-  margin-bottom: 15px;
+.actionButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-ul, ol {
-  padding-left: 20px;
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-li {
-  margin-bottom: 10px;
+.recipeDetails > * {
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
-.allergenList {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
+/* RTL Support */
+[dir="rtl"] .infoIcon {
+  margin-right: 0;
+  margin-left: 10px;
 }
 
-.allergen {
-  display: flex;
-  align-items: center;
-  background-color: #f0f0f0;
-  padding: 5px 10px;
-  border-radius: 20px;
-  font-size: 14px;
+[dir="rtl"] .instructionsList li::before {
+  margin-right: 0;
+  margin-left: 10px;
 }
 
-.allergen span {
-  margin-right: 5px;
+/* Responsive Design */
+@media (max-width: 768px) {
+  .recipeTitle {
+    font-size: 2rem;
+  }
+
+  .recipeInfo {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .actionButtons {
+    flex-direction: column;
+  }
+
+  .actionButton {
+    width: 100%;
+  }
 }
