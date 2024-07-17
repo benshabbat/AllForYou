@@ -1,8 +1,8 @@
 .recipeCard {
   background-color: white;
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
-  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
@@ -12,25 +12,37 @@
 
 .recipeCard:hover {
   transform: translateY(-5px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.recipeLink {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .imageContainer {
-  width: 100%;
-  height: 200px;
-  overflow: hidden;
-  border-radius: var(--border-radius) var(--border-radius) 0 0;
-  margin-bottom: 15px;
   position: relative;
+  width: 100%;
+  padding-top: 66.67%; /* 3:2 Aspect Ratio */
+  overflow: hidden;
 }
 
 .recipeImage {
+  position: absolute;
+  top: 0;
+  right: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
 .imagePlaceholder {
+  position: absolute;
+  top: 0;
+  right: 0;
   width: 100%;
   height: 100%;
   display: flex;
@@ -43,7 +55,7 @@
 .favoriteButton {
   position: absolute;
   top: 10px;
-  left: 10px;
+  left: 10px; /* Changed from right to left */
   background: rgba(255, 255, 255, 0.8);
   border: none;
   border-radius: 50%;
@@ -57,28 +69,24 @@
 }
 
 .recipeContent {
-  flex-grow: 1;
+  padding: 15px;
+  flex: 1;
   display: flex;
   flex-direction: column;
 }
 
 .recipeTitle {
-  font-size: 1.5rem;
-  color: var(--primary-color);
+  font-size: 1.2rem;
   margin-bottom: 10px;
-}
-
-.recipeDescription {
-  color: #666;
-  margin-bottom: 15px;
-  flex-grow: 1;
+  color: #333;
 }
 
 .recipeInfo {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   font-size: 0.9rem;
+  color: #666;
 }
 
 .recipeInfo span {
@@ -87,34 +95,45 @@
 }
 
 .recipeInfo svg {
-  margin-left: 5px;
+  margin-left: 5px; /* Changed from margin-right */
+}
+
+.recipeDescription {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 15px;
+  flex-grow: 1;
 }
 
 .cardFooter {
+  padding: 15px;
   display: flex;
   justify-content: space-between;
-  margin-top: 15px;
 }
 
 .viewRecipeButton, .editRecipeButton {
-  display: inline-block;
-  background-color: var(--primary-color);
-  color: white;
-  padding: 10px 15px;
-  border-radius: var(--border-radius);
+  padding: 8px 15px;
+  border-radius: 4px;
   text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: bold;
   transition: background-color 0.3s ease;
-  text-align: center;
 }
 
-.viewRecipeButton:hover, .editRecipeButton:hover {
+.viewRecipeButton {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.viewRecipeButton:hover {
   background-color: #3a7bd5;
 }
 
 .editRecipeButton {
-  background-color: #4CAF50;
+  background-color: #f0f0f0;
+  color: #333;
 }
 
 .editRecipeButton:hover {
-  background-color: #45a049;
+  background-color: #e0e0e0;
 }
