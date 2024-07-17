@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery } from 'react-query';
-import { useLocation } from 'react-router-dom';
 import api from '../services/api';
 import RecipeCard from '../components/RecipeCard';
 import SearchBar from '../components/SearchBar';
@@ -11,9 +10,8 @@ import ErrorMessage from '../components/ErrorMessage';
 import styles from './RecipeList.module.css';
 
 const RecipeList = () => {
-  const location = useLocation();
   const [filters, setFilters] = useState({
-    search: new URLSearchParams(location.search).get('search') || '',
+    search: '',
     category: '',
     allergens: [],
     difficulty: '',
@@ -38,11 +36,14 @@ const RecipeList = () => {
     setPage(1);
   };
 
+  const handleSearch = (searchTerm) => {
+    handleFilterChange({ search: searchTerm });
+  };
+
   const handleSortChange = (e) => {
     const [sortBy, order] = e.target.value.split('-');
-    setFilters(prevFilters => ({ ...prevFilters, sortBy, order }));
+    handleFilterChange({ sortBy, order });
   };
-  const totalPages = data ? Math.ceil(data.totalRecipes / pageSize) : 0;
 
   if (isLoading) return <Loading />;
   if (error) return <ErrorMessage message="שגיאה בטעינת המתכונים" />;
@@ -50,12 +51,12 @@ const RecipeList = () => {
   return (
     <div className={styles.recipeListContainer}>
       <h1 className={styles.title}>מתכונים</h1>
-      <SearchBar onSearch={(search) => handleFilterChange({ search })} />
+      <SearchBar onSearch={handleSearch} />
       <div className={styles.content}>
         <FilterSidebar filters={filters} onFilterChange={handleFilterChange} />
-        <div className={styles.recipeGrid}>
+        <div>
           <div className={styles.sortContainer}>
-            <label htmlFor="sort">מיין לפי: </label>
+            <label htmlFor="sort" className={styles.sortLabel}>מיין לפי: </label>
             <select
               id="sort"
               value={`${filters.sortBy}-${filters.order}`}
@@ -68,16 +69,18 @@ const RecipeList = () => {
               <option value="averageRating-asc">דירוג נמוך</option>
             </select>
           </div>
-          {data.recipes.length === 0 ? (
-            <p className={styles.noRecipes}>לא נמצאו מתכונים התואמים לחיפוש שלך.</p>
-          ) : (
-            data.recipes.map(recipe => <RecipeCard key={recipe._id} recipe={recipe} />)
-          )}
+          <div className={styles.recipeGrid}>
+            {data.recipes.length === 0 ? (
+              <p className={styles.noRecipes}>לא נמצאו מתכונים התואמים לחיפוש שלך.</p>
+            ) : (
+              data.recipes.map(recipe => <RecipeCard key={recipe._id} recipe={recipe} />)
+            )}
+          </div>
         </div>
       </div>
       <Pagination
         currentPage={page}
-        totalPages={totalPages}
+        totalPages={Math.ceil(data.total / pageSize)}
         onPageChange={setPage}
       />
     </div>
