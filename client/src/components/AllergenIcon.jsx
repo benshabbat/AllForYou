@@ -12,13 +12,23 @@ const AllergenIcon = ({ allergen, size = 'medium', showTooltip = true }) => {
   const iconClass = `${styles.allergenIcon} ${styles[size]}`;
   const iconId = `allergen-icon-${allergenObject._id}`;
 
+  const translateSeverity = (severity) => {
+    const severityMap = {
+      'Low': 'נמוכה',
+      'Medium': 'בינונית',
+      'High': 'גבוהה',
+      'Unknown': 'לא ידועה'
+    };
+    return severityMap[severity] || severity;
+  };
+
   return (
     <>
       <span 
         id={iconId}
         className={iconClass} 
         role="img" 
-        aria-label={`${allergenObject.name} allergen`}
+        aria-label={`אלרגן ${allergenObject.hebrewName}`}
         data-tooltip-id={showTooltip ? `tooltip-${allergenObject._id}` : undefined}
       >
         {allergenObject.icon || '❓'}
@@ -27,10 +37,10 @@ const AllergenIcon = ({ allergen, size = 'medium', showTooltip = true }) => {
         <Tooltip id={`tooltip-${allergenObject._id}`} place="top" effect="solid">
           <div className={styles.tooltipContent}>
             <h4>{allergenObject.hebrewName} ({allergenObject.name})</h4>
-            <p>{allergenObject.description || 'אין תיאור'}</p>
+            <p>{allergenObject.description || 'אין תיאור זמין'}</p>
             {allergenObject.severity && (
               <p className={styles.severity}>
-                חומרה: <span className={styles[allergenObject.severity.toLowerCase()]}>{allergenObject.severity}</span>
+                חומרה: <span className={styles[allergenObject.severity.toLowerCase()]}>{translateSeverity(allergenObject.severity)}</span>
               </p>
             )}
           </div>
@@ -49,7 +59,7 @@ AllergenIcon.propTypes = {
       hebrewName: PropTypes.string.isRequired,
       icon: PropTypes.string,
       description: PropTypes.string,
-      severity: PropTypes.oneOf(['Low', 'Medium', 'High'])
+      severity: PropTypes.oneOf(['Low', 'Medium', 'High', 'Unknown'])
     })
   ]).isRequired,
   size: PropTypes.oneOf(['small', 'medium', 'large']),
