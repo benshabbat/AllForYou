@@ -1,49 +1,44 @@
-import React from 'react';
+import React, { useId } from 'react';
 import PropTypes from 'prop-types';
 import { Tooltip } from 'react-tooltip';
+import { translateSeverity } from '../utils/allergenUtils';
 import styles from './AllergenIcon.module.css';
 
 const AllergenIcon = ({ allergen, size = 'medium', showTooltip = true }) => {
-  // בדיקה אם allergen הוא מחרוזת או אובייקט
+  const tooltipId = useId();
+  
   const allergenObject = typeof allergen === 'string' 
     ? { _id: allergen, name: allergen, hebrewName: allergen, icon: '❓' } 
     : allergen;
 
   const iconClass = `${styles.allergenIcon} ${styles[size]}`;
-  const iconId = `allergen-icon-${allergenObject._id}`;
 
-  const translateSeverity = (severity) => {
-    const severityMap = {
-      'Low': 'נמוכה',
-      'Medium': 'בינונית',
-      'High': 'גבוהה',
-      'Unknown': 'לא ידועה'
-    };
-    return severityMap[severity] || severity;
-  };
+  const renderTooltipContent = () => (
+    <div className={styles.tooltipContent}>
+      <h4>{allergenObject.hebrewName} ({allergenObject.name})</h4>
+      <p>{allergenObject.description || 'אין תיאור זמין'}</p>
+      {allergenObject.severity && (
+        <p className={styles.severity}>
+          חומרה: <span className={styles[allergenObject.severity.toLowerCase()]}>
+            {translateSeverity(allergenObject.severity)}
+          </span>
+        </p>
+      )}
+    </div>
+  );
 
   return (
     <>
       <span 
-        id={iconId}
         className={iconClass} 
-        role="img" 
+        data-tooltip-id={showTooltip ? tooltipId : undefined}
         aria-label={`אלרגן ${allergenObject.hebrewName}`}
-        data-tooltip-id={showTooltip ? `tooltip-${allergenObject._id}` : undefined}
       >
         {allergenObject.icon || '❓'}
       </span>
       {showTooltip && (
-        <Tooltip id={`tooltip-${allergenObject._id}`} place="top" effect="solid">
-          <div className={styles.tooltipContent}>
-            <h4>{allergenObject.hebrewName} ({allergenObject.name})</h4>
-            <p>{allergenObject.description || 'אין תיאור זמין'}</p>
-            {allergenObject.severity && (
-              <p className={styles.severity}>
-                חומרה: <span className={styles[allergenObject.severity.toLowerCase()]}>{translateSeverity(allergenObject.severity)}</span>
-              </p>
-            )}
-          </div>
+        <Tooltip id={tooltipId} place="top" effect="solid">
+          {renderTooltipContent()}
         </Tooltip>
       )}
     </>
