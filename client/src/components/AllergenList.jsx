@@ -9,6 +9,16 @@ const AllergenList = ({ allergens, showTooltips = true }) => {
     return <p className={styles.noAllergens}>לא נמצאו אלרגנים</p>;
   }
 
+  const translateSeverity = (severity) => {
+    const severityMap = {
+      'Low': 'נמוכה',
+      'Medium': 'בינונית',
+      'High': 'גבוהה',
+      'Unknown': 'לא ידועה'
+    };
+    return severityMap[severity] || severity;
+  };
+
   return (
     <div className={styles.allergenList} aria-label="רשימת אלרגנים">
       <h4 className={styles.allergenTitle}>אלרגנים:</h4>
@@ -42,16 +52,6 @@ const AllergenList = ({ allergens, showTooltips = true }) => {
       </ul>
     </div>
   );
-};
-
-const translateSeverity = (severity) => {
-  const severityMap = {
-    'Low': 'נמוכה',
-    'Medium': 'בינונית',
-    'High': 'גבוהה',
-    'Unknown': 'לא ידועה'
-  };
-  return severityMap[severity] || severity;
 };
 
 AllergenList.propTypes = {
