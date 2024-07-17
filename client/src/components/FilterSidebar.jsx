@@ -4,14 +4,24 @@ import api from '../services/api';
 import { CATEGORIES, DIFFICULTY_LEVELS } from '../constants';
 import styles from './FilterSidebar.module.css';
 
-const FilterSidebar = ({ initialFilters, onFilterChange }) => {
+const defaultFilters = {
+  category: '',
+  difficulty: '',
+  allergens: []
+};
+
+const FilterSidebar = ({ initialFilters = defaultFilters, onFilterChange }) => {
   const [filters, setFilters] = useState(initialFilters);
   const { data: allergens, isLoading: allergensLoading, error: allergensError } = useQuery('allergens', () => 
     api.get('/allergens').then(res => res.data)
   );
 
   useEffect(() => {
-    setFilters(initialFilters);
+    setFilters(prevFilters => ({
+      ...defaultFilters,
+      ...prevFilters,
+      ...initialFilters
+    }));
   }, [initialFilters]);
 
   const handleInputChange = (e) => {
@@ -33,8 +43,8 @@ const FilterSidebar = ({ initialFilters, onFilterChange }) => {
   };
 
   const handleResetFilters = () => {
-    setFilters(initialFilters);
-    onFilterChange(initialFilters);
+    setFilters(defaultFilters);
+    onFilterChange(defaultFilters);
   };
 
   if (allergensLoading) return <div className={styles.loading}>טוען אלרגנים...</div>;
