@@ -44,6 +44,7 @@ const RecipeList = () => {
     const [sortBy, order] = e.target.value.split('-');
     handleFilterChange({ sortBy, order });
   };
+  const totalPages = data ? Math.ceil(data.totalRecipes / pageSize) : 0;
 
   if (isLoading) return <Loading />;
   if (error) return <ErrorMessage message="שגיאה בטעינת המתכונים" />;
@@ -80,7 +81,7 @@ const RecipeList = () => {
       </div>
       <Pagination
         currentPage={page}
-        totalPages={Math.ceil(data.total / pageSize)}
+        totalPages={totalPages}
         onPageChange={setPage}
       />
     </div>
