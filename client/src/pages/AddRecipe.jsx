@@ -1,34 +1,42 @@
-import React from "react";
-import { useForm } from "react-hook-form";
+import React, { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useAddRecipe } from "../hooks/useAddRecipe";
+import { useNavigate } from "react-router-dom";
+import { useAddRecipe } from "../hooks/useRecipe";
 import { useAllergens } from "../hooks/useAllergens";
 import FormField from "../components/FormField";
 import AllergenSelection from "../components/AllergenSelection";
+import ImageUpload from "../components/ImageUpload";
+import { CATEGORIES, DIFFICULTY_LEVELS } from "../constants";
 import styles from "./AddRecipe.module.css";
 
 const recipeSchema = yup.object().shape({
-  name: yup.string().required("שם המתכון הוא שדה חובה"),
-  description: yup.string().required("תיאור קצר הוא שדה חובה"),
-  ingredients: yup.string().required("רשימת המרכיבים היא שדה חובה"),
+  name: yup.string().required("שם המתכון הוא שדה חובה").max(100, "שם המתכון ארוך מדי"),
+  description: yup.string().required("תיאור קצר הוא שדה חובה").max(500, "התיאור ארוך מדי"),
+  ingredients: yup.array().of(yup.string()).min(1, "יש להזין לפחות מרכיב אחד"),
   instructions: yup.string().required("הוראות ההכנה הן שדה חובה"),
   preparationTime: yup.number().positive().integer().required("זמן הכנה הוא שדה חובה"),
   cookingTime: yup.number().positive().integer().required("זמן בישול הוא שדה חובה"),
   servings: yup.number().positive().integer().required("מספר מנות הוא שדה חובה"),
-  difficulty: yup.string().oneOf(["Easy", "Medium", "Hard"]).required("רמת קושי היא שדה חובה"),
-  category: yup.string().oneOf(["Appetizer", "Main Course", "Dessert", "Beverage", "Snack"]).required("קטגוריה היא שדה חובה"),
+  difficulty: yup.string().oneOf(DIFFICULTY_LEVELS).required("רמת קושי היא שדה חובה"),
+  category: yup.string().oneOf(CATEGORIES).required("קטגוריה היא שדה חובה"),
   allergens: yup.array().of(yup.string()),
-  image: yup.string().url("נא להזין כתובת URL תקינה לתמונה"),
+  image: yup.mixed().test("fileSize", "הקובץ גדול מדי (מקסימום 5MB)", (value) => {
+    if (!value) return true; // Allow empty
+    return value.size <= 5000000; // 5MB
+  }),
 });
 
 const AddRecipe = () => {
-  const { control, handleSubmit, formState: { errors } } = useForm({
+  const navigate = useNavigate();
+  const [imagePreview, setImagePreview] = useState(null);
+  const { control, handleSubmit, setValue, watch, formState: { errors } } = useForm({
     resolver: yupResolver(recipeSchema),
     defaultValues: {
       name: "",
       description: "",
-      ingredients: "",
+      ingredients: [""],
       instructions: "",
       preparationTime: "",
       cookingTime: "",
@@ -36,28 +44,50 @@ const AddRecipe = () => {
       difficulty: "",
       category: "",
       allergens: [],
-      image: "",
+      image: null,
     },
   });
 
   const addRecipeMutation = useAddRecipe();
   const { allergens, isLoading: allergensLoading } = useAllergens();
 
+  const ingredients = watch("ingredients");
+
   const onSubmit = async (data) => {
+    const formData = new FormData();
+    Object.keys(data).forEach(key => {
+      if (key === 'ingredients') {
+        formData.append(key, JSON.stringify(data[key]));
+      } else if (key === 'image' && data[key]) {
+        formData.append(key, data[key][0]);
+      } else {
+        formData.append(key, data[key]);
+      }
+    });
+
     try {
-      const formattedData = {
-        ...data,
-        ingredients: data.ingredients.split("\n").map(item => item.trim()).filter(Boolean),
-        instructions: data.instructions.trim(),
-        preparationTime: Number(data.preparationTime),
-        cookingTime: Number(data.cookingTime),
-        servings: Number(data.servings),
-      };
-      console.log("Sending data:", formattedData);
-      await addRecipeMutation.mutateAsync(formattedData);
-      console.log("מתכון נוסף בהצלחה");
+      await addRecipeMutation.mutateAsync(formData);
+      navigate('/my-recipes');
     } catch (error) {
-      console.error("שגיאה בהוספת המתכון:", error.response?.data || error);
+      console.error('Error adding recipe:', error);
+    }
+  };
+
+  const handleAddIngredient = () => {
+    setValue("ingredients", [...ingredients, ""]);
+  };
+
+  const handleRemoveIngredient = (index) => {
+    const newIngredients = [...ingredients];
+    newIngredients.splice(index, 1);
+    setValue("ingredients", newIngredients);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setValue("image", e.target.files);
+      setImagePreview(URL.createObjectURL(file));
     }
   };
 
@@ -80,13 +110,27 @@ const AddRecipe = () => {
           error={errors.description}
           as="textarea"
         />
-        <FormField
-          name="ingredients"
-          control={control}
-          label="מרכיבים (כל מרכיב בשורה חדשה)"
-          error={errors.ingredients}
-          as="textarea"
-        />
+        <div className={styles.ingredientsSection}>
+          <label>מרכיבים:</label>
+          {ingredients.map((ingredient, index) => (
+            <div key={index} className={styles.ingredientRow}>
+              <Controller
+                name={`ingredients.${index}`}
+                control={control}
+                render={({ field }) => (
+                  <input {...field} placeholder={`מרכיב ${index + 1}`} />
+                )}
+              />
+              <button type="button" onClick={() => handleRemoveIngredient(index)} className={styles.removeIngredient}>
+                הסר
+              </button>
+            </div>
+          ))}
+          <button type="button" onClick={handleAddIngredient} className={styles.addIngredient}>
+            הוסף מרכיב
+          </button>
+          {errors.ingredients && <span className={styles.error}>{errors.ingredients.message}</span>}
+        </div>
         <FormField
           name="instructions"
           control={control}
@@ -117,32 +161,24 @@ const AddRecipe = () => {
             type="number"
           />
         </div>
-        <FormField
-          name="difficulty"
-          control={control}
-          label="רמת קושי"
-          error={errors.difficulty}
-          as="select"
-          options={[
-            { value: "Easy", label: "קל" },
-            { value: "Medium", label: "בינוני" },
-            { value: "Hard", label: "מאתגר" },
-          ]}
-        />
-        <FormField
-          name="category"
-          control={control}
-          label="קטגוריה"
-          error={errors.category}
-          as="select"
-          options={[
-            { value: "Appetizer", label: "מנה ראשונה" },
-            { value: "Main Course", label: "מנה עיקרית" },
-            { value: "Dessert", label: "קינוח" },
-            { value: "Beverage", label: "משקה" },
-            { value: "Snack", label: "חטיף" },
-          ]}
-        />
+        <div className={styles.formRow}>
+          <FormField
+            name="difficulty"
+            control={control}
+            label="רמת קושי"
+            error={errors.difficulty}
+            as="select"
+            options={DIFFICULTY_LEVELS.map(level => ({ value: level, label: level }))}
+          />
+          <FormField
+            name="category"
+            control={control}
+            label="קטגוריה"
+            error={errors.category}
+            as="select"
+            options={CATEGORIES.map(category => ({ value: category, label: category }))}
+          />
+        </div>
         <AllergenSelection
           name="allergens"
           control={control}
@@ -150,12 +186,10 @@ const AddRecipe = () => {
           error={errors.allergens}
           allergens={allergens || []}
         />
-        <FormField
-          name="image"
-          control={control}
-          label="קישור לתמונה"
+        <ImageUpload
+          onChange={handleImageChange}
+          preview={imagePreview}
           error={errors.image}
-          placeholder="https://example.com/image.jpg"
         />
         <button type="submit" className={styles.submitButton} disabled={addRecipeMutation.isLoading}>
           {addRecipeMutation.isLoading ? "מוסיף מתכון..." : "הוסף מתכון"}
@@ -165,4 +199,4 @@ const AddRecipe = () => {
   );
 };
 
-export default React.memo(AddRecipe);
+export default AddRecipe;

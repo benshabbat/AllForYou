@@ -27,10 +27,17 @@ const RecipeSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Allergen'
   }],
-  alternatives: {
-    type: String,
-    default: ''
-  },
+  alternatives: [{
+    allergen: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Allergen',
+      required: true
+    },
+    substitute: {
+      type: String,
+      required: true
+    }
+  }],
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

@@ -1,72 +1,80 @@
 import Recipe from '../models/Recipe.js';
 import logger from '../utils/logger.js';
-
+import Fuse from 'fuse.js';
+import { validateRecipe } from '../utils/validators.js';
+import { validateAllergens, validateAlternatives } from '../utils/allergenValidator.js';
 // Helper function for error handling
 const handleError = (res, error, statusCode = 500) => {
   logger.error(`Error in recipe controller: ${error.message}`);
   res.status(statusCode).json({ message: error.message || 'Server error' });
 };
 
+
+// פונקציה חדשה לקבלת הצעות חיפוש
+export const getSearchSuggestions = async (req, res) => {
+  try {
+    const { keyword } = req.query;
+    const recipes = await Recipe.find({}, 'name');
+    
+    const fuse = new Fuse(recipes, {
+      keys: ['name'],
+      includeScore: true,
+      threshold: 0.4
+    });
+
+    const results = fuse.search(keyword);
+    const suggestions = results.slice(0, 5).map(result => result.item.name);
+
+    res.json(suggestions);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// עדכון פונקציית החיפוש הקיימת
 export const getAllRecipes = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const { keyword, category, difficulty, allergens, maxPrepTime, maxCalories, page = 1, limit = 10 } = req.query;
     const startIndex = (page - 1) * limit;
 
     let query = {};
 
-    // Keyword search
-    if (req.query.keyword) {
-      query.$or = [
-        { name: { $regex: req.query.keyword, $options: 'i' } },
-        { ingredients: { $regex: req.query.keyword, $options: 'i' } },
-        { instructions: { $regex: req.query.keyword, $options: 'i' } }
-      ];
+    if (keyword) {
+      const recipes = await Recipe.find({});
+      const fuse = new Fuse(recipes, {
+        keys: ['name', 'ingredients', 'instructions'],
+        includeScore: true,
+        threshold: 0.4
+      });
+
+      const results = fuse.search(keyword);
+      const recipeIds = results.map(result => result.item._id);
+      query._id = { $in: recipeIds };
     }
 
-    // Category filter
-    if (req.query.category) {
-      query.category = req.query.category;
-    }
-
-    // Difficulty filter
-    if (req.query.difficulty) {
-      query.difficulty = req.query.difficulty;
-    }
-
-    // Allergens filter
-    if (req.query.allergens) {
-      const allergenIds = req.query.allergens.split(',');
-      query.allergens = { $nin: allergenIds };
-    }
-
-    // User allergen preferences
-    if (req.user && req.user.allergenPreferences) {
-      query.allergens = { 
-        $nin: req.user.allergenPreferences,
-        ...query.allergens 
-      };
-    }
+    if (category) query.category = category;
+    if (difficulty) query.difficulty = difficulty;
+    if (allergens) query.allergens = { $nin: allergens.split(',') };
+    if (maxPrepTime) query.preparationTime = { $lte: parseInt(maxPrepTime) };
+    if (maxCalories) query['nutritionInfo.calories'] = { $lte: parseInt(maxCalories) };
 
     const totalRecipes = await Recipe.countDocuments(query);
     const recipes = await Recipe.find(query)
       .populate('allergens')
-      .limit(limit)
+      .limit(parseInt(limit))
       .skip(startIndex)
       .sort({ createdAt: -1 });
 
     res.json({
       recipes,
-      currentPage: page,
+      currentPage: parseInt(page),
       totalPages: Math.ceil(totalRecipes / limit),
       totalRecipes
     });
   } catch (error) {
-    logger.error('Error fetching recipes:', error);
-    res.status(500).json({ message: 'Error fetching recipes', error: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
-
 export const getRecipe = async (req, res) => {
   try {
     const recipe = await Recipe.findById(req.params.id)
@@ -83,32 +91,59 @@ export const getRecipe = async (req, res) => {
 
 export const createRecipe = async (req, res) => {
   try {
+    const { error } = validateRecipe(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
+
+    const { allergens, alternatives, ...otherFields } = req.body;
+
+    const validAllergens = await validateAllergens(allergens);
+    const validAlternatives = await validateAlternatives(alternatives);
+
     const newRecipe = new Recipe({
-      ...req.body,
+      ...otherFields,
+      allergens: validAllergens,
+      alternatives: validAlternatives,
       createdBy: req.user._id
     });
+
     const savedRecipe = await newRecipe.save();
-    logger.info(`New recipe created: ${savedRecipe._id}`);
     res.status(201).json(savedRecipe);
   } catch (error) {
-    handleError(res, error, 400);
+    res.status(500).json({ message: 'שגיאה ביצירת המתכון', error: error.message });
   }
 };
 
 export const updateRecipe = async (req, res) => {
   try {
+    const { error } = validateRecipe(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
+
+    const { allergens, alternatives, ...otherFields } = req.body;
+
+    const validAllergens = await validateAllergens(allergens);
+    const validAlternatives = await validateAlternatives(alternatives);
+
     const updatedRecipe = await Recipe.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      {
+        ...otherFields,
+        allergens: validAllergens,
+        alternatives: validAlternatives
+      },
       { new: true, runValidators: true }
     );
+
     if (!updatedRecipe) {
-      return res.status(404).json({ message: 'Recipe not found' });
+      return res.status(404).json({ message: 'המתכון לא נמצא' });
     }
-    logger.info(`Recipe updated: ${updatedRecipe._id}`);
+
     res.json(updatedRecipe);
   } catch (error) {
-    handleError(res, error, 400);
+    res.status(500).json({ message: 'שגיאה בעדכון המתכון', error: error.message });
   }
 };
 
@@ -212,5 +247,26 @@ export const addRecipeComment = async (req, res) => {
     res.status(201).json(newComment);
   } catch (error) {
     handleError(res, error, 400);
+  }
+};
+export const toggleFavorite = async (req, res) => {
+  try {
+    const recipeId = req.params.id;
+    const userId = req.user._id;
+
+    const user = await User.findById(userId);
+    const isFavorite = user.favorites.includes(recipeId);
+
+    if (isFavorite) {
+      // הסר מהמועדפים
+      await User.findByIdAndUpdate(userId, { $pull: { favorites: recipeId } });
+    } else {
+      // הוסף למועדפים
+      await User.findByIdAndUpdate(userId, { $addToSet: { favorites: recipeId } });
+    }
+
+    res.json({ success: true, isFavorite: !isFavorite });
+  } catch (error) {
+    res.status(500).json({ message: 'שגיאה בעדכון המועדפים', error: error.message });
   }
 };

@@ -1,39 +1,36 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Controller } from 'react-hook-form';
+import styles from './AllergenInput.module.css';
 
-// AllergenInput component - קלט להוספת אלרגנים
-function AllergenInput({ allergens, onAllergensChange }) {
-  const [newAllergen, setNewAllergen] = useState('');
-
-  const handleAddAllergen = () => {
-    if (newAllergen && !allergens.includes(newAllergen)) {
-      onAllergensChange([...allergens, newAllergen]);
-      setNewAllergen('');
-    }
-  };
-
-  const handleRemoveAllergen = (allergen) => {
-    onAllergensChange(allergens.filter(a => a !== allergen));
-  };
-
+const AllergenInput = ({ control, index, allergens, onRemove }) => {
   return (
-    <div className="allergen-input">
-      <input 
-        type="text"
-        value={newAllergen}
-        onChange={(e) => setNewAllergen(e.target.value)}
-        placeholder="הוסף אלרגן"
+    <div className={styles.allergenInputRow}>
+      <Controller
+        name={`alternatives.${index}.allergen`}
+        control={control}
+        render={({ field }) => (
+          <select {...field}>
+            <option value="">בחר אלרגן</option>
+            {allergens.map(allergen => (
+              <option key={allergen._id} value={allergen._id}>
+                {allergen.hebrewName}
+              </option>
+            ))}
+          </select>
+        )}
       />
-      <button type="button" onClick={handleAddAllergen}>הוסף</button>
-      <ul>
-        {allergens.map(allergen => (
-          <li key={allergen}>
-            {allergen}
-            <button type="button" onClick={() => handleRemoveAllergen(allergen)}>הסר</button>
-          </li>
-        ))}
-      </ul>
+      <Controller
+        name={`alternatives.${index}.substitute`}
+        control={control}
+        render={({ field }) => (
+          <input {...field} placeholder="הזן תחליף" />
+        )}
+      />
+      <button type="button" onClick={() => onRemove(index)}>
+        הסר
+      </button>
     </div>
   );
-}
+};
 
 export default AllergenInput;

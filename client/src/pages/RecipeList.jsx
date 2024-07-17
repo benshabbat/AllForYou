@@ -1,78 +1,87 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { RECIPES_PER_PAGE } from '../constants';
+import React, { useState, useEffect } from 'react';
+import { useQuery } from 'react-query';
+import { useLocation } from 'react-router-dom';
+import api from '../services/api';
 import RecipeCard from '../components/RecipeCard';
-import AdvancedSearch from '../components/AdvancedSearch';
+import SearchBar from '../components/SearchBar';
+import FilterSidebar from '../components/FilterSidebar';
 import Pagination from '../components/Pagination';
 import Loading from '../components/Loading';
 import ErrorMessage from '../components/ErrorMessage';
-import { useRecipeList } from '../hooks/useRecipeList';
-import { useAllergens } from '../hooks/useAllergens';
 import styles from './RecipeList.module.css';
 
 const RecipeList = () => {
-  const [searchParams, setSearchParams] = useState({});
-  const { allergens } = useAllergens();
-  const { user } = useSelector(state => state.auth);
-  const {
-    recipes,
-    totalRecipes,
-    currentPage,
-    isLoading,
-    error,
-    fetchRecipes,
-    setCurrentPage
-  } = useRecipeList(RECIPES_PER_PAGE);
+  const location = useLocation();
+  const [filters, setFilters] = useState({
+    search: new URLSearchParams(location.search).get('search') || '',
+    category: '',
+    allergens: [],
+    difficulty: '',
+    sortBy: 'createdAt',
+    order: 'desc'
+  });
+  const [page, setPage] = useState(1);
+  const pageSize = 12;
+
+  const { data, isLoading, error, refetch } = useQuery(
+    ['recipes', filters, page],
+    () => api.get('/recipes', { params: { ...filters, page, pageSize } }).then(res => res.data),
+    { keepPreviousData: true }
+  );
 
   useEffect(() => {
-    fetchRecipes(searchParams);
-  }, [fetchRecipes, searchParams]);
+    refetch();
+  }, [filters, page, refetch]);
 
-  const handleSearch = useCallback((params) => {
-    setSearchParams(params);
-    setCurrentPage(1);
-  }, [setCurrentPage]);
+  const handleFilterChange = (newFilters) => {
+    setFilters(prevFilters => ({ ...prevFilters, ...newFilters }));
+    setPage(1);
+  };
 
-  const handlePageChange = useCallback((page) => {
-    setCurrentPage(page);
-  }, [setCurrentPage]);
+  const handleSortChange = (e) => {
+    const [sortBy, order] = e.target.value.split('-');
+    setFilters(prevFilters => ({ ...prevFilters, sortBy, order }));
+  };
+  const totalPages = data ? Math.ceil(data.totalRecipes / pageSize) : 0;
 
-  if (isLoading) return <Loading message="טוען מתכונים..." />;
-  if (error) return <ErrorMessage message={error} />;
-
-  const totalPages = Math.ceil(totalRecipes / RECIPES_PER_PAGE);
+  if (isLoading) return <Loading />;
+  if (error) return <ErrorMessage message="שגיאה בטעינת המתכונים" />;
 
   return (
     <div className={styles.recipeListContainer}>
-      <h1 className={styles.title}>המתכונים שלנו</h1>
-      <AdvancedSearch onSearch={handleSearch} allergens={allergens} />
-      {recipes.length === 0 ? (
-        <p className={styles.noRecipes}>לא נמצאו מתכונים התואמים לחיפוש שלך.</p>
-      ) : (
-        <>
-          <p className={styles.resultSummary}>נמצאו {totalRecipes} מתכונים</p>
-          <RecipeGrid recipes={recipes} currentUserId={user?.id} />
-          <Pagination 
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-        </>
-      )}
+      <h1 className={styles.title}>מתכונים</h1>
+      <SearchBar onSearch={(search) => handleFilterChange({ search })} />
+      <div className={styles.content}>
+        <FilterSidebar filters={filters} onFilterChange={handleFilterChange} />
+        <div className={styles.recipeGrid}>
+          <div className={styles.sortContainer}>
+            <label htmlFor="sort">מיין לפי: </label>
+            <select
+              id="sort"
+              value={`${filters.sortBy}-${filters.order}`}
+              onChange={handleSortChange}
+              className={styles.sortSelect}
+            >
+              <option value="createdAt-desc">חדש ביותר</option>
+              <option value="createdAt-asc">ישן ביותר</option>
+              <option value="averageRating-desc">דירוג גבוה</option>
+              <option value="averageRating-asc">דירוג נמוך</option>
+            </select>
+          </div>
+          {data.recipes.length === 0 ? (
+            <p className={styles.noRecipes}>לא נמצאו מתכונים התואמים לחיפוש שלך.</p>
+          ) : (
+            data.recipes.map(recipe => <RecipeCard key={recipe._id} recipe={recipe} />)
+          )}
+        </div>
+      </div>
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+      />
     </div>
   );
 };
 
-const RecipeGrid = React.memo(({ recipes, currentUserId }) => (
-  <div className={styles.recipeGrid} role="list" aria-label="רשימת מתכונים">
-    {recipes.map((recipe) => (
-      <RecipeCard 
-        key={recipe._id}
-        recipe={recipe} 
-        isOwner={recipe.createdBy === currentUserId}
-      />
-    ))}
-  </div>
-));
-
-export default React.memo(RecipeList);
+export default RecipeList;

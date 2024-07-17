@@ -1,26 +1,28 @@
 .allergenSelection {
   margin-bottom: 20px;
+  position: relative;
 }
 
 .label {
   display: block;
   margin-bottom: 10px;
   font-weight: bold;
+  color: #333;
 }
 
 .allergenGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 10px;
 }
 
 .allergenItem {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 5px;
   border: 1px solid #ddd;
-  border-radius: 5px;
-  cursor: pointer;
+  border-radius: 4px;
 }
 
 .allergenItem:hover {
@@ -31,12 +33,58 @@
   margin-right: 5px;
 }
 
-.allergenItem span {
-  margin-left: 5px;
+.infoButton {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.infoButton:hover {
+  background-color: #357abd;
 }
 
 .error {
-  color: red;
-  font-size: 0.8em;
+  color: #d32f2f;
+  font-size: 14px;
   margin-top: 5px;
+}
+
+.allergenInfo {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 15px;
+  margin-top: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+.allergenInfo h4 {
+  margin-top: 0;
+  color: #4a90e2;
+}
+
+.allergenInfo ul {
+  padding-left: 20px;
+}
+
+.allergenInfo button {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.allergenInfo button:hover {
+  background-color: #e0e0e0;
 }

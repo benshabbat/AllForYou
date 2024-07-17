@@ -1,44 +1,63 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Controller } from 'react-hook-form';
-import AllergenIcon from './AllergenIcon';
 import styles from './AllergenSelection.module.css';
 
 const AllergenSelection = ({ name, control, label, error, allergens }) => {
-  if (!allergens || allergens.length === 0) {
-    return <div>אין אלרגנים זמינים</div>;
-  }
+  const [selectedAllergen, setSelectedAllergen] = useState(null);
 
   return (
-    <Controller
-      name={name}
-      control={control}
-      defaultValue={[]}
-      render={({ field }) => (
-        <div className={styles.allergenSelection}>
-          <label className={styles.label}>{label}</label>
+    <div className={styles.allergenSelection}>
+      <label className={styles.label}>{label}</label>
+      <Controller
+        name={name}
+        control={control}
+        render={({ field }) => (
           <div className={styles.allergenGrid}>
             {allergens.map((allergen) => (
-              <label key={allergen._id} className={styles.allergenItem}>
-                <input
-                  type="checkbox"
-                  value={allergen._id}
-                  checked={field.value.includes(allergen._id)}
-                  onChange={(e) => {
-                    const updatedValue = e.target.checked
-                      ? [...field.value, allergen._id]
-                      : field.value.filter(id => id !== allergen._id);
-                    field.onChange(updatedValue);
-                  }}
-                />
-                <AllergenIcon allergen={allergen} />
-                <span>{allergen.hebrewName}</span>
-              </label>
+              <div key={allergen._id} className={styles.allergenItem}>
+                <label>
+                  <input
+                    type="checkbox"
+                    value={allergen._id}
+                    checked={field.value.includes(allergen._id)}
+                    onChange={(e) => {
+                      const updatedValue = e.target.checked
+                        ? [...field.value, allergen._id]
+                        : field.value.filter(id => id !== allergen._id);
+                      field.onChange(updatedValue);
+                    }}
+                  />
+                  <span>{allergen.hebrewName}</span>
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setSelectedAllergen(allergen)}
+                  className={styles.infoButton}
+                >
+                  מידע
+                </button>
+              </div>
             ))}
           </div>
-          {error && <span className={styles.error}>{error.message}</span>}
+        )}
+      />
+      {error && <span className={styles.error}>{error.message}</span>}
+      {selectedAllergen && (
+        <div className={styles.allergenInfo}>
+          <h4>{selectedAllergen.hebrewName}</h4>
+          <p>{selectedAllergen.description}</p>
+          <h5>תחליפים מומלצים:</h5>
+          <ul>
+            {selectedAllergen.alternatives.map((alt, index) => (
+              <li key={index}>
+                <strong>{alt.name}</strong>: {alt.description}
+              </li>
+            ))}
+          </ul>
+          <button onClick={() => setSelectedAllergen(null)}>סגור</button>
         </div>
       )}
-    />
+    </div>
   );
 };
 

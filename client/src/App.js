@@ -17,7 +17,7 @@ const queryClient = new QueryClient();
 // Lazy loaded components
 const Home = lazy(() => import('./pages/Home'));
 const RecipeList = lazy(() => import('./pages/RecipeList'));
-const AddRecipe = lazy(() => import('./pages/AddRecipe'));
+const RecipeForm = lazy(() => import('./pages/AddRecipe.jsx'));
 const Register = lazy(() => import('./pages/Register'));
 const Login = lazy(() => import('./pages/Login'));
 const UserProfile = lazy(() => import('./pages/UserProfile'));
@@ -74,7 +74,7 @@ function AppContent() {
                 <Route path="/recipe/:id" element={<RecipeDetails />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/add-recipe" element={<PrivateRoute><AddRecipe /></PrivateRoute>} />
+                <Route path="/add-recipe" element={<PrivateRoute><RecipeForm /></PrivateRoute>} />
                 <Route path="/profile" element={<PrivateRoute><UserProfile /></PrivateRoute>} />
                 <Route path="/my-recipes" element={<PrivateRoute><MyRecipes /></PrivateRoute>} />
                 <Route path="/settings" element={<PrivateRoute><UserSettings /></PrivateRoute>} />

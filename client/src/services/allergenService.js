@@ -9,4 +9,8 @@ const fetchAllergens = async () => {
   }
 };
 
-export default { fetchAllergens };
+const allergenService = {
+  fetchAllergens
+};
+
+export default allergenService;

@@ -12,3 +12,4 @@ export const validate = (validations) => {
     res.status(400).json({ errors: errors.array() });
   };
 };
+

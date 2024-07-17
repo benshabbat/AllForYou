@@ -35,7 +35,13 @@ const AllergenSchema = new mongoose.Schema({
     validate: [arrayLimit, 'מספר המאכלים להימנעות לא יכול לעלות על 20']
   },
   alternatives: {
-    type: [String],
+    type: [{
+      name: {
+        type: String,
+        required: true
+      },
+      description: String
+    }],
     validate: [arrayLimit, 'מספר החלופות לא יכול לעלות על 10']
   },
   severity: {

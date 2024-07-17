@@ -1,10 +1,3 @@
-:root {
-  --primary-color: #4a90e2; /* או כל צבע אחר שאתה משתמש בו */
-  --secondary-color: #f5a623; /* או כל צבע אחר שאתה משתמש בו */
-  --border-radius: 10px;
-  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
 .home {
   max-width: 1200px;
   margin: 0 auto;
@@ -14,41 +7,44 @@
 .hero {
   text-align: center;
   padding: 60px 0;
-  background-color: #f7f7f7;
+  background: linear-gradient(135deg, #6dd5ed, #2193b0);
   border-radius: 10px;
   margin-bottom: 40px;
-  /* Consider adding a subtle background pattern or gradient */
+  color: white;
 }
 
 .hero h1 {
   font-size: 2.5em;
-  color: var(--primary-color);
   margin-bottom: 20px;
 }
 
 .hero p {
   font-size: 1.2em;
-  color: #555;
   margin-bottom: 30px;
 }
 
-/* Consider creating a separate .button class for reusability */
-.ctaButton, .addRecipeButton, .loginButton, .registerButton {
+.heroSearch {
+  max-width: 600px;
+  margin: 0 auto 20px;
+}
+
+.ctaButton, .addRecipeButton, .myRecipesButton, .loginButton, .registerButton {
   display: inline-block;
   padding: 12px 24px;
-  border-radius: 5px;
+  border-radius: 30px;
   text-decoration: none;
   font-weight: bold;
   transition: all 0.3s ease;
+  margin: 0 10px;
 }
 
-.ctaButton, .loginButton {
-  background-color: var(--primary-color);
-  color: white;
+.ctaButton {
+  background-color: #ffd700;
+  color: #333;
 }
 
-.ctaButton:hover, .loginButton:hover {
-  background-color: #3a7bd5;
+.ctaButton:hover {
+  background-color: #ffc600;
   transform: translateY(-2px);
 }
 
@@ -72,8 +68,14 @@
   transform: translateY(-5px);
 }
 
+.featureIcon {
+  font-size: 2.5em;
+  color: #2193b0;
+  margin-bottom: 15px;
+}
+
 .feature h2 {
-  color: var(--primary-color);
+  color: #333;
   margin-bottom: 15px;
 }
 
@@ -82,21 +84,29 @@
   padding: 40px;
   border-radius: 10px;
   text-align: center;
+  margin-top: 40px;
 }
 
-.addRecipeButton {
-  background-color: var(--secondary-color);
+.userActions, .authButtons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.addRecipeButton, .loginButton {
+  background-color: #4caf50;
   color: white;
 }
 
-.registerButton {
+.myRecipesButton, .registerButton {
   background-color: white;
-  color: var(--primary-color);
-  border: 2px solid var(--primary-color);
+  color: #4caf50;
+  border: 2px solid #4caf50;
 }
 
-.addRecipeButton:hover, .registerButton:hover {
-  background-color: var(--primary-color);
+.addRecipeButton:hover, .myRecipesButton:hover, .loginButton:hover, .registerButton:hover {
+  background-color: #45a049;
   color: white;
 }
 
@@ -112,20 +122,8 @@
   .features {
     grid-template-columns: 1fr;
   }
-}
 
-/* Accessibility */
-.ctaButton:focus, .addRecipeButton:focus, .loginButton:focus, .registerButton:focus {
-  outline: 3px solid var(--primary-color);
-  outline-offset: 2px;
-}
-
-/* Animations */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.hero, .feature, .userSection, .callToAction {
-  animation: fadeInUp 0.6s ease-out;
+  .userActions, .authButtons {
+    flex-direction: column;
+  }
 }
