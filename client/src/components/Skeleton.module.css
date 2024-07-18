@@ -1,19 +1,41 @@
-.skeleton {
-  background: linear-gradient(
-    90deg,
-    rgba(240, 240, 240, 1) 0%,
-    rgba(224, 224, 224, 1) 50%,
-    rgba(240, 240, 240, 1) 100%
-  );
-  background-size: 200% 100%;
-  animation: loading 1.5s infinite;
-}
-
-@keyframes loading {
+@keyframes shimmer {
   0% {
-    background-position: 200% 0;
-  }
-  100% {
     background-position: -200% 0;
   }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--border-radius);
+}
+
+.text {
+  height: 1em;
+  margin-bottom: 0.5em;
+}
+
+.title {
+  height: 1.5em;
+  margin-bottom: 1em;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.thumbnail {
+  width: 100%;
+  height: 200px;
+}
+
+.button {
+  height: 40px;
+  width: 100px;
 }

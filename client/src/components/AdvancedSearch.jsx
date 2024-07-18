@@ -4,7 +4,6 @@ import { fetchAllergens, fetchRecipes } from '../store/slices/recipeSlice';
 import AllergenFilter from './AllergenFilter';
 import { useAllergens } from '../hooks/useAllergens';
 import { useSearchForm } from '../hooks/useSearchForm';
-import SearchInputs from './SearchInputs';
 import SearchSuggestions from './SearchSuggestions';
 import { CATEGORIES, DIFFICULTY_LEVELS } from '../constants';
 import styles from "./AdvancedSearch.module.css";
@@ -56,19 +55,56 @@ const AdvancedSearch = () => {
   return (
     <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
       <div className={styles.searchInputWrapper}>
-        <SearchInputs 
-          searchParams={searchParams} 
-          handleChange={handleKeywordChange} 
-          categories={CATEGORIES}
-          difficultyLevels={DIFFICULTY_LEVELS}
+        <input
+          type="text"
+          name="keyword"
+          value={searchParams.keyword}
+          onChange={handleKeywordChange}
+          placeholder="חפש מתכונים..."
+          className={styles.searchInput}
         />
+        <button type="submit" className={styles.searchButton}>
+          חפש
+        </button>
         <SearchSuggestions suggestions={suggestions} onSuggestionClick={handleSuggestionClick} />
       </div>
+      
       <button type="button" onClick={toggleAdvancedOptions} className={styles.advancedOptionsButton}>
         {advancedOptions ? 'הסתר אפשרויות מתקדמות' : 'הצג אפשרויות מתקדמות'}
       </button>
+      
       {advancedOptions && (
         <div className={styles.advancedOptions}>
+          <div className={styles.optionGroup}>
+            <label htmlFor="category">קטגוריה:</label>
+            <select
+              id="category"
+              name="category"
+              value={searchParams.category}
+              onChange={handleChange}
+            >
+              <option value="">כל הקטגוריות</option>
+              {CATEGORIES.map(category => (
+                <option key={category} value={category}>{category}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div className={styles.optionGroup}>
+            <label htmlFor="difficulty">רמת קושי:</label>
+            <select
+              id="difficulty"
+              name="difficulty"
+              value={searchParams.difficulty}
+              onChange={handleChange}
+            >
+              <option value="">כל רמות הקושי</option>
+              {DIFFICULTY_LEVELS.map(level => (
+                <option key={level} value={level}>{level}</option>
+              ))}
+            </select>
+          </div>
+          
           <AllergenFilter 
             allergens={allergens}
             selectedAllergens={selectedAllergens}
@@ -76,9 +112,10 @@ const AdvancedSearch = () => {
             isLoading={allergensLoading}
             error={allergensError}
           />
-          <div className={styles.timeRange}>
-            <label>
-              זמן הכנה מקסימלי (בדקות):
+          
+          <div className={styles.optionGroup}>
+            <label>זמן הכנה מקסימלי (בדקות):</label>
+            <div className={styles.timeRange}>
               <input
                 type="number"
                 name="maxPrepTime"
@@ -86,11 +123,13 @@ const AdvancedSearch = () => {
                 onChange={handleChange}
                 min="0"
               />
-            </label>
+              <span>דקות</span>
+            </div>
           </div>
-          <div className={styles.calorieRange}>
-            <label>
-              קלוריות מקסימליות:
+          
+          <div className={styles.optionGroup}>
+            <label>קלוריות מקסימליות:</label>
+            <div className={styles.calorieRange}>
               <input
                 type="number"
                 name="maxCalories"
@@ -98,15 +137,11 @@ const AdvancedSearch = () => {
                 onChange={handleChange}
                 min="0"
               />
-            </label>
+              <span>קלוריות</span>
+            </div>
           </div>
         </div>
       )}
-      <div className={styles.searchButtonContainer}>
-        <button type="submit" className={styles.searchButton}>
-          חיפוש
-        </button>
-      </div>
     </form>
   );
 };

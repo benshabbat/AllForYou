@@ -1,81 +1,119 @@
-/* מכיל את כל תוכן הפרופיל */
 .profileContainer {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
   direction: rtl;
 }
 
 .title {
   font-size: 2.5rem;
-  color: #333;
+  color: var(--text-color);
   text-align: center;
   margin-bottom: 30px;
+  font-weight: 700;
 }
-  
-  /* מידע על המשתמש */
-  .userInfo {
-    background-color: #f9f9f9;
-    border-radius: 8px;
+
+.userInfo {
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius);
+  padding: 25px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.userInfo h2 {
+  color: var(--primary-color);
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+.userInfo p {
+  color: #555;
+  margin: 10px 0;
+  font-size: 1.1rem;
+}
+
+.userRecipes {
+  margin-top: 40px;
+}
+
+.userRecipes h3 {
+  font-size: 1.8rem;
+  color: var(--text-color);
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 10px;
+}
+
+.recipeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 25px;
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 20px;
+  font-size: 1.2rem;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius);
+  margin-top: 20px;
+}
+
+.loading {
+  color: var(--primary-color);
+}
+
+.error {
+  color: var(--error-color);
+}
+
+.editProfileButton {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  margin-top: 20px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.editProfileButton:hover {
+  background-color: darken(var(--primary-color), 10%);
+}
+
+@media (max-width: 768px) {
+  .profileContainer {
     padding: 20px;
-    margin-bottom: 30px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
-  
+
+  .title {
+    font-size: 2rem;
+  }
+
   .userInfo h2 {
-    color: #2c3e50;
-    margin-bottom: 10px;
+    font-size: 1.3rem;
   }
-  
+
   .userInfo p {
-    color: #7f8c8d;
-    margin: 5px 0;
+    font-size: 1rem;
   }
-  
-  /* אזור המתכונים של המשתמש */
-  .userRecipes {
-    margin-top: 30px;
-  }
-  
+
   .userRecipes h3 {
-    font-size: 1.8rem;
-    color: #2c3e50;
-    margin-bottom: 20px;
+    font-size: 1.5rem;
   }
-  
-  /* רשת להצגת המתכונים */
+
   .recipeGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
+    grid-template-columns: 1fr;
   }
-  
-  /* סגנונות למצבי טעינה ושגיאה */
-  .loading, .error {
-    text-align: center;
-    padding: 20px;
-    font-size: 1.2rem;
-  }
-  
-  .loading {
-    color: #3498db;
-  }
-  
-  .error {
-    color: #e74c3c;
-  }
-  
-  /* התאמה למסכים קטנים */
-  @media (max-width: 768px) {
-    .title {
-      font-size: 2rem;
-    }
-  
-    .userInfo, .userRecipes {
-      padding: 15px;
-    }
-  
-    .recipeGrid {
-      grid-template-columns: 1fr;
-    }
-  }
+}

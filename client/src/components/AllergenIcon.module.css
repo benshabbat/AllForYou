@@ -4,8 +4,9 @@
   justify-content: center;
   border-radius: 50%;
   background-color: #f0f0f0;
-  transition: all 0.3s ease;
+  transition: var(--transition);
   cursor: pointer;
+  position: relative;
 }
 
 .allergenIcon:hover {
@@ -14,27 +15,43 @@
 }
 
 .small {
-  width: 24px;
-  height: 24px;
-  font-size: 14px;
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
 }
 
 .medium {
-  width: 32px;
-  height: 32px;
-  font-size: 18px;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
 }
 
 .large {
-  width: 48px;
-  height: 48px;
+  width: 50px;
+  height: 50px;
   font-size: 24px;
 }
 
 .tooltipContent {
-  max-width: 200px;
-  direction: rtl;
-  text-align: right;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  width: 200px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+  z-index: 1000;
+}
+
+.allergenIcon:hover .tooltipContent {
+  opacity: 1;
+  visibility: visible;
 }
 
 .tooltipContent h4 {
@@ -51,34 +68,24 @@
   font-weight: bold;
 }
 
-.low {
-  color: #4caf50;
-}
+.low { color: #4caf50; }
+.medium { color: #ff9800; }
+.high { color: #f44336; }
+.unknown { color: #9e9e9e; }
 
-.medium {
-  color: #ff9800;
-}
-
-.high {
-  color: #f44336;
-}
-
-.unknown {
-  color: #9e9e9e;
-}
-
-/* Accessibility */
+/* נגישות */
 .allergenIcon:focus {
-  outline: 2px solid #4a90e2;
+  outline: 2px solid var(--primary-color);
   outline-offset: 2px;
 }
 
-/* Animation for tooltip */
-@keyframes tooltipFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+/* אנימציה */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
 
-[data-tooltip-content] {
-  animation: tooltipFadeIn 0.2s ease-out;
+.allergenIcon:hover {
+  animation: pulse 0.5s infinite;
 }

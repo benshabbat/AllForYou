@@ -1,7 +1,12 @@
 .ratingContainer {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.starContainer {
+  display: inline-flex;
+  direction: ltr; /* תמיד משמאל לימין */
 }
 
 .star {
@@ -15,11 +20,49 @@
   color: #ffc107;
 }
 
+.star.hovered {
+  color: #ffdb58;
+}
+
 .star.readOnly {
   cursor: default;
 }
 
 .rating {
-  margin-left: 10px;
+  margin-right: 10px;
   font-size: 16px;
+  color: var(--text-color);
+}
+
+.ratingLabel {
+  margin-left: 10px;
+  font-size: 14px;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .star {
+    font-size: 20px;
+  }
+
+  .rating {
+    font-size: 14px;
+  }
+}
+
+/* נגישות */
+.star:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* אנימציה */
+@keyframes starPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.star.clicked {
+  animation: starPulse 0.3s ease-in-out;
 }

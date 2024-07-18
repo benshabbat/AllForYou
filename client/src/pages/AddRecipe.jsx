@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -7,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { useAddRecipe } from "../hooks/useRecipe";
 import { useAllergens } from "../hooks/useAllergens";
 import FormField from "../components/FormField";
-import AllergenSelection from "../components/AllergenSelection";
 import ImageUpload from "../components/ImageUpload";
 import { CATEGORIES, DIFFICULTY_LEVELS } from "../constants";
 import styles from "./AddRecipe.module.css";
@@ -180,13 +178,43 @@ const AddRecipe = () => {
             options={CATEGORIES.map(category => ({ value: category, label: category }))}
           />
         </div>
-        <AllergenSelection
-          name="allergens"
-          control={control}
-          label="אלרגנים"
-          error={errors.allergens}
-          allergens={allergens || []}
-        />
+        <div className={styles.allergensSection}>
+          <label>אלרגנים:</label>
+          <div className={styles.allergenGrid}>
+            {allergens.map((allergen) => (
+              <div key={allergen._id} className={styles.allergenItem}>
+                <Controller
+                  name="allergens"
+                  control={control}
+                  render={({ field }) => (
+                    <label>
+                      <input
+                        type="checkbox"
+                        onChange={(e) => {
+                          const updatedAllergens = e.target.checked
+                            ? [...field.value, allergen._id]
+                            : field.value.filter(id => id !== allergen._id);
+                          field.onChange(updatedAllergens);
+                        }}
+                        checked={field.value.includes(allergen._id)}
+                      />
+                      {allergen.icon} {allergen.hebrewName}
+                    </label>
+                  )}
+                />
+                <div className={styles.allergenAlternatives}>
+                  <strong>תחליפים:</strong>
+                  <ul>
+                    {allergen.alternatives.map((alt, index) => (
+                      <li key={index}>{alt.name} - {alt.description}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+          {errors.allergens && <span className={styles.error}>{errors.allergens.message}</span>}
+        </div>
         <ImageUpload
           onChange={handleImageChange}
           preview={imagePreview}

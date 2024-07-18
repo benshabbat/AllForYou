@@ -1,4 +1,4 @@
-import React, { useEffect, lazy, Suspense, useRef } from 'react';
+import React, { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Provider, useDispatch } from 'react-redux';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -11,10 +11,10 @@ import PrivateRoute from './components/PrivateRoute';
 import NotFound from './components/NotFound';
 import ErrorBoundary from './components/ErrorBoundary';
 import { useAuth } from './hooks/useAuth';
+import { ToastProvider, ToastContainer } from './components/Toast';
 
 const queryClient = new QueryClient();
 
-// Lazy loaded components
 const Home = lazy(() => import('./pages/Home'));
 const RecipeList = lazy(() => import('./pages/RecipeList'));
 const RecipeForm = lazy(() => import('./pages/AddRecipe.jsx'));
@@ -30,7 +30,7 @@ function AppContent() {
   const dispatch = useDispatch();
   const { isLoading } = useAuth();
   const location = useLocation();
-  const nodeRef = useRef(null);
+  const nodeRef = React.useRef(null);
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -93,9 +93,12 @@ function App() {
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        <Router>
-          <AppContent />
-        </Router>
+        <ToastProvider>
+          <Router>
+            <AppContent />
+            <ToastContainer />
+          </Router>
+        </ToastProvider>
       </QueryClientProvider>
     </Provider>
   );

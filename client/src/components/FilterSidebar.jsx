@@ -12,6 +12,7 @@ const defaultFilters = {
 
 const FilterSidebar = ({ initialFilters = defaultFilters, onFilterChange }) => {
   const [filters, setFilters] = useState(initialFilters);
+  const [searchAllergen, setSearchAllergen] = useState('');
   const { data: allergens, isLoading: allergensLoading, error: allergensError } = useQuery('allergens', () => 
     api.get('/allergens').then(res => res.data)
   );
@@ -44,8 +45,14 @@ const FilterSidebar = ({ initialFilters = defaultFilters, onFilterChange }) => {
 
   const handleResetFilters = () => {
     setFilters(defaultFilters);
+    setSearchAllergen('');
     onFilterChange(defaultFilters);
   };
+
+  const filteredAllergens = allergens?.filter(allergen => 
+    allergen.hebrewName.toLowerCase().includes(searchAllergen.toLowerCase()) ||
+    allergen.name.toLowerCase().includes(searchAllergen.toLowerCase())
+  );
 
   if (allergensLoading) return <div className={styles.loading}>טוען אלרגנים...</div>;
   if (allergensError) return <div className={styles.error}>שגיאה בטעינת אלרגנים: {allergensError.message}</div>;
@@ -86,17 +93,23 @@ const FilterSidebar = ({ initialFilters = defaultFilters, onFilterChange }) => {
 
       <section className={styles.filterSection}>
         <h3>אלרגנים (ללא)</h3>
+        <input
+          type="text"
+          placeholder="חפש אלרגן..."
+          value={searchAllergen}
+          onChange={(e) => setSearchAllergen(e.target.value)}
+          className={styles.allergenSearch}
+        />
         <div className={styles.allergenList}>
-          {allergens?.map(allergen => (
-            <label key={allergen._id} className={styles.allergenItem}>
-              <input
-                type="checkbox"
-                className={styles.allergenCheckbox}
-                checked={filters.allergens.includes(allergen._id)}
-                onChange={() => handleAllergenChange(allergen._id)}
-              />
-              <span className={styles.allergenLabel}>{allergen.hebrewName}</span>
-            </label>
+          {filteredAllergens?.map(allergen => (
+            <div 
+              key={allergen._id} 
+              className={`${styles.allergenItem} ${filters.allergens.includes(allergen._id) ? styles.selected : ''}`}
+              onClick={() => handleAllergenChange(allergen._id)}
+            >
+              <span className={styles.allergenIcon}>{allergen.icon}</span>
+              <span className={styles.allergenName}>{allergen.hebrewName}</span>
+            </div>
           ))}
         </div>
       </section>
@@ -104,7 +117,7 @@ const FilterSidebar = ({ initialFilters = defaultFilters, onFilterChange }) => {
       <button onClick={handleApplyFilters} className={styles.applyFiltersButton}>
         החל סינונים
       </button>
-      <button onClick={handleResetFilters} className={`${styles.applyFiltersButton} ${styles.resetButton}`}>
+      <button onClick={handleResetFilters} className={styles.resetButton}>
         אפס סינונים
       </button>
     </aside>

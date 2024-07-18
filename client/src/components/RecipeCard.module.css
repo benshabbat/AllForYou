@@ -1,9 +1,9 @@
 .recipeCard {
   background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: var(--transition);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -65,13 +65,13 @@
   background-color: rgba(255, 255, 255, 0.8);
   border: none;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--transition);
   z-index: 1;
 }
 
@@ -90,8 +90,8 @@
 .recipeTitle {
   font-size: 1.4rem;
   font-weight: 600;
-  color: #333;
-  margin-bottom: 10px;
+  color: var(--text-color);
+  margin-bottom: 15px;
   line-height: 1.3;
 }
 
@@ -110,7 +110,7 @@
 
 .recipeInfo svg {
   margin-left: 5px;
-  color: #4a90e2;
+  color: var(--primary-color);
 }
 
 .recipeDescription {
@@ -130,29 +130,17 @@
 }
 
 .viewRecipeButton {
-  padding: 8px 15px;
-  background-color: #4a90e2;
+  padding: 10px 20px;
+  background-color: var(--primary-color);
   color: white;
   border-radius: 20px;
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 600;
-  transition: all 0.3s ease;
+  transition: var(--transition);
 }
 
 .viewRecipeButton:hover {
-  background-color: #3a7bd5;
+  background-color: darken(var(--primary-color), 10%);
   transform: translateY(-2px);
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .recipeTitle {
-    font-size: 1.2rem;
-  }
-
-  .recipeInfo {
-    flex-direction: column;
-    gap: 5px;
-  }
 }

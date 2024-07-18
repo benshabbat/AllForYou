@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import api from '../services/api';
@@ -8,6 +7,7 @@ import FilterSidebar from '../components/FilterSidebar';
 import Pagination from '../components/Pagination';
 import Loading from '../components/Loading';
 import ErrorMessage from '../components/ErrorMessage';
+import Skeleton from '../components/Skeleton';
 import styles from './RecipeList.module.css';
 
 const RecipeList = () => {
@@ -48,7 +48,18 @@ const RecipeList = () => {
 
   const totalPages = data ? Math.ceil(data.totalRecipes / pageSize) : 0;
 
-  if (isLoading) return <Loading />;
+  if (isLoading) return (
+    <div className={styles.recipeGrid}>
+      {Array.from({ length: 6 }).map((_, index) => (
+        <div key={index} className={styles.recipeCardSkeleton}>
+          <Skeleton type="thumbnail" height="200px" />
+          <Skeleton type="title" width="80%" height="24px" />
+          <Skeleton type="text" count={3} />
+        </div>
+      ))}
+    </div>
+  );
+  
   if (error) return <ErrorMessage message="שגיאה בטעינת המתכונים" />;
 
   return (

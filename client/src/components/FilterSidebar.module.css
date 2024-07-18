@@ -1,148 +1,136 @@
 .filterSidebar {
-  background-color: #f8f9fa;
+  background-color: #ffffff;
   border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+  padding: 25px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
   transition: all 0.3s ease;
 }
 
-.filterSidebar:hover {
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-}
-
 .filterTitle {
-  font-size: 1.4rem;
-  color: #333;
-  margin-bottom: 20px;
+  font-size: 1.5rem;
+  color: var(--text-color);
+  margin-bottom: 25px;
   padding-bottom: 10px;
-  border-bottom: 2px solid #4a90e2;
+  border-bottom: 2px solid var(--primary-color);
 }
 
 .filterSection {
-  margin-bottom: 25px;
+  margin-bottom: 30px;
 }
 
 .filterSection h3 {
-  font-size: 1.1rem;
-  color: #555;
-  margin-bottom: 12px;
+  font-size: 1.2rem;
+  color: var(--text-color);
+  margin-bottom: 15px;
 }
 
 .filterSelect {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   border: 1px solid #ddd;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 1rem;
-  color: #333;
+  color: var(--text-color);
   background-color: white;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: left 10px center;
   padding-left: 30px;
-  transition: border-color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .filterSelect:focus {
-  border-color: #4a90e2;
+  border-color: var(--primary-color);
   outline: none;
   box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
 }
 
+.allergenSearch {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-bottom: 15px;
+}
+
 .allergenList {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: 10px;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .allergenItem {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  font-size: 1rem;
-  color: #333;
-}
-
-.allergenCheckbox {
-  margin-right: 10px;
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  border: 2px solid #4a90e2;
-  border-radius: 4px;
-  outline: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.allergenCheckbox:checked {
-  background-color: #4a90e2;
-  border-color: #4a90e2;
-}
-
-.allergenCheckbox:checked::after {
-  content: '✔';
-  display: flex;
   justify-content: center;
-  align-items: center;
-  color: white;
-  font-size: 12px;
-  height: 100%;
-}
-
-.allergenLabel {
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
   cursor: pointer;
+  text-align: center;
 }
 
-.applyFiltersButton {
+.allergenItem:hover {
+  background-color: #e0e0e0;
+}
+
+.allergenItem.selected {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.allergenIcon {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.allergenName {
+  font-size: 0.9rem;
+}
+
+.applyFiltersButton, .resetButton {
   width: 100%;
   padding: 12px;
-  background-color: #4a90e2;
-  color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.applyFiltersButton {
+  background-color: var(--primary-color);
+  color: white;
 }
 
 .applyFiltersButton:hover {
-  background-color: #3a7bd5;
+  background-color: darken(var(--primary-color), 10%);
 }
 
-/* RTL Support */
-[dir="rtl"] .filterSelect {
-  background-position: right 10px center;
-  padding-right: 30px;
-  padding-left: 10px;
+.resetButton {
+  background-color: #f0f0f0;
+  color: var(--text-color);
 }
 
-[dir="rtl"] .allergenCheckbox {
-  margin-left: 10px;
-  margin-right: 0;
+.resetButton:hover {
+  background-color: #e0e0e0;
 }
 
-/* Responsiveness */
 @media (max-width: 768px) {
   .filterSidebar {
-    padding: 15px;
+    padding: 20px;
   }
 
-  .filterTitle {
-    font-size: 1.2rem;
+  .allergenList {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
   }
-
-  .filterSection h3 {
-    font-size: 1rem;
-  }
-}
-
-/* Accessibility */
-.filterSelect:focus,
-.allergenCheckbox:focus,
-.applyFiltersButton:focus {
-  outline: 2px solid #4a90e2;
-  outline-offset: 2px;
 }

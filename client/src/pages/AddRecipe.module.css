@@ -1,19 +1,17 @@
-
 .addRecipeContainer {
   max-width: 800px;
   margin: 40px auto;
   padding: 30px;
   background-color: #ffffff;
-  border-radius: 10px;
+  border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  direction: rtl;
 }
 
 .title {
   text-align: center;
   color: #333;
   margin-bottom: 30px;
-  font-size: 28px;
+  font-size: 24px;
 }
 
 .form {
@@ -55,6 +53,49 @@
 .addIngredient:hover,
 .removeIngredient:hover {
   opacity: 0.9;
+}
+
+.allergensSection {
+  margin-bottom: 20px;
+}
+
+.allergenGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.allergenItem {
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  padding: 10px;
+  transition: all 0.3s ease;
+}
+
+.allergenItem:hover {
+  background-color: #f0f0f0;
+}
+
+.allergenItem label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.allergenAlternatives {
+  margin-top: 10px;
+  font-size: 0.9em;
+}
+
+.allergenAlternatives ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin-top: 5px;
+}
+
+.allergenAlternatives li {
+  margin-bottom: 5px;
 }
 
 .submitButton {

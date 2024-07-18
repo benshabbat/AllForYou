@@ -34,28 +34,17 @@ const AllergenSchema = new mongoose.Schema({
     required: [true, 'יש לציין לפחות מאכל אחד להימנעות'],
     validate: [arrayLimit, 'מספר המאכלים להימנעות לא יכול לעלות על 20']
   },
-  alternatives: {
-    type: [{
-      name: {
-        type: String,
-        required: true
-      },
-      description: String
-    }],
-    validate: [arrayLimit, 'מספר החלופות לא יכול לעלות על 10']
-  },
+  alternatives: [{
+    name: {
+      type: String,
+      required: true
+    },
+    description: String
+  }],
   severity: {
     type: String,
     enum: ['Low', 'Medium', 'High'],
     default: 'Medium'
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
   }
 }, {
   timestamps: true
@@ -65,6 +54,6 @@ function arrayLimit(val) {
   return val.length <= 20;
 }
 
-AllergenSchema.index({ name: 'text', hebrewName: 'text', description: 'text' });
+const Allergen = mongoose.model('Allergen', AllergenSchema);
 
-export default mongoose.model('Allergen', AllergenSchema);
+export default Allergen;
