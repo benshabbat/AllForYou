@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import api from '../services/api';
@@ -44,6 +45,7 @@ const RecipeList = () => {
     const [sortBy, order] = e.target.value.split('-');
     handleFilterChange({ sortBy, order });
   };
+
   const totalPages = data ? Math.ceil(data.totalRecipes / pageSize) : 0;
 
   if (isLoading) return <Loading />;
@@ -55,7 +57,7 @@ const RecipeList = () => {
       <SearchBar onSearch={handleSearch} />
       <div className={styles.content}>
         <FilterSidebar filters={filters} onFilterChange={handleFilterChange} />
-        <div>
+        <div className={styles.recipesSection}>
           <div className={styles.sortContainer}>
             <label htmlFor="sort" className={styles.sortLabel}>מיין לפי: </label>
             <select
@@ -77,13 +79,13 @@ const RecipeList = () => {
               data.recipes.map(recipe => <RecipeCard key={recipe._id} recipe={recipe} />)
             )}
           </div>
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
         </div>
       </div>
-      <Pagination
-        currentPage={page}
-        totalPages={totalPages}
-        onPageChange={setPage}
-      />
     </div>
   );
 };
