@@ -1,4 +1,4 @@
-// Home.jsx
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaSearch, FaUtensils, FaStar } from 'react-icons/fa';

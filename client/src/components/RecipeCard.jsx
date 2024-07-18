@@ -1,3 +1,4 @@
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -14,6 +15,7 @@ const RecipeCard = ({ recipe }) => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
+  // Mutation for toggling favorite status
   const toggleFavoriteMutation = useMutation(
     () => api.post(`/recipes/${recipe._id}/favorite`),
     {
@@ -29,7 +31,7 @@ const RecipeCard = ({ recipe }) => {
     if (user) {
       toggleFavoriteMutation.mutate();
     } else {
-      alert('אנא התחבר כדי להוסיף למועדפים');
+      alert('Please log in to add to favorites');
     }
   };
 
@@ -40,12 +42,12 @@ const RecipeCard = ({ recipe }) => {
           {recipe.image ? (
             <img src={recipe.image} alt={recipe.name} className={styles.recipeImage} />
           ) : (
-            <div className={styles.imagePlaceholder}>אין תמונה זמינה</div>
+            <div className={styles.imagePlaceholder}>No image available</div>
           )}
           <button 
             className={styles.favoriteButton} 
             onClick={handleFavoriteClick}
-            aria-label={recipe.isFavorite ? "הסר ממועדפים" : "הוסף למועדפים"}
+            aria-label={recipe.isFavorite ? "Remove from favorites" : "Add to favorites"}
           >
             {recipe.isFavorite ? <FaHeart color="red" /> : <FaRegHeart />}
           </button>
@@ -66,11 +68,6 @@ const RecipeCard = ({ recipe }) => {
         <Link to={`/recipe/${recipe._id}`} className={styles.viewRecipeButton}>
           צפה במתכון
         </Link>
-        {user && user.id === recipe.createdBy && (
-          <Link to={`/edit-recipe/${recipe._id}`} className={styles.editRecipeButton}>
-            ערוך מתכון
-          </Link>
-        )}
       </div>
     </div>
   );
@@ -88,7 +85,6 @@ RecipeCard.propTypes = {
     description: PropTypes.string.isRequired,
     allergens: PropTypes.array,
     isFavorite: PropTypes.bool,
-    createdBy: PropTypes.string
   }).isRequired
 };
 
