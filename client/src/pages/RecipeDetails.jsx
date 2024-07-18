@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
-import { FaClock, FaUtensils, FaUsers } from 'react-icons/fa';
+import { FaClock, FaUtensils, FaUsers, FaHeart, FaRegHeart } from 'react-icons/fa';
 import api from '../services/api';
 import RatingStars from '../components/RatingStars';
 import AllergenWarning from '../components/AllergenWarning';
@@ -34,6 +35,10 @@ const RecipeDetails = () => {
     onSuccess: () => queryClient.invalidateQueries(['recipe', id])
   });
 
+  const toggleFavoriteMutation = useMutation(() => api.post(`/recipes/${id}/favorite`), {
+    onSuccess: () => queryClient.invalidateQueries(['recipe', id])
+  });
+
   const handleDelete = () => {
     if (window.confirm('האם אתה בטוח שברצונך למחוק מתכון זה?')) {
       deleteMutation.mutate();
@@ -42,6 +47,14 @@ const RecipeDetails = () => {
 
   const handleRate = (rating) => rateMutation.mutate(rating);
 
+  const handleToggleFavorite = () => {
+    if (user) {
+      toggleFavoriteMutation.mutate();
+    } else {
+      alert('עליך להתחבר כדי להוסיף למועדפים');
+    }
+  };
+
   if (isLoading) return <Loading message="טוען מתכון..." />;
   if (error) return <ErrorMessage message={error.message} />;
 
@@ -49,7 +62,13 @@ const RecipeDetails = () => {
     <article className={styles.recipeDetails}>
       <div className={styles.recipeHeader}>
         <h1 className={styles.recipeTitle}>{recipe.name}</h1>
-        <RatingStars rating={recipe.averageRating} onRate={handleRate} />
+        <div className={styles.recipeActions}>
+          <RatingStars rating={recipe.averageRating} onRate={handleRate} />
+          <button onClick={handleToggleFavorite} className={styles.favoriteButton}>
+            {recipe.isFavorite ? <FaHeart /> : <FaRegHeart />}
+            {recipe.isFavorite ? 'הסר ממועדפים' : 'הוסף למועדפים'}
+          </button>
+        </div>
       </div>
       
       {recipe.image && <img src={recipe.image} alt={recipe.name} className={styles.recipeImage} />}
@@ -69,9 +88,11 @@ const RecipeDetails = () => {
         </div>
       </div>
 
+      <p className={styles.recipeDescription}>{recipe.description}</p>
+
       <AllergenWarning allergens={recipe.allergens} />
 
-      <section>
+      <section className={styles.recipeSection}>
         <h2 className={styles.sectionTitle}>מרכיבים:</h2>
         <ul className={styles.ingredientsList}>
           {recipe.ingredients.map((ingredient, index) => (
@@ -80,7 +101,7 @@ const RecipeDetails = () => {
         </ul>
       </section>
 
-      <section>
+      <section className={styles.recipeSection}>
         <h2 className={styles.sectionTitle}>הוראות הכנה:</h2>
         <ol className={styles.instructionsList}>
           {recipe.instructions.split('\n').map((instruction, index) => (
@@ -90,21 +111,35 @@ const RecipeDetails = () => {
       </section>
 
       {recipe.nutritionInfo && (
-        <section>
+        <section className={styles.recipeSection}>
           <h2 className={styles.sectionTitle}>מידע תזונתי:</h2>
-          <p>קלוריות: {recipe.nutritionInfo.calories || 'לא זמין'}</p>
-          <p>חלבון: {recipe.nutritionInfo.protein || 'לא זמין'}ג</p>
-          <p>פחמימות: {recipe.nutritionInfo.carbohydrates || 'לא זמין'}ג</p>
-          <p>שומן: {recipe.nutritionInfo.fat || 'לא זמין'}ג</p>
+          <div className={styles.nutritionInfo}>
+            <div className={styles.nutritionItem}>
+              <span>קלוריות:</span>
+              <span>{recipe.nutritionInfo.calories || 'לא זמין'}</span>
+            </div>
+            <div className={styles.nutritionItem}>
+              <span>חלבון:</span>
+              <span>{recipe.nutritionInfo.protein || 'לא זמין'}ג</span>
+            </div>
+            <div className={styles.nutritionItem}>
+              <span>פחמימות:</span>
+              <span>{recipe.nutritionInfo.carbohydrates || 'לא זמין'}ג</span>
+            </div>
+            <div className={styles.nutritionItem}>
+              <span>שומן:</span>
+              <span>{recipe.nutritionInfo.fat || 'לא זמין'}ג</span>
+            </div>
+          </div>
         </section>
       )}
 
       {user && user.id === recipe.createdBy && (
-        <div className={styles.actionButtons}>
-          <button onClick={() => navigate(`/edit-recipe/${recipe._id}`)} className={`${styles.actionButton} ${styles.editButton}`}>
+        <div className={styles.ownerActions}>
+          <button onClick={() => navigate(`/edit-recipe/${recipe._id}`)} className={styles.editButton}>
             ערוך מתכון
           </button>
-          <button onClick={handleDelete} className={`${styles.actionButton} ${styles.deleteButton}`}>
+          <button onClick={handleDelete} className={styles.deleteButton}>
             מחק מתכון
           </button>
         </div>
