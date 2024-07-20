@@ -2871,3 +2871,19 @@
 {"level":"info","message":"Server running on port 5000","timestamp":"2024-07-20T19:24:07.920Z"}
 {"level":"info","message":"Server running on port 5000","timestamp":"2024-07-20T19:30:31.450Z"}
 {"level":"info","message":"Server running on port 5000","timestamp":"2024-07-20T19:34:53.726Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2024-07-20T19:41:42.289Z"}
+{"level":"error","message":"Token verification failed: jwt expired","timestamp":"2024-07-20T19:42:26.619Z"}
+{"level":"info","message":"::1 - - [20/Jul/2024:19:42:26 +0000] \"GET /api/recipes/user/668ada7af2d67ce156a0946c HTTP/1.1\" 401 42 \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-20T19:42:26.626Z"}
+{"level":"error","message":"Token verification failed: jwt expired","timestamp":"2024-07-20T19:42:27.661Z"}
+{"level":"info","message":"::1 - - [20/Jul/2024:19:42:27 +0000] \"GET /api/recipes/user/668ada7af2d67ce156a0946c HTTP/1.1\" 401 42 \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-20T19:42:27.665Z"}
+{"level":"error","message":"Token verification failed: jwt expired","timestamp":"2024-07-20T19:42:30.968Z"}
+{"level":"info","message":"::1 - - [20/Jul/2024:19:42:30 +0000] \"GET /api/users/me HTTP/1.1\" 401 42 \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-20T19:42:30.971Z"}
+{"level":"error","message":"Token verification failed: jwt expired","timestamp":"2024-07-20T19:42:30.978Z"}
+{"level":"info","message":"::1 - - [20/Jul/2024:19:42:30 +0000] \"GET /api/users/me HTTP/1.1\" 401 42 \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-20T19:42:30.980Z"}
+{"level":"info","message":"::1 - - [20/Jul/2024:19:42:42 +0000] \"POST /api/users/login HTTP/1.1\" 200 510 \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-20T19:42:42.238Z"}
+{"level":"info","message":"::1 - - [20/Jul/2024:19:42:42 +0000] \"GET /api/recipes/user/668ada7af2d67ce156a0946c HTTP/1.1\" 304 - \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-20T19:42:42.721Z"}
+{"level":"info","message":"::1 - - [20/Jul/2024:19:43:04 +0000] \"GET /api/recipes/user/668ada7af2d67ce156a0946c HTTP/1.1\" 304 - \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-20T19:43:04.663Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2024-07-20T19:47:30.073Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2024-07-20T19:47:39.350Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2024-07-20T19:47:53.118Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2024-07-20T19:48:06.602Z"}
