@@ -5,7 +5,6 @@ import RecipeCard from '../components/RecipeCard';
 import SearchBar from '../components/SearchBar';
 import FilterSidebar from '../components/FilterSidebar';
 import Pagination from '../components/Pagination';
-import Loading from '../components/Loading';
 import ErrorMessage from '../components/ErrorMessage';
 import Skeleton from '../components/Skeleton';
 import styles from './RecipeList.module.css';
