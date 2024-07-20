@@ -2890,3 +2890,10 @@
 {"level":"info","message":"Server running on port 5000","timestamp":"2024-07-20T19:48:17.145Z"}
 {"level":"info","message":"Server running on port 5000","timestamp":"2024-07-20T19:57:59.964Z"}
 {"level":"info","message":"Server running on port 5000","timestamp":"2024-07-20T19:58:34.172Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2024-07-20T19:58:41.715Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2024-07-20T20:14:27.072Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2024-07-20T20:14:30.186Z"}
+{"level":"info","message":"::1 - - [20/Jul/2024:20:16:23 +0000] \"GET /api/recipes/user/668ada7af2d67ce156a0946c HTTP/1.1\" 200 3731 \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-20T20:16:23.307Z"}
+{"level":"info","message":"::1 - - [20/Jul/2024:20:16:27 +0000] \"GET /api/recipes/66962da32478e2d202c6d06c HTTP/1.1\" 200 3649 \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-20T20:16:27.859Z"}
+{"level":"info","message":"::1 - - [20/Jul/2024:20:17:00 +0000] \"GET /api/users/me HTTP/1.1\" 200 336 \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-20T20:17:00.864Z"}
+{"level":"info","message":"::1 - - [20/Jul/2024:20:17:01 +0000] \"GET /api/users/me HTTP/1.1\" 304 - \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-20T20:17:01.256Z"}
