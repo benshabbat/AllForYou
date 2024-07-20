@@ -3,7 +3,7 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
-import { useAddRecipe } from "../hooks/useRecipe";
+import { useAddRecipe } from "../hooks/useAddRecipe";
 import { useAllergens } from "../hooks/useAllergens";
 import FormField from "../components/FormField";
 import ImageUpload from "../components/ImageUpload";
@@ -11,26 +11,50 @@ import { CATEGORIES, DIFFICULTY_LEVELS } from "../constants";
 import styles from "./AddRecipe.module.css";
 
 const recipeSchema = yup.object().shape({
-  name: yup.string().required("שם המתכון הוא שדה חובה").max(100, "שם המתכון ארוך מדי"),
-  description: yup.string().required("תיאור קצר הוא שדה חובה").max(500, "התיאור ארוך מדי"),
+  name: yup
+    .string()
+    .required("שם המתכון הוא שדה חובה")
+    .max(100, "שם המתכון ארוך מדי"),
+  description: yup
+    .string()
+    .required("תיאור קצר הוא שדה חובה")
+    .max(500, "התיאור ארוך מדי"),
   ingredients: yup.array().of(yup.string()).min(1, "יש להזין לפחות מרכיב אחד"),
   instructions: yup.string().required("הוראות ההכנה הן שדה חובה"),
-  preparationTime: yup.number().positive().integer().required("זמן הכנה הוא שדה חובה"),
-  cookingTime: yup.number().positive().integer().required("זמן בישול הוא שדה חובה"),
-  servings: yup.number().positive().integer().required("מספר מנות הוא שדה חובה"),
-  difficulty: yup.string().oneOf(DIFFICULTY_LEVELS).required("רמת קושי היא שדה חובה"),
+  preparationTime: yup
+    .number()
+    .positive()
+    .integer()
+    .required("זמן הכנה הוא שדה חובה"),
+  cookingTime: yup
+    .number()
+    .positive()
+    .integer()
+    .required("זמן בישול הוא שדה חובה"),
+  servings: yup
+    .number()
+    .positive()
+    .integer()
+    .required("מספר מנות הוא שדה חובה"),
+  difficulty: yup
+    .string()
+    .oneOf(DIFFICULTY_LEVELS)
+    .required("רמת קושי היא שדה חובה"),
   category: yup.string().oneOf(CATEGORIES).required("קטגוריה היא שדה חובה"),
   allergens: yup.array().of(yup.string()),
-  image: yup.mixed().test("fileSize", "הקובץ גדול מדי (מקסימום 5MB)", (value) => {
-    if (!value) return true; // Allow empty
-    return value.size <= 5000000; // 5MB
-  }),
+  image: yup.mixed().nullable(),
 });
 
 const AddRecipe = () => {
   const navigate = useNavigate();
   const [imagePreview, setImagePreview] = useState(null);
-  const { control, handleSubmit, setValue, watch, formState: { errors } } = useForm({
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(recipeSchema),
     defaultValues: {
       name: "",
@@ -53,22 +77,26 @@ const AddRecipe = () => {
   const ingredients = watch("ingredients");
 
   const onSubmit = async (data) => {
+    
+    console.log("Submitting data:", data);
     const formData = new FormData();
-    Object.keys(data).forEach(key => {
-      if (key === 'ingredients') {
+    Object.keys(data).forEach((key) => {
+      if (key === "image") {
+        if (data.image && data.image[0])
+          formData.append("image", data.image[0]);
+      } else if (Array.isArray(data[key])) {
         formData.append(key, JSON.stringify(data[key]));
-      } else if (key === 'image' && data[key]) {
-        formData.append(key, data[key][0]);
       } else {
         formData.append(key, data[key]);
       }
     });
 
     try {
-      await addRecipeMutation.mutateAsync(formData);
-      navigate('/my-recipes');
+      const result = await addRecipeMutation.mutateAsync(formData);
+      console.log("Recipe added successfully:", result);
+      navigate("/my-recipes");
     } catch (error) {
-      console.error('Error adding recipe:', error);
+      console.error("Error adding recipe:", error);
     }
   };
 
@@ -120,15 +148,25 @@ const AddRecipe = () => {
                   <input {...field} placeholder={`מרכיב ${index + 1}`} />
                 )}
               />
-              <button type="button" onClick={() => handleRemoveIngredient(index)} className={styles.removeIngredient}>
+              <button
+                type="button"
+                onClick={() => handleRemoveIngredient(index)}
+                className={styles.removeIngredient}
+              >
                 הסר
               </button>
             </div>
           ))}
-          <button type="button" onClick={handleAddIngredient} className={styles.addIngredient}>
+          <button
+            type="button"
+            onClick={handleAddIngredient}
+            className={styles.addIngredient}
+          >
             הוסף מרכיב
           </button>
-          {errors.ingredients && <span className={styles.error}>{errors.ingredients.message}</span>}
+          {errors.ingredients && (
+            <span className={styles.error}>{errors.ingredients.message}</span>
+          )}
         </div>
         <FormField
           name="instructions"
@@ -167,7 +205,10 @@ const AddRecipe = () => {
             label="רמת קושי"
             error={errors.difficulty}
             as="select"
-            options={DIFFICULTY_LEVELS.map(level => ({ value: level, label: level }))}
+            options={DIFFICULTY_LEVELS.map((level) => ({
+              value: level,
+              label: level,
+            }))}
           />
           <FormField
             name="category"
@@ -175,7 +216,10 @@ const AddRecipe = () => {
             label="קטגוריה"
             error={errors.category}
             as="select"
-            options={CATEGORIES.map(category => ({ value: category, label: category }))}
+            options={CATEGORIES.map((category) => ({
+              value: category,
+              label: category,
+            }))}
           />
         </div>
         <div className={styles.allergensSection}>
@@ -193,7 +237,7 @@ const AddRecipe = () => {
                         onChange={(e) => {
                           const updatedAllergens = e.target.checked
                             ? [...field.value, allergen._id]
-                            : field.value.filter(id => id !== allergen._id);
+                            : field.value.filter((id) => id !== allergen._id);
                           field.onChange(updatedAllergens);
                         }}
                         checked={field.value.includes(allergen._id)}
@@ -206,21 +250,29 @@ const AddRecipe = () => {
                   <strong>תחליפים:</strong>
                   <ul>
                     {allergen.alternatives.map((alt, index) => (
-                      <li key={index}>{alt.name} - {alt.description}</li>
+                      <li key={index}>
+                        {alt.name} - {alt.description}
+                      </li>
                     ))}
                   </ul>
                 </div>
               </div>
             ))}
           </div>
-          {errors.allergens && <span className={styles.error}>{errors.allergens.message}</span>}
+          {errors.allergens && (
+            <span className={styles.error}>{errors.allergens.message}</span>
+          )}
         </div>
         <ImageUpload
           onChange={handleImageChange}
           preview={imagePreview}
           error={errors.image}
         />
-        <button type="submit" className={styles.submitButton} disabled={addRecipeMutation.isLoading}>
+        <button
+          type="submit"
+          className={styles.submitButton}
+          disabled={addRecipeMutation.isLoading}
+        >
           {addRecipeMutation.isLoading ? "מוסיף מתכון..." : "הוסף מתכון"}
         </button>
       </form>

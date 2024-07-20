@@ -63,12 +63,12 @@ const RecipeSchema = new mongoose.Schema({
   },
   difficulty: {
     type: String,
-    enum: ['Easy', 'Medium', 'Hard'],
+    enum: ["קל", "בינוני", "מאתגר"],
     required: [true, 'רמת הקושי היא שדה חובה']
   },
   category: {
     type: String,
-    enum: ['Appetizer', 'Main Course', 'Dessert', 'Beverage', 'Snack'],
+    enum: ["מנה ראשונה", "מנה עיקרית", "קינוח", "משקה", "חטיף"],
     required: [true, 'קטגוריית המתכון היא שדה חובה']
   },
   preparationTime: {

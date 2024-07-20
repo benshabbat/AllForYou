@@ -1,62 +1,70 @@
 .allergenWarning {
   background-color: #fff3cd;
   border: 1px solid #ffeeba;
-  border-radius: var(--border-radius);
+  border-radius: 8px;
   padding: 20px;
   margin-bottom: 30px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .warningTitle {
-  color: #856404;
-  margin-top: 0;
-  margin-bottom: 15px;
-  font-size: 1.3rem;
   display: flex;
   align-items: center;
+  color: #856404;
+  font-size: 1.3rem;
+  margin-top: 0;
+  margin-bottom: 15px;
 }
 
 .warningIcon {
   margin-left: 10px;
-  font-size: 1.5rem;
+  color: #856404;
 }
 
 .warningDescription {
   color: #856404;
   margin-bottom: 15px;
-  font-size: 1.1rem;
 }
 
 .allergenList {
   list-style-type: none;
-  padding-right: 0;
-  margin-bottom: 0;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .allergenItem {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  background-color: #fff;
+  padding: 8px 12px;
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.allergenItem span {
-  margin-right: 10px;
-  font-size: 1.1rem;
-  color: #856404;
+.allergenIcon {
+  font-size: 1.2rem;
+  margin-left: 8px;
+}
+
+.allergenName {
+  font-weight: 500;
 }
 
 .warningFooter {
   margin-top: 15px;
-  font-size: 0.9rem;
-  color: #856404;
   font-style: italic;
+  color: #856404;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.allergenWarning {
-  animation: fadeIn 0.3s ease-out;
+@media (max-width: 768px) {
+  .allergenList {
+    flex-direction: column;
+  }
+  
+  .allergenItem {
+    width: 100%;
+  }
 }

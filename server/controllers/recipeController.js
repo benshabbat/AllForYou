@@ -1,16 +1,13 @@
 import Recipe from '../models/Recipe.js';
 import logger from '../utils/logger.js';
 import Fuse from 'fuse.js';
-import { validateRecipe } from '../utils/validators.js';
-import { validateAllergens, validateAlternatives } from '../utils/allergenValidator.js';
-// Helper function for error handling
+import { validateRecipe,validateAllergens, validateAlternatives  } from '../utils/validators.js';
+
 const handleError = (res, error, statusCode = 500) => {
   logger.error(`Error in recipe controller: ${error.message}`);
   res.status(statusCode).json({ message: error.message || 'Server error' });
 };
 
-
-// פונקציה חדשה לקבלת הצעות חיפוש
 export const getSearchSuggestions = async (req, res) => {
   try {
     const { keyword } = req.query;
@@ -31,7 +28,6 @@ export const getSearchSuggestions = async (req, res) => {
   }
 };
 
-// עדכון פונקציית החיפוש הקיימת
 export const getAllRecipes = async (req, res) => {
   try {
     const { keyword, category, difficulty, allergens, maxPrepTime, maxCalories, page = 1, limit = 10 } = req.query;
@@ -75,11 +71,12 @@ export const getAllRecipes = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 export const getRecipe = async (req, res) => {
   try {
     const recipe = await Recipe.findById(req.params.id)
-    .populate('createdBy', 'username')
-    .populate('allergens');
+      .populate('createdBy', 'username')
+      .populate('allergens');
     if (!recipe) {
       return res.status(404).json({ message: 'Recipe not found' });
     }
@@ -88,33 +85,48 @@ export const getRecipe = async (req, res) => {
     handleError(res, error);
   }
 };
-
 export const createRecipe = async (req, res) => {
+  console.log("Received request body:", req.body);
+  console.log("Received file:", req.file);
+  
   try {
-    const { error } = validateRecipe(req.body);
+    let recipeData = { ...req.body };
+    
+    // Parse JSON strings
+    ['ingredients', 'allergens'].forEach(field => {
+      if (typeof recipeData[field] === 'string') {
+        try {
+          recipeData[field] = JSON.parse(recipeData[field]);
+        } catch (e) {
+          console.error(`Error parsing ${field}:`, e);
+        }
+      }
+    });
+    
+    if (req.file) {
+      recipeData.image = req.file.path;
+    }
+
+    console.log("Processed recipe data:", recipeData);
+
+    const { error } = validateRecipe(recipeData);
     if (error) {
+      console.log("Validation error:", error.details[0].message);
       return res.status(400).json({ message: error.details[0].message });
     }
 
-    const { allergens, alternatives, ...otherFields } = req.body;
-
-    const validAllergens = await validateAllergens(allergens);
-    const validAlternatives = await validateAlternatives(alternatives);
-
     const newRecipe = new Recipe({
-      ...otherFields,
-      allergens: validAllergens,
-      alternatives: validAlternatives,
+      ...recipeData,
       createdBy: req.user._id
     });
 
     const savedRecipe = await newRecipe.save();
     res.status(201).json(savedRecipe);
   } catch (error) {
+    console.error("Error creating recipe:", error);
     res.status(500).json({ message: 'שגיאה ביצירת המתכון', error: error.message });
   }
 };
-
 export const updateRecipe = async (req, res) => {
   try {
     const { error } = validateRecipe(req.body);
@@ -205,50 +217,6 @@ export const getUserRecipes = async (req, res) => {
   }
 };
 
-export const getRecipeComments = async (req, res) => {
-  try {
-    const recipe = await Recipe.findById(req.params.id).populate({
-      path: 'comments.user',
-      select: 'username'
-    });
-    
-    if (!recipe) {
-      return res.status(404).json({ message: 'Recipe not found' });
-    }
-    
-    if (recipe.comments.length === 0) {
-      return res.json({ message: 'No comments yet for this recipe', comments: [] });
-    }
-    
-    res.json({ comments: recipe.comments });
-  } catch (error) {
-    handleError(res, error);
-  }
-};
-
-export const addRecipeComment = async (req, res) => {
-  try {
-    const { content } = req.body;
-    const recipe = await Recipe.findById(req.params.id);
-    
-    if (!recipe) {
-      return res.status(404).json({ message: 'Recipe not found' });
-    }
-    
-    const newComment = {
-      user: req.user._id,
-      content
-    };
-    
-    recipe.comments.push(newComment);
-    await recipe.save();
-    
-    logger.info(`New comment added to recipe: ${recipe._id}`);
-    res.status(201).json(newComment);
-  } catch (error) {
-    handleError(res, error, 400);
-  }
-};
 export const toggleFavorite = async (req, res) => {
   try {
     const recipeId = req.params.id;
@@ -258,10 +226,8 @@ export const toggleFavorite = async (req, res) => {
     const isFavorite = user.favorites.includes(recipeId);
 
     if (isFavorite) {
-      // הסר מהמועדפים
       await User.findByIdAndUpdate(userId, { $pull: { favorites: recipeId } });
     } else {
-      // הוסף למועדפים
       await User.findByIdAndUpdate(userId, { $addToSet: { favorites: recipeId } });
     }
 

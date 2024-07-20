@@ -11,21 +11,70 @@ import {
   toggleFavorite,
   getSearchSuggestions,
 } from "../controllers/recipeController.js";
+import multer from 'multer';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 const router = express.Router();
 
-// Public routes
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadPath = path.join(__dirname, '..', 'uploads');
+    fs.mkdirSync(uploadPath, { recursive: true });
+    cb(null, uploadPath);
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  if (file) {
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only JPEG, JPG, PNG and GIF are allowed.'), false);
+    }
+  } else {
+    cb(null, true);
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024
+  }
+});
+
+const handleUpload = (req, res, next) => {
+  upload.single('image')(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      console.error('Multer error:', err);
+      return res.status(400).json({ message: `Multer uploading error: ${err.message}` });
+    } else if (err) {
+      console.error('Unknown error:', err);
+      return res.status(500).json({ message: `Unknown uploading error: ${err.message}` });
+    }
+    next();
+  });
+};
+
+router.post("/", protect, handleUpload, createRecipe);
+router.put("/:id", protect, handleUpload, updateRecipe);
+
 router.get("/", optionalAuth, getAllRecipes);
 router.get("/:id", optionalAuth, getRecipe);
-
-// Protected routes
-router.use(protect);
 router.get("/suggestions", getSearchSuggestions);
-router.post("/", createRecipe);
-router.put("/:id", updateRecipe);
-router.delete("/:id", deleteRecipe);
-router.post("/:id/rate", rateRecipe);
+router.delete("/:id", protect, deleteRecipe);
+router.post("/:id/rate", protect, rateRecipe);
 router.post("/:id/favorite", protect, toggleFavorite);
-router.get("/user/:userId", getUserRecipes);
+router.get("/user/:userId", protect, getUserRecipes);
 
 export default router;

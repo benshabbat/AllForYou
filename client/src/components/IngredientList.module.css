@@ -1,0 +1,60 @@
+.ingredientList {
+    margin-bottom: 30px;
+  }
+  
+  .sectionTitle {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #4a90e2;
+    padding-bottom: 5px;
+  }
+  
+  .servingsAdjuster {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .adjustButton {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .adjustButton:hover {
+    background-color: #357abd;
+  }
+  
+  .servingsCount {
+    margin: 0 15px;
+    font-weight: bold;
+  }
+  
+  .ingredients {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .ingredientItem {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: baseline;
+  }
+  
+  .quantity {
+    font-weight: bold;
+    margin-left: 10px;
+    min-width: 60px;
+  }
+  
+  .ingredientName {
+    flex-grow: 1;
+  }

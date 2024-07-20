@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import AllergenIcon from './AllergenIcon';
+import { FaExclamationTriangle } from 'react-icons/fa';
 import styles from './AllergenWarning.module.css';
 
 const AllergenWarning = ({ allergens = [], isLoading = false }) => {
@@ -15,14 +15,16 @@ const AllergenWarning = ({ allergens = [], isLoading = false }) => {
   return (
     <div className={styles.allergenWarning} role="alert">
       <h3 className={styles.warningTitle}>
-        <span className={styles.warningIcon} aria-hidden="true">⚠️</span>
+        <FaExclamationTriangle className={styles.warningIcon} aria-hidden="true" />
         אזהרת אלרגנים
       </h3>
       <p className={styles.warningDescription}>מתכון זה מכיל את האלרגנים הבאים:</p>
       <ul className={styles.allergenList}>
         {allergens.map((allergen) => (
           <li key={allergen._id} className={styles.allergenItem}>
-            <AllergenIcon allergen={allergen} size="medium" />
+            <span className={styles.allergenIcon} role="img" aria-label={allergen.name}>
+              {allergen.icon}
+            </span>
             <span className={styles.allergenName}>{allergen.hebrewName || allergen.name}</span>
           </li>
         ))}
@@ -41,10 +43,9 @@ AllergenWarning.propTypes = {
       name: PropTypes.string.isRequired,
       hebrewName: PropTypes.string,
       icon: PropTypes.string,
-      severity: PropTypes.string
     })
   ),
   isLoading: PropTypes.bool
 };
 
-export default React.memo(AllergenWarning);
+export default AllergenWarning;

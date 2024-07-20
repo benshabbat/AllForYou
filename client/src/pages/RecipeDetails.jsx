@@ -1,12 +1,15 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
-import { FaClock, FaUtensils, FaUsers, FaHeart, FaRegHeart, FaPrint, FaShare } from 'react-icons/fa';
+import { FaClock, FaUtensils, FaUsers, FaHeart, FaRegHeart, FaPrint, FaShare, FaEdit, FaTrash } from 'react-icons/fa';
 import api from '../services/api';
 import RatingStars from '../components/RatingStars';
 import AllergenWarning from '../components/AllergenWarning';
 import CommentSection from '../components/CommentSection';
+import IngredientList from '../components/IngredientList';
+import InstructionList from '../components/InstructionList';
+import NutritionInfo from '../components/NutritionInfo';
 import Loading from '../components/Loading';
 import ErrorMessage from '../components/ErrorMessage';
 import { translateDifficulty } from '../utils/recipeUtils';
@@ -22,9 +25,18 @@ const RecipeDetails = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { addToast } = useToast();
 
-  const { data: recipe, isLoading, error } = useQuery(['recipe', id], 
-    () => api.get(`/recipes/${id}`).then(res => res.data)
+  const { data: recipe, isLoading, error, refetch } = useQuery(['recipe', id], 
+    async () => {
+      const response = await api.get(`/recipes/${id}`);
+      console.log('Recipe data:', response.data); // לוג לבדיקת הנתונים המתקבלים
+      return response.data;
+    },
+    { staleTime: 5 * 60 * 1000 } // 5 minutes
   );
+
+  useEffect(() => {
+    refetch();
+  }, [id, refetch]);
 
   const deleteMutation = useMutation(() => api.delete(`/recipes/${id}`), {
     onSuccess: () => {
@@ -48,31 +60,23 @@ const RecipeDetails = () => {
   });
 
   const toggleFavoriteMutation = useMutation(() => api.post(`/recipes/${id}/favorite`), {
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries(['recipe', id]);
-      addToast(recipe.isFavorite ? 'המתכון הוסר מהמועדפים' : 'המתכון נוסף למועדפים', 'success');
+      addToast(data.isFavorite ? 'המתכון נוסף למועדפים' : 'המתכון הוסר מהמועדפים', 'success');
     },
     onError: (error) => {
       addToast(`שגיאה בעדכון המועדפים: ${error.message}`, 'error');
     }
   });
 
-  const handleDelete = useCallback(() => {
-    setIsDeleteModalOpen(true);
-  }, []);
-
+  const handleDelete = useCallback(() => setIsDeleteModalOpen(true), []);
   const confirmDelete = useCallback(() => {
     deleteMutation.mutate();
     setIsDeleteModalOpen(false);
   }, [deleteMutation]);
 
-  const handleRate = useCallback((rating) => {
-    rateMutation.mutate(rating);
-  }, [rateMutation]);
-
-  const handleToggleFavorite = useCallback(() => {
-    toggleFavoriteMutation.mutate();
-  }, [toggleFavoriteMutation]);
+  const handleRate = useCallback((rating) => rateMutation.mutate(rating), [rateMutation]);
+  const handleToggleFavorite = useCallback(() => toggleFavoriteMutation.mutate(), [toggleFavoriteMutation]);
 
   const handlePrint = useCallback(() => {
     window.print();
@@ -87,7 +91,7 @@ const RecipeDetails = () => {
       }).then(() => {
         addToast('המתכון שותף בהצלחה', 'success');
       }).catch((error) => {
-        addToast(`שגיאה בשיתוף המתכון: ${error}`, 'error');
+        addToast(`שגיאה בשיתוף המתכון: ${error}`, 'info');
       });
     } else {
       addToast('שיתוף אינו נתמך בדפדפן זה', 'info');
@@ -96,21 +100,22 @@ const RecipeDetails = () => {
 
   if (isLoading) return <Loading message="טוען מתכון..." />;
   if (error) return <ErrorMessage message={error.message} />;
-
+  if (!recipe) return <ErrorMessage message="המתכון לא נמצא" />;
+  console.log('Allergens:', recipe.allergens);
   return (
     <article className={styles.recipeDetails}>
       <header className={styles.recipeHeader}>
         <h1 className={styles.recipeTitle}>{recipe.name}</h1>
         <div className={styles.recipeActions}>
           <RatingStars rating={recipe.averageRating} onRate={handleRate} />
-          <button onClick={handleToggleFavorite} className={styles.actionButton}>
+          <button onClick={handleToggleFavorite} className={styles.actionButton} aria-label={recipe.isFavorite ? "הסר ממועדפים" : "הוסף למועדפים"}>
             {recipe.isFavorite ? <FaHeart /> : <FaRegHeart />}
             {recipe.isFavorite ? 'הסר ממועדפים' : 'הוסף למועדפים'}
           </button>
-          <button onClick={handlePrint} className={styles.actionButton}>
+          <button onClick={handlePrint} className={styles.actionButton} aria-label="הדפס מתכון">
             <FaPrint /> הדפס
           </button>
-          <button onClick={handleShare} className={styles.actionButton}>
+          <button onClick={handleShare} className={styles.actionButton} aria-label="שתף מתכון">
             <FaShare /> שתף
           </button>
         </div>
@@ -141,55 +146,17 @@ const RecipeDetails = () => {
 
       <AllergenWarning allergens={recipe.allergens} />
 
-      <section className={styles.recipeSection}>
-        <h2 className={styles.sectionTitle}>מרכיבים:</h2>
-        <ul className={styles.ingredientsList}>
-          {recipe.ingredients.map((ingredient, index) => (
-            <li key={index}>{ingredient}</li>
-          ))}
-        </ul>
-      </section>
-
-      <section className={styles.recipeSection}>
-        <h2 className={styles.sectionTitle}>הוראות הכנה:</h2>
-        <ol className={styles.instructionsList}>
-          {recipe.instructions.split('\n').map((instruction, index) => (
-            <li key={index}>{instruction.trim()}</li>
-          ))}
-        </ol>
-      </section>
-
-      {recipe.nutritionInfo && (
-        <section className={styles.recipeSection}>
-          <h2 className={styles.sectionTitle}>מידע תזונתי:</h2>
-          <div className={styles.nutritionInfo}>
-            <div className={styles.nutritionItem}>
-              <span>קלוריות:</span>
-              <span>{recipe.nutritionInfo.calories || 'לא זמין'}</span>
-            </div>
-            <div className={styles.nutritionItem}>
-              <span>חלבון:</span>
-              <span>{recipe.nutritionInfo.protein || 'לא זמין'}ג</span>
-            </div>
-            <div className={styles.nutritionItem}>
-              <span>פחמימות:</span>
-              <span>{recipe.nutritionInfo.carbohydrates || 'לא זמין'}ג</span>
-            </div>
-            <div className={styles.nutritionItem}>
-              <span>שומן:</span>
-              <span>{recipe.nutritionInfo.fat || 'לא זמין'}ג</span>
-            </div>
-          </div>
-        </section>
-      )}
+      <IngredientList ingredients={recipe.ingredients} defaultServings={recipe.servings} />
+      <InstructionList instructions={recipe.instructions} />
+      {recipe.nutritionInfo && <NutritionInfo nutritionInfo={recipe.nutritionInfo} servings={recipe.servings} />}
 
       {user && user.id === recipe.createdBy && (
         <div className={styles.ownerActions}>
           <button onClick={() => navigate(`/edit-recipe/${recipe._id}`)} className={styles.editButton}>
-            ערוך מתכון
+            <FaEdit /> ערוך מתכון
           </button>
           <button onClick={handleDelete} className={styles.deleteButton}>
-            מחק מתכון
+            <FaTrash /> מחק מתכון
           </button>
         </div>
       )}
@@ -201,6 +168,7 @@ const RecipeDetails = () => {
         onConfirm={confirmDelete}
       >
         <p>האם אתה בטוח שברצונך למחוק את המתכון "{recipe.name}"?</p>
+        <p>פעולה זו אינה הפיכה.</p>
       </Modal>
 
       <CommentSection comments={recipe.comments} recipeId={recipe._id} />
@@ -208,4 +176,4 @@ const RecipeDetails = () => {
   );
 };
 
-export default RecipeDetails;
+export default React.memo(RecipeDetails);

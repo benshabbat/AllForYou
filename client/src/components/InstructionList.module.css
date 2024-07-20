@@ -1,0 +1,52 @@
+.instructionList {
+    margin-bottom: 30px;
+  }
+  
+  .sectionTitle {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #4a90e2;
+    padding-bottom: 10px;
+  }
+  
+  .instructions {
+    list-style-type: none;
+    padding: 0;
+    counter-reset: instruction;
+  }
+  
+  .instructionStep {
+    display: flex;
+    margin-bottom: 20px;
+    align-items: flex-start;
+  }
+  
+  .stepNumber {
+    background-color: #4a90e2;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-left: 15px;
+    flex-shrink: 0;
+  }
+  
+  .stepText {
+    flex-grow: 1;
+    margin: 0;
+    line-height: 1.6;
+  }
+  
+  @media (max-width: 768px) {
+    .instructionStep {
+      flex-direction: column;
+    }
+    
+    .stepNumber {
+      margin-bottom: 10px;
+    }
+  }
