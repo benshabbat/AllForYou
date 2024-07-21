@@ -37,10 +37,16 @@ export const validateRecipe = (recipe) => {
       'string.max': `Description should have a maximum length of {#limit}`,
       'any.required': `Description is a required field`
     }),
-    ingredients: Joi.array().items(Joi.string()).min(1).required().messages({
+    ingredients: Joi.array().items(Joi.object({
+      name: Joi.string().required().min(1),
+      amount: Joi.string().required(),
+      unit: Joi.string().allow('')
+    })).min(1).required().messages({
       'array.base': `Ingredients should be an array`,
       'array.min': `Should have at least {#limit} ingredient`,
-      'any.required': `Ingredients are required`
+      'any.required': `Ingredients are required`,
+      'string.empty': `Ingredient name cannot be empty`,
+      'string.min': `Ingredient name should have at least {#limit} character`
     }),
     instructions: Joi.string().required().messages({
       'string.base': `Instructions should be a type of 'text'`,

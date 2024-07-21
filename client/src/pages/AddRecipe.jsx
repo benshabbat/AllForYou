@@ -79,12 +79,28 @@ const AddRecipe = () => {
   const onSubmit = async (data) => {
     console.log("Submitting data:", data);
     const formData = new FormData();
-  
-    // Ensure ingredients is an array
-    const ingredientsArray = Array.isArray(data.ingredients) 
-      ? data.ingredients 
-      : [data.ingredients];
-  
+
+    // Transform ingredients
+    const ingredientsArray = data.ingredients
+      .map((ingredient) => {
+        const parts = ingredient.trim().split(/\s+/);
+        let amount = parts[0];
+        let name = parts.slice(1).join(" ");
+
+        // If the first part is not a number, assume it's part of the name
+        if (isNaN(parseFloat(amount))) {
+          amount = "1"; // Default amount
+          name = ingredient.trim();
+        }
+
+        return {
+          name: name || "Unknown Ingredient", // Fallback name if empty
+          amount: amount,
+          unit: "", // You might want to add logic to extract the unit if possible
+        };
+      })
+      .filter((ingredient) => ingredient.name.trim() !== ""); // Remove any empty ingredients
+
     Object.keys(data).forEach((key) => {
       if (key === "image") {
         if (data.image && data.image[0])
@@ -97,7 +113,7 @@ const AddRecipe = () => {
         formData.append(key, data[key]);
       }
     });
-  
+
     try {
       const result = await addRecipeMutation.mutateAsync(formData);
       console.log("Recipe added successfully:", result);
@@ -151,6 +167,7 @@ const AddRecipe = () => {
               <Controller
                 name={`ingredients.${index}`}
                 control={control}
+                rules={{ required: "מרכיב לא יכול להיות ריק" }}
                 render={({ field }) => (
                   <input {...field} placeholder={`מרכיב ${index + 1}`} />
                 )}

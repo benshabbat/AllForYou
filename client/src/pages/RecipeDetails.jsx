@@ -151,8 +151,7 @@ const RecipeDetails = () => {
       <p className={styles.recipeDescription}>{recipe.description}</p>
 
       <AllergenWarning allergens={recipe.allergens || []} />
-
-      <IngredientList ingredients={recipe.ingredients || []} defaultServings={recipe.servings} />
+      <IngredientList ingredients={recipe.ingredients} defaultServings={recipe.servings} />
       <InstructionList instructions={recipe.instructions || []} />
       {recipe.nutritionInfo && <NutritionInfo nutritionInfo={recipe.nutritionInfo} servings={recipe.servings} />}
 

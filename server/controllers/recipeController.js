@@ -103,8 +103,12 @@ export const createRecipe = async (req, res) => {
       }
     });
     
+    // Filter out any ingredients with empty names
+    if (Array.isArray(recipeData.ingredients)) {
+      recipeData.ingredients = recipeData.ingredients.filter(ing => ing.name && ing.name.trim() !== '');
+    }
+
     if (req.file) {
-      // Save the file path or URL instead of the file itself
       recipeData.image = req.file.path;
     }
 
