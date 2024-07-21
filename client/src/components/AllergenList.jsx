@@ -5,7 +5,7 @@ import styles from './AllergenList.module.css';
 
 const AllergenList = ({ allergens, showTooltips = true }) => {
   if (!allergens || allergens.length === 0) {
-    return <p className={styles.noAllergens}>לא נמצאו אלרגנים</p>;
+    return <p className={styles.noAllergens}>לא נמצאו אלרגנים</p>; // אם אין אלרגנים, לא מציגים כלום
   }
 
   return (
@@ -13,8 +13,9 @@ const AllergenList = ({ allergens, showTooltips = true }) => {
       <h4 className={styles.allergenTitle}>אלרגנים:</h4>
       <ul className={styles.allergenIcons}>
         {allergens.map(allergen => {
+          // בדיקה אם האלרגן הוא אובייקט או מחרוזת
           const allergenObject = typeof allergen === 'string'
-            ? { _id: allergen, name: allergen, hebrewName: allergen, icon: '❓', severity: 'Unknown' }
+            ? { _id: allergen, name: allergen, hebrewName: allergen, icon: '❓' }
             : allergen;
 
           return (

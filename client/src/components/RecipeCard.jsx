@@ -35,48 +35,35 @@ const RecipeCard = ({ recipe }) => {
     if (user) {
       toggleFavoriteMutation.mutate();
     } else {
-      // הודעה למשתמש שעליו להתחבר כדי להוסיף למועדפים
       alert("יש להתחבר כדי להוסיף למועדפים");
     }
   };
-    // const imageUrl = recipe.image 
+
+  // const imageUrl = recipe.image 
   // ? `${process.env.REACT_APP_API_URL}/${recipe.image}`
   // : '/placeholder-image.jpg';
-  
   const imageUrl = recipe.image 
-  ? `http://localhost:5000/${recipe.image}`
-  : '/placeholder-image.jpg';
+    ? `http://localhost:5000/${recipe.image}`
+    : '/placeholder-image.jpg';
 
-  console.log("Full Image URL:", imageUrl);
-  console.log("Image URL:", imageUrl);
+
+    
+  console.log("Recipe allergens:", recipe.allergens); // לוג לבדיקת נתוני האלרגנים
+
   return (
     <div className={styles.recipeCard}>
       <Link to={`/recipe/${recipe._id}`} className={styles.recipeLink}>
         <div className={styles.imageContainer}>
-          {recipe.image ? (
-            <img
-              src={imageUrl}
-              alt={recipe.name}
-              className={styles.recipeImage}
-              onError={(e) => {
-                console.error("Error loading image:", imageUrl);
-                console.error("Error details:", e.target.error);
-                fetch(imageUrl)
-                  .then((response) => {
-                    if (!response.ok) {
-                      throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.blob();
-                  })
-                  .then((blob) => console.log("Image loaded successfully"))
-                  .catch((e) => console.error("Fetch error:", e));
-                e.target.onerror = null;
-                e.target.src = "/placeholder-image.jpg";
-              }}
-            />
-          ) : (
-            <div className={styles.imagePlaceholder}>אין תמונה זמינה</div>
-          )}
+          <img
+            src={imageUrl}
+            alt={recipe.name}
+            className={styles.recipeImage}
+            onError={(e) => {
+              console.error("Error loading image:", imageUrl);
+              e.target.onerror = null;
+              e.target.src = "/placeholder-image.jpg";
+            }}
+          />
           <button
             className={styles.favoriteButton}
             onClick={handleFavoriteClick}
@@ -100,7 +87,9 @@ const RecipeCard = ({ recipe }) => {
           </div>
           <RatingStars rating={recipe.averageRating} readOnly={true} />
           <p className={styles.recipeDescription}>{recipe.description}</p>
-          <AllergenList allergens={recipe.allergens} />
+          {recipe.allergens && recipe.allergens.length > 0 && (
+            <AllergenList allergens={recipe.allergens} showTooltips={false} />
+          )}
         </div>
       </Link>
       <div className={styles.cardFooter}>
