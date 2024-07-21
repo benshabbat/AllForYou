@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -25,18 +25,20 @@ const RecipeDetails = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { addToast } = useToast();
 
-  const { data: recipe, isLoading, error, refetch } = useQuery(['recipe', id], 
+  const { data: recipe, isLoading, error } = useQuery(['recipe', id], 
     async () => {
       const response = await api.get(`/recipes/${id}`);
-      console.log('Recipe data:', response.data); // לוג לבדיקת הנתונים המתקבלים
+      console.log('Recipe data:', response.data);
       return response.data;
     },
-    { staleTime: 5 * 60 * 1000 } // 5 minutes
+    { 
+      staleTime: 5 * 60 * 1000,
+      onError: (error) => {
+        console.error("Error fetching recipe:", error);
+        addToast("שגיאה בטעינת המתכון", "error");
+      }
+    }
   );
-
-  useEffect(() => {
-    refetch();
-  }, [id, refetch]);
 
   const deleteMutation = useMutation(() => api.delete(`/recipes/${id}`), {
     onSuccess: () => {
@@ -45,6 +47,7 @@ const RecipeDetails = () => {
       navigate('/my-recipes');
     },
     onError: (error) => {
+      console.error("Error deleting recipe:", error);
       addToast(`שגיאה במחיקת המתכון: ${error.message}`, 'error');
     }
   });
@@ -55,6 +58,7 @@ const RecipeDetails = () => {
       addToast('הדירוג נשמר בהצלחה', 'success');
     },
     onError: (error) => {
+      console.error("Error rating recipe:", error);
       addToast(`שגיאה בשמירת הדירוג: ${error.message}`, 'error');
     }
   });
@@ -65,6 +69,7 @@ const RecipeDetails = () => {
       addToast(data.isFavorite ? 'המתכון נוסף למועדפים' : 'המתכון הוסר מהמועדפים', 'success');
     },
     onError: (error) => {
+      console.error("Error toggling favorite:", error);
       addToast(`שגיאה בעדכון המועדפים: ${error.message}`, 'error');
     }
   });
@@ -91,7 +96,8 @@ const RecipeDetails = () => {
       }).then(() => {
         addToast('המתכון שותף בהצלחה', 'success');
       }).catch((error) => {
-        addToast(`שגיאה בשיתוף המתכון: ${error}`, 'info');
+        console.error("Error sharing recipe:", error);
+        addToast(`שגיאה בשיתוף המתכון: ${error}`, 'error');
       });
     } else {
       addToast('שיתוף אינו נתמך בדפדפן זה', 'info');
@@ -99,9 +105,9 @@ const RecipeDetails = () => {
   }, [recipe, addToast]);
 
   if (isLoading) return <Loading message="טוען מתכון..." />;
-  if (error) return <ErrorMessage message={error.message} />;
+  if (error) return <ErrorMessage message={error.message || "שגיאה בטעינת המתכון"} />;
   if (!recipe) return <ErrorMessage message="המתכון לא נמצא" />;
-  console.log('Allergens:', recipe.allergens);
+
   return (
     <article className={styles.recipeDetails}>
       <header className={styles.recipeHeader}>
@@ -144,10 +150,10 @@ const RecipeDetails = () => {
 
       <p className={styles.recipeDescription}>{recipe.description}</p>
 
-      <AllergenWarning allergens={recipe.allergens} />
+      <AllergenWarning allergens={recipe.allergens || []} />
 
-      <IngredientList ingredients={recipe.ingredients} defaultServings={recipe.servings} />
-      <InstructionList instructions={recipe.instructions} />
+      <IngredientList ingredients={recipe.ingredients || []} defaultServings={recipe.servings} />
+      <InstructionList instructions={recipe.instructions || []} />
       {recipe.nutritionInfo && <NutritionInfo nutritionInfo={recipe.nutritionInfo} servings={recipe.servings} />}
 
       {user && user.id === recipe.createdBy && (

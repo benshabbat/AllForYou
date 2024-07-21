@@ -104,6 +104,7 @@ export const createRecipe = async (req, res) => {
     });
     
     if (req.file) {
+      // Save the file path or URL instead of the file itself
       recipeData.image = req.file.path;
     }
 

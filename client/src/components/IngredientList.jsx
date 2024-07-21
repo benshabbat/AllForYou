@@ -6,13 +6,13 @@ import styles from './IngredientList.module.css';
 const IngredientList = ({ ingredients, defaultServings }) => {
   const [servings, setServings] = useState(defaultServings);
 
-  const adjustQuantity = (quantity) => {
-    if (!quantity) return '';
-    const numericPart = quantity.match(/\d+(\.\d+)?/);
-    if (!numericPart) return quantity;
+  const adjustQuantity = (amount) => {
+    if (!amount) return '';
+    const numericPart = amount.match(/\d+(\.\d+)?/);
+    if (!numericPart) return amount;
     
     const adjustedQuantity = parseFloat(numericPart[0]) * (servings / defaultServings);
-    return quantity.replace(numericPart[0], adjustedQuantity.toFixed(2));
+    return amount.replace(numericPart[0], adjustedQuantity.toFixed(2));
   };
 
   const handleServingsChange = (change) => {
@@ -32,26 +32,26 @@ const IngredientList = ({ ingredients, defaultServings }) => {
         </button>
       </div>
       <ul className={styles.ingredients}>
-        {ingredients.map((ingredient, index) => {
-          const [quantity, ...rest] = ingredient.split(' ');
-          const adjustedQuantity = adjustQuantity(quantity);
-          const ingredientName = rest.join(' ');
-          
-          return (
-            <li key={index} className={styles.ingredientItem}>
-              <span className={styles.quantity}>{adjustedQuantity}</span>
-              <span className={styles.ingredientName}>{ingredientName}</span>
-            </li>
-          );
-        })}
-      </ul>
+    {ingredients?.map((ingredient, index) => (
+      <li key={index} className={styles.ingredientItem}>
+        <span className={styles.quantity}>{adjustQuantity(ingredient.amount)}</span>
+        <span className={styles.unit}>{ingredient.unit}</span>
+        <span className={styles.ingredientName}>{ingredient.name}</span>
+      </li>
+    ))}
+  </ul>
     </section>
   );
 };
 
+
 IngredientList.propTypes = {
-  ingredients: PropTypes.arrayOf(PropTypes.string).isRequired,
-  defaultServings: PropTypes.number.isRequired,
+ingredients: PropTypes.arrayOf(PropTypes.shape({
+  name: PropTypes.string.isRequired,
+  amount: PropTypes.string.isRequired,
+  unit: PropTypes.string
+})).isRequired,
+defaultServings: PropTypes.number.isRequired,
 };
 
 export default IngredientList;

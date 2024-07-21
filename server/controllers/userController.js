@@ -1,7 +1,6 @@
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
-import Recipe from '../models/Recipe.js';
-
+import { updateLastLogin } from '../services/userService.js';
 // פונקציית עזר ליצירת טוקן JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1d' });
@@ -57,6 +56,9 @@ export const login = async (req, res) => {
 
     const token = generateToken(user._id);
     
+    // עדכן את זמן ההתחברות האחרון
+    await updateLastLogin(user._id);
+
     // נחזיר את פרטי המשתמש ללא הסיסמה
     const userResponse = user.toObject();
     delete userResponse.password;

@@ -77,20 +77,27 @@ const AddRecipe = () => {
   const ingredients = watch("ingredients");
 
   const onSubmit = async (data) => {
-    
     console.log("Submitting data:", data);
     const formData = new FormData();
+  
+    // Ensure ingredients is an array
+    const ingredientsArray = Array.isArray(data.ingredients) 
+      ? data.ingredients 
+      : [data.ingredients];
+  
     Object.keys(data).forEach((key) => {
       if (key === "image") {
         if (data.image && data.image[0])
           formData.append("image", data.image[0]);
+      } else if (key === "ingredients") {
+        formData.append("ingredients", JSON.stringify(ingredientsArray));
       } else if (Array.isArray(data[key])) {
         formData.append(key, JSON.stringify(data[key]));
       } else {
         formData.append(key, data[key]);
       }
     });
-
+  
     try {
       const result = await addRecipeMutation.mutateAsync(formData);
       console.log("Recipe added successfully:", result);

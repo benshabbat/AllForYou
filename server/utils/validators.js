@@ -72,9 +72,7 @@ export const validateRecipe = (recipe) => {
       'any.required': `Category is required`
     }),
     allergens: Joi.array().items(Joi.string()),
-    image: Joi.string().uri().allow('').messages({
-      'string.uri': `Image should be a valid URL`
-    })
+    image: Joi.any(),
   });
 
   return schema.validate(recipe, { abortEarly: false });

@@ -18,20 +18,8 @@ const RecipeSchema = new mongoose.Schema({
   },
   // List of ingredients with name, amount, and optional unit
   ingredients: [{
-    name: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    amount: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    unit: {
-      type: String,
-      trim: true
-    }
+    type: String,
+    required: true
   }],
   // Step-by-step cooking instructions
   instructions: {

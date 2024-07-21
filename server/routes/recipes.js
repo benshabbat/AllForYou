@@ -23,14 +23,12 @@ const __dirname = path.dirname(__filename);
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadPath = path.join(__dirname, '..', 'uploads');
-    fs.mkdirSync(uploadPath, { recursive: true });
-    cb(null, uploadPath);
+    cb(null, 'uploads/') // make sure this directory exists
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
+    cb(null, Date.now() + '-' + file.originalname)
   }
-});
+})
 
 const fileFilter = (req, file, cb) => {
   if (file) {
@@ -45,13 +43,7 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-const upload = multer({
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: {
-    fileSize: 5 * 1024 * 1024
-  }
-});
+const upload = multer({ storage: storage })
 
 const handleUpload = (req, res, next) => {
   upload.single('image')(req, res, function (err) {
@@ -66,7 +58,7 @@ const handleUpload = (req, res, next) => {
   });
 };
 
-router.post("/", protect, handleUpload, createRecipe);
+router.post("/", protect, upload.single('image'), createRecipe);
 router.put("/:id", protect, handleUpload, updateRecipe);
 
 router.get("/", optionalAuth, getAllRecipes);
