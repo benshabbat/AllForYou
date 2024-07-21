@@ -5,7 +5,13 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  direction: rtl;
+  transition: all 0.3s ease;
+}
+
+.scrolled {
+  padding: 0.5rem 0;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
 }
 
 .container {
@@ -27,6 +33,10 @@
   transition: var(--transition);
 }
 
+.scrolled .logo {
+  color: var(--primary-color);
+}
+
 .logo:hover {
   transform: scale(1.05);
 }
@@ -39,6 +49,7 @@
 .nav {
   display: flex;
   gap: 1.5rem;
+  align-items: center;
 }
 
 .navLink, .activeLink {
@@ -50,9 +61,17 @@
   font-weight: 500;
 }
 
+.scrolled .navLink, .scrolled .activeLink {
+  color: var(--text-color);
+}
+
 .navLink:hover, .activeLink {
   background-color: rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
+}
+
+.scrolled .navLink:hover, .scrolled .activeLink {
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .activeLink {
@@ -60,35 +79,159 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.logoutButton {
-  background-color: #ff6b6b;
-  color: #ffffff;
+.userMenu {
+  position: relative;
+}
+
+.userButton {
+  background: none;
   border: none;
-  padding: 0.7rem 1.2rem;
-  border-radius: 20px;
+  color: #ffffff;
   cursor: pointer;
-  transition: var(--transition);
-  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.scrolled .userButton {
+  color: var(--text-color);
+}
+
+.userDropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  display: none;
+  flex-direction: column;
+  min-width: 150px;
+}
+
+.userMenu:hover .userDropdown {
+  display: flex;
+}
+
+.dropdownLink {
+  color: var(--text-color);
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+}
+
+.dropdownLink:hover {
+  background-color: #f0f0f0;
+}
+
+.logoutButton {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  text-align: start;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .logoutButton:hover {
-  background-color: #ee5253;
-  transform: translateY(-2px);
+  background-color: #f0f0f0;
 }
 
-@media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-    gap: 1rem;
+.searchForm {
+  display: flex;
+  margin: 0 1rem;
+}
+
+.searchForm input {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 20px 0 0 20px;
+  outline: none;
+}
+
+.searchForm button {
+  background-color: #ffffff;
+  border: none;
+  border-radius: 0 20px 20px 0;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.menuToggle {
+  display: none;
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+.scanButton {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin-right: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.scanButton:hover {
+  transform: scale(1.1);
+}
+
+.scrolled .scanButton {
+  color: var(--text-color);
+}
+
+
+  @media (max-width: 768px) {
+  .scanButton {
+    margin-right: 0.5rem;
+  }
+  .menuToggle {
+    display: block;
   }
 
   .nav {
-    flex-wrap: wrap;
-    justify-content: center;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #ffffff;
+    flex-direction: column;
+    padding: 1rem;
+    display: none;
   }
 
-  .navLink, .activeLink, .logoutButton {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.9rem;
+  .nav.open {
+    display: flex;
+  }
+
+  .navLink, .activeLink {
+    color: var(--text-color);
+  }
+
+  .searchForm {
+    margin: 1rem 0;
+    width: 100%;
+  }
+
+  .userMenu {
+    width: 100%;
+  }
+
+  .userButton {
+    width: 100%;
+    justify-content: center;
+    padding: 0.5rem;
+  }
+
+  .userDropdown {
+    position: static;
+    display: flex;
+    box-shadow: none;
   }
 }

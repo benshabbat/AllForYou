@@ -12,7 +12,7 @@ import NotFound from './components/NotFound';
 import ErrorBoundary from './components/ErrorBoundary';
 import { useAuth } from './hooks/useAuth';
 import { ToastProvider, ToastContainer } from './components/Toast';
-
+import EnhancedFoodScanner from './pages/EnhancedFoodScanner';
 const queryClient = new QueryClient();
 
 const Home = lazy(() => import('./pages/Home'));
@@ -79,6 +79,7 @@ function AppContent() {
                 <Route path="/my-recipes" element={<PrivateRoute><MyRecipes /></PrivateRoute>} />
                 <Route path="/settings" element={<PrivateRoute><UserSettings /></PrivateRoute>} />
                 <Route path="/favorites" element={<PrivateRoute><FavoritesPage /></PrivateRoute>} />
+                <Route path="/food-scanner" element={<EnhancedFoodScanner />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>

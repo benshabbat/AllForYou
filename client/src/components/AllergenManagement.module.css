@@ -1,0 +1,43 @@
+.allergenManagement {
+    margin-bottom: 20px;
+  }
+  
+  .addAllergen {
+    display: flex;
+    margin-bottom: 10px;
+  }
+  
+  .allergenSelect {
+    flex-grow: 1;
+    margin-right: 10px;
+  }
+  
+  .addButton {
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .allergenList {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .allergenItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    margin-bottom: 5px;
+    background-color: #f1f1f1;
+  }
+  
+  .removeButton {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+  }

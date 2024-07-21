@@ -1,0 +1,157 @@
+.scannerContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.title {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.scannerSection {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.toggleScannerButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.toggleScannerButton:hover {
+  background-color: #357abd;
+}
+
+.scannerActive {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+  border: 2px solid #4a90e2;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+.scannerOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.scannerLine {
+  width: 100%;
+  height: 2px;
+  background-color: #4a90e2;
+  animation: scan 2s linear infinite;
+}
+
+@keyframes scan {
+  0% {
+    transform: translateY(-150px);
+  }
+  50% {
+    transform: translateY(150px);
+  }
+  100% {
+    transform: translateY(-150px);
+  }
+}
+
+.instructions {
+  text-align: center;
+  margin-top: 10px;
+  color: #666;
+}
+
+.manualSection {
+  margin-bottom: 20px;
+}
+
+.manualInput {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.submitButton {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.loading, .error {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.error {
+  color: #ff0000;
+}
+
+.productInfo {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.allergenWarning {
+  background-color: #ffe6e6;
+  border: 1px solid #ff9999;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.addToHistoryButton {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.historySection {
+  margin-top: 30px;
+}
+
+.historyItem {
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 600px) {
+  .scannerContainer {
+    padding: 10px;
+  }
+  
+  .scannerActive {
+    height: 200px;
+  }
+}
