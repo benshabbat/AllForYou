@@ -107,9 +107,8 @@ export const createRecipe = async (req, res) => {
     if (Array.isArray(recipeData.ingredients)) {
       recipeData.ingredients = recipeData.ingredients.filter(ing => ing.name && ing.name.trim() !== '');
     }
-
     if (req.file) {
-      recipeData.image = req.file.path;
+      recipeData.image = `uploads/${req.file.filename}`;
     }
 
     console.log("Processed recipe data:", recipeData);
