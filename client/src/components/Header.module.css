@@ -1,5 +1,5 @@
 .header {
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: linear-gradient(135deg, #6dd5ed, #2193b0);
   padding: 1rem 0;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: sticky;
@@ -12,11 +12,6 @@
   padding: 0.5rem 0;
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
-}
-
-.darkMode {
-  background: linear-gradient(135deg, #2c3e50, #34495e);
-  color: #ecf0f1;
 }
 
 .container {
@@ -35,19 +30,11 @@
   font-size: 1.8rem;
   font-weight: bold;
   text-decoration: none;
-  transition: var(--transition);
+  transition: all 0.3s ease;
 }
 
 .scrolled .logo {
-  color: var(--primary-color);
-}
-
-.darkMode .logo {
-  color: #ecf0f1;
-}
-
-.logo:hover {
-  transform: scale(1.05);
+  color: #2193b0;
 }
 
 .logoIcon {
@@ -55,51 +42,39 @@
   margin-left: 0.5rem;
 }
 
-.logoText {
-  display: none;
-}
-
-@media (min-width: 768px) {
-  .logoText {
-    display: inline;
-  }
-}
-
 .nav {
   display: flex;
   gap: 1.5rem;
-  align-items: center;
 }
 
 .navLink, .activeLink {
   color: #ffffff;
   text-decoration: none;
-  padding: 0.7rem 1.2rem;
+  padding: 0.5rem 1rem;
   border-radius: 20px;
-  transition: var(--transition);
-  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
 .scrolled .navLink, .scrolled .activeLink {
-  color: var(--text-color);
-}
-
-.darkMode .navLink, .darkMode .activeLink {
-  color: #ecf0f1;
+  color: #333;
 }
 
 .navLink:hover, .activeLink {
   background-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
 }
 
 .scrolled .navLink:hover, .scrolled .activeLink {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(33, 147, 176, 0.1);
 }
 
 .activeLink {
   font-weight: bold;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .userMenu {
@@ -114,14 +89,11 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  font-size: 1rem;
 }
 
 .scrolled .userButton {
-  color: var(--text-color);
-}
-
-.darkMode .userButton {
-  color: #ecf0f1;
+  color: #333;
 }
 
 .userDropdown {
@@ -131,226 +103,145 @@
   background-color: #ffffff;
   border-radius: 4px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  display: none;
-  flex-direction: column;
   min-width: 150px;
-}
-
-.darkMode .userDropdown {
-  background-color: #34495e;
-}
-
-.userMenu:hover .userDropdown {
-  display: flex;
+  z-index: 1000;
 }
 
 .dropdownLink {
-  color: var(--text-color);
+  display: block;
   padding: 0.5rem 1rem;
+  color: #333;
   text-decoration: none;
-}
-
-.darkMode .dropdownLink {
-  color: #ecf0f1;
 }
 
 .dropdownLink:hover {
   background-color: #f0f0f0;
 }
 
-.darkMode .dropdownLink:hover {
-  background-color: #2c3e50;
-}
-
 .logoutButton {
+  width: 100%;
+  padding: 0.5rem 1rem;
   background: none;
   border: none;
-  color: var(--text-color);
+  text-align: right;
   cursor: pointer;
+  color: #e74c3c;
+}
+
+.authLink {
+  color: #ffffff;
+  text-decoration: none;
   padding: 0.5rem 1rem;
-  text-align: start;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  border-radius: 20px;
+  transition: all 0.3s ease;
 }
 
-.darkMode .logoutButton {
-  color: #ecf0f1;
+.scrolled .authLink {
+  color: #333;
 }
 
-.logoutButton:hover {
-  background-color: #f0f0f0;
+.authLink:hover {
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
-.darkMode .logoutButton:hover {
-  background-color: #2c3e50;
+.scrolled .authLink:hover {
+  background-color: rgba(33, 147, 176, 0.1);
 }
 
-.searchForm {
-  display: flex;
-  margin: 0 1rem;
-}
-
-.searchForm input {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 20px 0 0 20px;
-  outline: none;
-}
-
-.darkMode .searchForm input {
-  background-color: #2c3e50;
-  color: #ecf0f1;
-}
-
-.searchForm button {
-  background-color: #ffffff;
-  border: none;
-  border-radius: 0 20px 20px 0;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-}
-
-.darkMode .searchForm button {
-  background-color: #34495e;
-  color: #ecf0f1;
-}
-
-.menuToggle, .scanButton, .themeToggle {
+.mobileMenuToggle {
   display: none;
   background: none;
   border: none;
   color: #ffffff;
   font-size: 1.5rem;
   cursor: pointer;
-  margin-right: 1rem;
-  transition: transform 0.3s ease;
 }
 
-.scrolled .menuToggle, .scrolled .scanButton, .scrolled .themeToggle {
-  color: var(--text-color);
+.scrolled .mobileMenuToggle {
+  color: #333;
 }
 
-.darkMode .menuToggle, .darkMode .scanButton, .darkMode .themeToggle {
-  color: #ecf0f1;
-}
-
-.menuToggle:hover, .scanButton:hover, .themeToggle:hover {
-  transform: scale(1.1);
+.mobileMenu {
+  display: none;
 }
 
 @media (max-width: 768px) {
-  .menuToggle, .scanButton, .themeToggle {
+  .nav, .actions {
+    display: none;
+  }
+
+  .mobileMenuToggle {
     display: block;
   }
 
-  .nav {
+  .mobileMenu {
+    display: flex;
+    flex-direction: column;
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
     background-color: #ffffff;
-    flex-direction: column;
-    padding: 1rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
   }
 
-  .darkMode .nav {
-    background-color: #34495e;
+  .mobileLink {
+    color: #333;
+    text-decoration: none;
+    padding: 0.5rem 0;
   }
 
-  .navLink, .activeLink {
-    color: var(--text-color);
-  }
-
-  .darkMode .navLink, .darkMode .activeLink {
-    color: #ecf0f1;
-  }
-
-  .searchForm {
-    margin: 1rem 0;
+  .mobileLogoutButton {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    cursor: pointer;
+    padding: 0.5rem 0;
+    text-align: right;
     width: 100%;
-  }
-
-  .userMenu {
-    width: 100%;
-  }
-
-  .userButton {
-    width: 100%;
-    justify-content: center;
-    padding: 0.5rem;
-  }
-
-  .userDropdown {
-    position: static;
-    display: flex;
-    box-shadow: none;
   }
 }
 
 /* Animations */
-.navEnter {
+.dropdownEnter {
   opacity: 0;
-  transform: translateY(-20px);
+  transform: translateY(-10px);
 }
 
-.navEnterActive {
+.dropdownEnterActive {
   opacity: 1;
   transform: translateY(0);
   transition: opacity 300ms, transform 300ms;
 }
 
-.navExit {
+.dropdownExit {
   opacity: 1;
 }
 
-.navExitActive {
+.dropdownExitActive {
   opacity: 0;
-  transform: translateY(-20px);
+  transform: translateY(-10px);
   transition: opacity 300ms, transform 300ms;
 }
 
-/* Accessibility */
-@media (prefers-reduced-motion: reduce) {
-  .logo:hover,
-  .navLink:hover,
-  .activeLink,
-  .menuToggle:hover,
-  .scanButton:hover,
-  .themeToggle:hover,
-  .navEnterActive,
-  .navExitActive {
-    transition: none;
-    transform: none;
-  }
+.mobileMenuEnter {
+  opacity: 0;
+  transform: translateY(-20px);
 }
 
-/* Focus styles for keyboard navigation */
-.navLink:focus,
-.activeLink:focus,
-.userButton:focus,
-.dropdownLink:focus,
-.logoutButton:focus,
-.searchForm input:focus,
-.searchForm button:focus,
-.menuToggle:focus,
-.scanButton:focus,
-.themeToggle:focus {
-  outline: 2px solid #ffffff;
-  outline-offset: 2px;
+.mobileMenuEnterActive {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
 }
 
-.darkMode .navLink:focus,
-.darkMode .activeLink:focus,
-.darkMode .userButton:focus,
-.darkMode .dropdownLink:focus,
-.darkMode .logoutButton:focus,
-.darkMode .searchForm input:focus,
-.darkMode .searchForm button:focus,
-.darkMode .menuToggle:focus,
-.darkMode .scanButton:focus,
-.darkMode .themeToggle:focus {
-  outline-color: #ecf0f1;
+.mobileMenuExit {
+  opacity: 1;
+}
+
+.mobileMenuExitActive {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 300ms, transform 300ms;
 }

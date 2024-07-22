@@ -12,6 +12,7 @@ import NotFound from './components/NotFound';
 import ErrorBoundary from './components/ErrorBoundary';
 import { useAuth } from './hooks/useAuth';
 import { ToastProvider, ToastContainer } from './components/Toast';
+
 import EnhancedFoodScanner from './pages/EnhancedFoodScanner';
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const MyRecipes = lazy(() => import('./pages/MyRecipes'));
 const RecipeDetails = lazy(() => import('./pages/RecipeDetails'));
 const UserSettings = lazy(() => import('./pages/UserSettings'));
 const FavoritesPage = lazy(() => import('./pages/FavoritesPage'));
+const AllergyInfo = lazy(() => import('./pages/AllergyInfo'));
 
 function AppContent() {
   const dispatch = useDispatch();
@@ -80,6 +82,8 @@ function AppContent() {
                 <Route path="/settings" element={<PrivateRoute><UserSettings /></PrivateRoute>} />
                 <Route path="/favorites" element={<PrivateRoute><FavoritesPage /></PrivateRoute>} />
                 <Route path="/food-scanner" element={<EnhancedFoodScanner />} />
+                <Route path="/allergy-info" element={<AllergyInfo />} />
+                <Route path="/allergy-info/:allergenId" element={<AllergyInfo />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
