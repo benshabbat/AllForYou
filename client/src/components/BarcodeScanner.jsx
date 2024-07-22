@@ -1,83 +1,84 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import Quagga from '@ericblade/quagga2';
 import styles from './BarcodeScanner.module.css';
 
-const BarcodeScanner = ({ onScan, onClose }) => {
+const BarcodeScanner = ({ onScan, onError, onClose }) => {
   const [error, setError] = useState(null);
   const scannerRef = useRef(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
-    if (scannerRef.current) {
-      Quagga.init(
+  const initializeScanner = useCallback(async () => {
+    if (!scannerRef.current) {
+      console.error("Scanner ref is not available");
+      setError("Scanner element is not available");
+      return;
+    }
+
+    try {
+      await Quagga.init(
         {
           inputStream: {
             type: "LiveStream",
             constraints: {
-              width: 480,
-              height: 320,
-              facingMode: "environment"
+              width: { min: 450 },
+              height: { min: 300 },
+              facingMode: "environment",
+              aspectRatio: { min: 1, max: 2 }
             },
             target: scannerRef.current
           },
+          locator: {
+            patchSize: "medium",
+            halfSample: true
+          },
+          numOfWorkers: 2,
           decoder: {
-            readers: ["ean_reader", "ean_8_reader", "code_128_reader", "code_39_reader", "code_39_vin_reader", "codabar_reader", "upc_reader", "upc_e_reader", "i2of5_reader"],
+            readers: ["ean_reader", "ean_8_reader", "code_128_reader", "code_39_reader", "code_39_vin_reader", "codabar_reader", "upc_reader", "upc_e_reader"]
           },
           locate: true
         },
-        function (err) {
+        (err) => {
           if (err) {
             console.error("Quagga initialization failed", err);
-            setError("Failed to initialize the scanner. Please make sure you've given camera permissions.");
+            setError(`Failed to initialize the scanner: ${err.message}`);
+            onError(err);
             return;
           }
           console.log("Quagga initialization succeeded");
           Quagga.start();
+          setIsInitialized(true);
         }
       );
 
-      Quagga.onDetected((data) => {
-        console.log("Barcode detected", data);
-        onScan(data.codeResult.code);
+      Quagga.onDetected((result) => {
+        console.log("Barcode detected", result);
+        onScan(result.codeResult.code);
       });
 
-      Quagga.onProcessed((result) => {
-        const drawingCtx = Quagga.canvas.ctx.overlay;
-        const drawingCanvas = Quagga.canvas.dom.overlay;
-
-        if (result) {
-          if (result.boxes) {
-            drawingCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
-            result.boxes.filter((box) => box !== result.box).forEach((box) => {
-              Quagga.ImageDebug.drawPath(box, { x: 0, y: 1 }, drawingCtx, { color: "green", lineWidth: 2 });
-            });
-          }
-
-          if (result.box) {
-            Quagga.ImageDebug.drawPath(result.box, { x: 0, y: 1 }, drawingCtx, { color: "#00F", lineWidth: 2 });
-          }
-
-          if (result.codeResult && result.codeResult.code) {
-            Quagga.ImageDebug.drawPath(result.line, { x: 'x', y: 'y' }, drawingCtx, { color: 'red', lineWidth: 3 });
-          }
-        }
-      });
-
+    } catch (err) {
+      console.error("Quagga initialization failed", err);
+      setError(`Failed to initialize the scanner: ${err.message}`);
+      onError(err);
     }
+  }, [onScan, onError]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      initializeScanner();
+    }, 1000);
 
     return () => {
-      Quagga.stop();
+      clearTimeout(timer);
+      if (isInitialized) {
+        Quagga.stop();
+      }
     };
-  }, [onScan]);
+  }, [initializeScanner, isInitialized]);
 
-  const requestCameraPermission = async () => {
-    try {
-      await navigator.mediaDevices.getUserMedia({ video: true });
-      setError(null);
-      // Reinitialize Quagga here
-    } catch (err) {
-      console.error("Failed to get camera permission", err);
-      setError("Camera access denied. Please enable camera access and try again.");
-    }
+  const retryInitialization = () => {
+    setError(null);
+    setIsInitialized(false);
+    initializeScanner();
   };
 
   return (
@@ -85,8 +86,8 @@ const BarcodeScanner = ({ onScan, onClose }) => {
       {error ? (
         <div className={styles.errorMessage}>
           <p>{error}</p>
-          <button onClick={requestCameraPermission} className={styles.retryButton}>
-            Retry
+          <button onClick={retryInitialization} className={styles.retryButton}>
+            נסה שוב
           </button>
         </div>
       ) : (

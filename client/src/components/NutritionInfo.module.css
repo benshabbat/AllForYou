@@ -1,62 +1,135 @@
 .nutritionInfo {
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 30px;
-  }
-  
-  .sectionTitle {
-    font-size: 1.5rem;
-    margin-bottom: 15px;
-    color: #333;
-  }
-  
-  .servingInfo {
-    font-style: italic;
-    color: #666;
-    margin-bottom: 15px;
-  }
-  
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.servingsAdjuster {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.servingsAdjuster button {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.servingsAdjuster button:hover {
+  background-color: #357abd;
+}
+
+.servingInfo {
+  margin: 0 15px;
+  font-weight: bold;
+}
+
+.nutritionGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.nutritionItem {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  background-color: #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.nutrientLabel {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.nutrientValue {
+  color: #4a90e2;
+  font-size: 1.1em;
+  margin-bottom: 5px;
+}
+
+.nutrientUnit {
+  font-size: 0.9em;
+  color: #666;
+  margin-right: 4px;
+}
+
+.dailyValueBar {
+  height: 5px;
+  background-color: #e0e0e0;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.dailyValueFill {
+  height: 100%;
+  background-color: #4caf50;
+  transition: width 0.3s ease-in-out;
+}
+
+.dailyValuePercentage {
+  font-size: 0.9em;
+  color: #666;
+  display: flex;
+  align-items: center;
+}
+
+.infoIcon {
+  margin-right: 5px;
+  color: #4a90e2;
+  cursor: help;
+}
+
+.disclaimer {
+  font-size: 0.9em;
+  color: #666;
+  margin-top: 20px;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
   .nutritionGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
+    grid-template-columns: 1fr;
   }
-  
-  .nutritionItem {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    background-color: #ffffff;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.nutritionItem {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .nutritionItem,
+  .dailyValueFill {
+    animation: none;
+    transition: none;
   }
-  
-  .nutrientLabel {
-    font-weight: bold;
-    color: #333;
-  }
-  
-  .nutrientValue {
-    color: #4a90e2;
-  }
-  
-  .nutrientUnit {
-    font-size: 0.9em;
-    color: #666;
-    margin-right: 4px;
-  }
-  
-  .disclaimer {
-    font-size: 0.9em;
-    color: #666;
-    margin-top: 20px;
-    font-style: italic;
-  }
-  
-  @media (max-width: 768px) {
-    .nutritionGrid {
-      grid-template-columns: 1fr;
-    }
-  }
+}

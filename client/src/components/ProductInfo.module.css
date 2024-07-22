@@ -1,0 +1,26 @@
+.productInfo {
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+  }
+  
+  .productInfo h3 {
+    color: #333;
+    margin-bottom: 15px;
+  }
+  
+  .productInfo p {
+    margin-bottom: 10px;
+  }
+  
+  .nutritionInfo {
+    margin-top: 20px;
+    border-top: 1px solid #ddd;
+    padding-top: 15px;
+  }
+  
+  .nutritionInfo h4 {
+    color: #333;
+    margin-bottom: 10px;
+  }

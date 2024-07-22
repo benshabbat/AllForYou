@@ -7,37 +7,23 @@ import {
   getFavoriteRecipes,
   updateAllergenPreferences,
   updateUserProfile,
+  addToScanHistory,
+  getScanHistory,
+  getUserData  // הוספנו פונקציה חדשה
 } from "../controllers/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-/**
- * @route   POST /api/users/register
- * @desc    Register a new user
- * @access  Public
- * @body    { username, email, password }
- */
 router.post("/register", register);
-
-/**
- * @route   POST /api/users/login
- * @desc    Authenticate a user and get token
- * @access  Public
- * @body    { email, password }
- */
 router.post("/login", login);
-
-/**
- * @route   GET /api/users/me
- * @desc    Get current user's profile
- * @access  Private
- */
 router.get("/me", protect, getMe);
-
 router.post("/favorites/:recipeId", protect, toggleFavoriteRecipe);
 router.get("/favorites", protect, getFavoriteRecipes);
-
 router.put("/allergen-preferences", protect, updateAllergenPreferences);
 router.put("/profile", protect, updateUserProfile);
+router.post("/scan-history", protect, addToScanHistory);
+router.get("/scan-history", protect, getScanHistory);
+router.get("/data", protect, getUserData);  // הוספנו נתיב חדש
+
 export default router;

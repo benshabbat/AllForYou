@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api', // וודא שזו הכתובת הנכונה של השרת שלך
+  baseURL: 'http://localhost:5000/api',
 });
 
 // אינטרספטור להוספת טוקן לכל בקשה

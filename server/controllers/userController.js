@@ -1,30 +1,25 @@
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 import { updateLastLogin } from '../services/userService.js';
-// פונקציית עזר ליצירת טוקן JWT
+
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 };
 
-// רישום משתמש חדש
 export const register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    // בדיקה אם המשתמש כבר קיים
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     if (existingUser) {
       return res.status(400).json({ message: 'משתמש עם אימייל או שם משתמש זה כבר קיים' });
     }
 
-    // יצירת משתמש חדש
     const user = new User({ username, email, password });
     await user.save();
 
-    // יצירת טוקן JWT
     const token = generateToken(user._id);
 
-    // החזרת פרטי המשתמש ללא הסיסמה
     const userResponse = user.toObject();
     delete userResponse.password;
 
@@ -35,7 +30,6 @@ export const register = async (req, res) => {
   }
 };
 
-// התחברות משתמש
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -56,10 +50,8 @@ export const login = async (req, res) => {
 
     const token = generateToken(user._id);
     
-    // עדכן את זמן ההתחברות האחרון
     await updateLastLogin(user._id);
 
-    // נחזיר את פרטי המשתמש ללא הסיסמה
     const userResponse = user.toObject();
     delete userResponse.password;
 
@@ -70,7 +62,6 @@ export const login = async (req, res) => {
   }
 };
 
-// קבלת פרטי המשתמש המחובר
 export const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
@@ -92,10 +83,8 @@ export const toggleFavoriteRecipe = async (req, res) => {
     const isFavorite = user.favorites.includes(recipeId);
 
     if (isFavorite) {
-      // Remove from favorites
       user.favorites = user.favorites.filter(id => id.toString() !== recipeId);
     } else {
-      // Add to favorites
       user.favorites.push(recipeId);
     }
 
@@ -115,7 +104,6 @@ export const getFavoriteRecipes = async (req, res) => {
     res.status(500).json({ message: 'שגיאה בטעינת מתכונים מועדפים' });
   }
 };
-
 
 export const updateAllergenPreferences = async (req, res) => {
   try {
@@ -158,7 +146,6 @@ export const updateUserProfile = async (req, res) => {
 
     await user.save();
 
-    // שליחת המשתמש המעודכן בחזרה, ללא הסיסמה
     const userResponse = user.toObject();
     delete userResponse.password;
 
@@ -167,4 +154,74 @@ export const updateUserProfile = async (req, res) => {
     console.error('Update user profile error:', error);
     res.status(500).json({ message: 'שגיאה בעדכון פרופיל המשתמש' });
   }
+};
+
+export const getUserData = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'משתמש לא נמצא' });
+    }
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    res.status(500).json({ message: 'שגיאה בטעינת נתוני המשתמש' });
+  }
+};
+
+export const addToScanHistory = async (req, res) => {
+  try {
+    const { productCode, productName } = req.body;
+    const userId = req.user.id;
+
+    const scanRecord = await ScanHistory.create({
+      user: userId,
+      productCode,
+      productName,
+    });
+
+    res.status(201).json(scanRecord);
+  } catch (error) {
+    console.error('Error adding to scan history:', error);
+    res.status(500).json({ message: 'Error saving scan history' });
+  }
+};
+
+export const getScanHistory = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const scanHistory = await ScanHistory.find({ user: userId }).sort({ createdAt: -1 });
+    res.json(scanHistory);
+  } catch (error) {
+    console.error('Error fetching scan history:', error);
+    res.status(500).json({ message: 'Error fetching scan history' });
+  }
+};
+
+export const getUserAllergens = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).populate('allergenPreferences');
+    if (!user) {
+      return res.status(404).json({ message: 'משתמש לא נמצא' });
+    }
+    res.json(user.allergenPreferences);
+  } catch (error) {
+    console.error('Get user allergens error:', error);
+    res.status(500).json({ message: 'שגיאה בקבלת אלרגנים של המשתמש' });
+  }
+};
+
+export default {
+  register,
+  login,
+  getMe,
+  toggleFavoriteRecipe,
+  getFavoriteRecipes,
+  updateAllergenPreferences,
+  updateUserProfile,
+  getUserData,
+  getScanHistory,
+  addToScanHistory,
+  getUserAllergens
 };
