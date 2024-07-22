@@ -266,6 +266,63 @@
   text-align: center;
   margin-bottom: 20px;
 }
+.scannerContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.scannerContainer h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.manualInput {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.manualInput input {
+  flex-grow: 1;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px 0 0 4px;
+}
+
+.manualInput button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+}
+
+.scanHistory {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.scanHistory h3 {
+  margin-bottom: 10px;
+}
+
+.scanHistory ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.scanHistory li {
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
 @media (max-width: 600px) {
   .scannerContainer {
     padding: 10px;
