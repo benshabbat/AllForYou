@@ -168,7 +168,42 @@ input:checked + .slider:before {
   transform: translateX(-26px);
 }
 
-.submitButton {
+.actionButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.editButton, .saveButton, .cancelButton {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.editButton {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.saveButton {
+  background-color: #4caf50;
+  color: white;
+}
+
+.cancelButton {
+  background-color: #f44336;
+  color: white;
+}
+
+.editButton:hover, .saveButton:hover, .cancelButton:hover {
+  opacity: 0.9;
+}
+
+.passwordButton {
   display: block;
   width: 100%;
   padding: 12px;
@@ -176,28 +211,14 @@ input:checked + .slider:before {
   color: white;
   border: none;
   border-radius: 5px;
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-top: 15px;
 }
 
-.submitButton:hover {
-  background-color: #3a7bd5;
-}
-
-@media (max-width: 600px) {
-  .userSettings {
-    padding: 20px;
-  }
-
-  .tabContainer {
-    flex-wrap: wrap;
-  }
-
-  .tabButton {
-    flex: 1 0 50%;
-    padding: 10px;
-  }
+.passwordButton:hover {
+  background-color: #357abd;
 }
 
 /* Accessibility */
@@ -205,7 +226,10 @@ input:checked + .slider:before {
 .allergenButton:focus,
 .themeButton:focus,
 .switch input:focus + .slider,
-.submitButton:focus {
+.editButton:focus,
+.saveButton:focus,
+.cancelButton:focus,
+.passwordButton:focus {
   outline: 2px solid #4a90e2;
   outline-offset: 2px;
 }
@@ -218,4 +242,46 @@ input:checked + .slider:before {
 
 .userSettings {
   animation: fadeIn 0.5s ease-out;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .userSettings {
+    padding: 20px;
+  }
+
+  .tabContainer {
+    flex-wrap: wrap;
+  }
+
+  .tabButton {
+    flex: 1 0 50%;
+    padding: 10px;
+  }
+
+  .themeButtons {
+    flex-direction: column;
+  }
+
+  .actionButtons {
+    flex-direction: column;
+  }
+
+  .editButton, .saveButton, .cancelButton {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .userSettings,
+  .tabButton,
+  .allergenButton,
+  .themeButton,
+  .slider,
+  .editButton,
+  .saveButton,
+  .cancelButton {
+    transition: none;
+    animation: none;
+  }
 }
