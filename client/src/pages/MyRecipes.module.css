@@ -12,20 +12,6 @@
   font-weight: 700;
 }
 
-.subTitle {
-  font-size: 1.8rem;
-  color: #444;
-  margin-bottom: 20px;
-  font-weight: 600;
-}
-
-.recipeGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 30px;
-  margin-bottom: 40px;
-}
-
 .addRecipeButton {
   display: inline-block;
   background-color: #4a90e2;
@@ -46,30 +32,41 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.loading, .error {
-  text-align: center;
-  font-size: 1.2rem;
-  margin-top: 50px;
-  padding: 20px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
 }
 
-.error {
-  color: #d32f2f;
-  background-color: #fdecea;
+.sortContainer, .filterContainer {
+  display: flex;
+  align-items: center;
+}
+
+.sortLabel, .filterLabel {
+  margin-right: 10px;
+  font-weight: 600;
+}
+
+.sortSelect, .filterSelect {
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+}
+
+.recipeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
 }
 
 .noRecipes {
   text-align: center;
   font-size: 1.2rem;
   color: #666;
-  margin-top: 30px;
-  padding: 40px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  margin-top: 50px;
 }
 
 .noRecipes a {
@@ -82,38 +79,17 @@
   text-decoration: underline;
 }
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.recipeGrid > * {
-  animation: fadeIn 0.5s ease-out forwards;
-}
-
-/* RTL Support */
-[dir="rtl"] .addRecipeButton {
-  margin-left: 0;
-  margin-right: auto;
-}
-
-/* Responsive Design */
 @media (max-width: 768px) {
-  .title {
-    font-size: 2rem;
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .subTitle {
-    font-size: 1.5rem;
+  .sortContainer, .filterContainer {
+    margin-bottom: 15px;
   }
 
   .recipeGrid {
     grid-template-columns: 1fr;
-  }
-
-  .addRecipeButton {
-    display: block;
-    width: 100%;
   }
 }
