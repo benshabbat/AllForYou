@@ -2,17 +2,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
-import {
-  FaClock,
-  FaUtensils,
-  FaUsers,
-  FaHeart,
-  FaRegHeart,
-  FaPrint,
-  FaShare,
-  FaEdit,
-  FaTrash,
-} from "react-icons/fa";
+import { FaClock, FaUtensils, FaUsers, FaHeart, FaRegHeart, FaPrint, FaShare, FaEdit, FaTrash } from "react-icons/fa";
 import api from "../services/api";
 import RatingStars from "../components/RatingStars";
 import AllergenWarning from "../components/AllergenWarning";
@@ -43,7 +33,7 @@ const RecipeDetails = () => {
   } = useQuery(
     ["recipe", id],
     () => api.get(`/recipes/${id}`).then((res) => res.data),
-    { staleTime: 5 * 60 * 1000 } // 5 minutes
+    { staleTime: 5 * 60 * 1000 } // 5 דקות
   );
 
   useEffect(() => {
@@ -131,14 +121,11 @@ const RecipeDetails = () => {
   if (isLoading) return <Loading message="טוען מתכון..." />;
   if (error) return <ErrorMessage message={error.message} />;
   if (!recipe) return <ErrorMessage message="המתכון לא נמצא" />;
-  // const imageUrl = recipe.image 
-  // ? `${process.env.REACT_APP_API_URL}/${recipe.image}`
-  // : '/placeholder-image.jpg';
-  const imageUrl = recipe.image 
-  ? `http://localhost:5000/${recipe.image}`
-  : '/placeholder-image.jpg';
 
-  console.log("Full Image URL:", imageUrl);
+  const imageUrl = recipe.image 
+    ? `http://localhost:5000/${recipe.image}`
+    : '/placeholder-image.jpg';
+
   return (
     <article className={styles.recipeDetails}>
       <header className={styles.recipeHeader}>
@@ -177,17 +164,7 @@ const RecipeDetails = () => {
             alt={recipe.name}
             className={styles.recipeImage}
             onError={(e) => {
-              console.error("Error loading image:", imageUrl);
-              console.error("Error details:", e.target.error);
-              fetch(imageUrl)
-                .then((response) => {
-                  if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                  }
-                  return response.blob();
-                })
-                .then((blob) => console.log("Image loaded successfully"))
-                .catch((e) => console.error("Fetch error:", e));
+              console.error("שגיאה בטעינת תמונה:", imageUrl);
               e.target.onerror = null;
               e.target.src = "/placeholder-image.jpg";
             }}
