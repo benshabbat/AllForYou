@@ -79,6 +79,9 @@ const Forum = () => {
   if (isLoading) return <div className={styles.loading}>טוען את הפורום...</div>;
   if (error) return <div className={styles.error}>שגיאה בטעינת הפורום: {error.message}</div>;
 
+  const topics = forumData?.topics || [];
+  const totalPages = forumData?.totalPages || 0;
+
   return (
     <div className={styles.forumContainer}>
       <h1 className={styles.forumTitle}>פורום קהילתי</h1>
@@ -105,16 +108,18 @@ const Forum = () => {
             />
           )}
           <TopicList 
-            topics={forumData?.topics} 
+            topics={topics} 
             onSelectTopic={setSelectedTopic}
             isModerator={isModerator}
             onDeleteTopic={handleDeleteTopic}
           />
-          <Pagination
-            currentPage={currentPage}
-            totalPages={forumData?.totalPages}
-            onPageChange={setCurrentPage}
-          />
+          {totalPages > 0 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          )}
         </>
       )}
     </div>

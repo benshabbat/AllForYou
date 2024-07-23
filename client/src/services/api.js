@@ -37,9 +37,31 @@ api.interceptors.response.use(
 
 
 // Forum-related API methods
-api.getForumTopics = () => api.get('/forum/topics');
-api.getForumTopic = (topicId) => api.get(`/forum/topics/${topicId}`);
-api.createForumTopic = (topicData) => api.post('/forum/topics', topicData);
-api.createForumReply = (topicId, replyData) => api.post(`/forum/topics/${topicId}/replies`, replyData);
+api.getForumTopics = (page = 1) => 
+  api.get(`/forum/topics?page=${page}`).then(res => ({
+    topics: res.data.topics || [],
+    currentPage: res.data.currentPage,
+    totalPages: res.data.totalPages,
+    totalTopics: res.data.totalTopics
+  }));
 
+api.searchForumTopics = (searchTerm, page = 1) => 
+  api.get(`/forum/search?query=${searchTerm}&page=${page}`).then(res => ({
+    topics: res.data.topics || [],
+    currentPage: res.data.currentPage,
+    totalPages: res.data.totalPages,
+    totalTopics: res.data.totalTopics
+  }));
+
+api.createForumTopic = (topicData) => 
+  api.post('/forum/topics', topicData);
+
+api.deleteForumTopic = (topicId) => 
+  api.delete(`/forum/topics/${topicId}`);
+
+api.getForumTopic = (topicId) => 
+  api.get(`/forum/topics/${topicId}`);
+
+api.createForumReply = (topicId, replyData) => 
+  api.post(`/forum/topics/${topicId}/replies`, replyData);
 export default api;

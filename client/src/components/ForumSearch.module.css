@@ -1,108 +1,62 @@
 .forumSearch {
-    margin-bottom: 20px;
-    position: relative;
-  }
-  
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.searchForm {
+  display: flex;
+  gap: 10px;
+}
+
+.searchInput {
+  flex-grow: 1;
+  padding: 10px 15px;
+  font-size: 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+}
+
+.searchButton {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  background-color: #4a90e2;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.searchButton:hover {
+  background-color: #357abd;
+}
+
+/* RTL Support */
+:root[dir="rtl"] .searchInput {
+  text-align: right;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
   .searchForm {
-    display: flex;
-    gap: 10px;
+    flex-direction: column;
   }
-  
-  .searchInput {
-    flex-grow: 1;
-    padding: 10px 15px;
-    font-size: 16px;
-    border: 2px solid #e0e0e0;
-    border-radius: 25px;
-    transition: all 0.3s ease;
-  }
-  
-  .searchInput:focus {
-    outline: none;
-    border-color: #4a90e2;
-    box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
-  }
-  
+
   .searchButton {
-    padding: 10px 20px;
-    font-size: 16px;
-    color: white;
-    background-color: #4a90e2;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    width: 100%;
   }
-  
-  .searchButton:hover {
-    background-color: #357abd;
-  }
-  
-  .searchResults {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background-color: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    max-height: 300px;
-    overflow-y: auto;
-    z-index: 10;
-  }
-  
-  .searchResultItem {
-    padding: 10px 15px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .searchResultItem:hover {
-    background-color: #f5f5f5;
-  }
-  
-  .loadingMessage,
-  .errorMessage {
-    text-align: center;
-    padding: 10px;
-    color: #666;
-  }
-  
-  .errorMessage {
-    color: #e74c3c;
-  }
-  
-  /* RTL Support */
-  :root[dir="rtl"] .searchInput {
-    text-align: right;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .searchForm {
-      flex-direction: column;
-    }
-  
-    .searchButton {
-      width: 100%;
-    }
-  }
-  
-  /* Accessibility */
-  .searchInput:focus,
-  .searchButton:focus,
-  .searchResultItem:focus {
-    outline: 2px solid #4a90e2;
-    outline-offset: 2px;
-  }
-  
-  /* Animation */
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  
-  .searchResults {
-    animation: fadeIn 0.3s ease-out;
-  }
+}
+
+/* Accessibility */
+.searchInput:focus,
+.searchButton:focus {
+  outline: 2px solid #4a90e2;
+  outline-offset: 2px;
+}
