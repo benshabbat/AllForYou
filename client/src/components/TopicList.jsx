@@ -14,7 +14,7 @@ const TopicList = ({ topics = [], onSelectTopic, isModerator, onDeleteTopic }) =
             {topic.title}
           </h3>
           <p className={styles.topicAuthor}>מאת: {topic.author.username}</p>
-          <p className={styles.topicDate}>נוצר ב: {new Date(topic.createdAt).toLocaleDateString()}</p>
+          <p className={styles.topicDate}>נוצר ב: {new Date(topic.createdAt).toLocaleDateString('he-IL')}</p>
           <p className={styles.topicReplies}>תגובות: {topic.replies.length}</p>
           {isModerator && (
             <button 

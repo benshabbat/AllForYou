@@ -12,6 +12,7 @@ const NewTopicForm = ({ onSubmit, onCancel }) => {
 
   return (
     <form onSubmit={handleSubmit} className={styles.newTopicForm}>
+      <h2>יצירת נושא חדש</h2>
       <input
         type="text"
         value={title}
@@ -28,7 +29,7 @@ const NewTopicForm = ({ onSubmit, onCancel }) => {
         required
       />
       <div className={styles.formActions}>
-        <button type="submit" className={styles.submitButton}>צור נושא</button>
+        <button type="submit" className={styles.submitButton}>פרסם נושא</button>
         <button type="button" onClick={onCancel} className={styles.cancelButton}>בטל</button>
       </div>
     </form>

@@ -15,6 +15,7 @@
   border: 2px solid #e0e0e0;
   border-radius: 25px;
   transition: all 0.3s ease;
+  text-align: right;
 }
 
 .searchInput:focus {
@@ -38,12 +39,6 @@
   background-color: #357abd;
 }
 
-/* RTL Support */
-:root[dir="rtl"] .searchInput {
-  text-align: right;
-}
-
-/* Responsive Design */
 @media (max-width: 768px) {
   .searchForm {
     flex-direction: column;
@@ -52,11 +47,4 @@
   .searchButton {
     width: 100%;
   }
-}
-
-/* Accessibility */
-.searchInput:focus,
-.searchButton:focus {
-  outline: 2px solid #4a90e2;
-  outline-offset: 2px;
 }

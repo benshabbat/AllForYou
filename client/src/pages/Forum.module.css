@@ -1,36 +1,40 @@
 .forumContainer {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  .forumTitle {
-    text-align: center;
-    color: #333;
-    margin-bottom: 30px;
-  }
-  
-  .newTopicButton {
-    background-color: #4a90e2;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-bottom: 20px;
-  }
-  
-  .newTopicButton:hover {
-    background-color: #357abd;
-  }
-  
-  .loading, .error {
-    text-align: center;
-    margin-top: 50px;
-    font-size: 18px;
-  }
-  
-  .error {
-    color: #f44336;
-  }
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  direction: rtl;
+  font-family: 'Arial', 'Helvetica', sans-serif;
+}
+
+.forumTitle {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.newTopicButton {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.newTopicButton:hover {
+  background-color: #357abd;
+}
+
+.loading, .error {
+  text-align: center;
+  margin-top: 50px;
+  font-size: 18px;
+}
+
+.error {
+  color: #f44336;
+}
+
+/* כאן ניתן להוסיף סגנונות נוספים לפי הצורך */
