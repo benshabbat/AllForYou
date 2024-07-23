@@ -34,4 +34,12 @@ api.interceptors.response.use(
   }
 );
 
+
+
+// Forum-related API methods
+api.getForumTopics = () => api.get('/forum/topics');
+api.getForumTopic = (topicId) => api.get(`/forum/topics/${topicId}`);
+api.createForumTopic = (topicData) => api.post('/forum/topics', topicData);
+api.createForumReply = (topicId, replyData) => api.post(`/forum/topics/${topicId}/replies`, replyData);
+
 export default api;

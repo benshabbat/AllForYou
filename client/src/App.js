@@ -27,6 +27,7 @@ const RecipeDetails = lazy(() => import('./pages/RecipeDetails'));
 const UserSettings = lazy(() => import('./pages/UserSettings'));
 const FavoritesPage = lazy(() => import('./pages/FavoritesPage'));
 const AllergyInfo = lazy(() => import('./pages/AllergyInfo'));
+const Forum = lazy(() => import('./pages/Forum'));
 
 function AppContent() {
   const dispatch = useDispatch();
@@ -84,6 +85,7 @@ function AppContent() {
                 <Route path="/food-scanner" element={<EnhancedFoodScanner />} />
                 <Route path="/allergy-info" element={<AllergyInfo />} />
                 <Route path="/allergy-info/:allergenId" element={<AllergyInfo />} />
+                <Route path="/forum" element={<Forum/>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>

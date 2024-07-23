@@ -12,6 +12,7 @@ import { loginLimiter, apiLimiter } from './middleware/rateLimiter.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import productRoutes from './routes/products.js';
+import forumRoutes from './routes/forumRoutes.js';
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -41,6 +42,7 @@ app.use('/api/recipes', recipeRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/allergens', allergenRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/forum', forumRoutes);
 
 app.use((err, req, res, next) => {
   logger.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);

@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { logout } from '../store/slices/authSlice';
-import { FaUtensils, FaUser, FaSignOutAlt, FaBars } from 'react-icons/fa';
-import { CSSTransition } from 'react-transition-group';
-import styles from './Header.module.css';
+import React, { useState, useEffect } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../store/slices/authSlice";
+import { FaUtensils, FaUser, FaSignOutAlt, FaBars } from "react-icons/fa";
+import { CSSTransition } from "react-transition-group";
+import styles from "./Header.module.css";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -17,18 +17,18 @@ const Header = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/');
+    navigate("/");
     setIsMenuOpen(false);
   };
 
   return (
-    <header className={`${styles.header} ${isScrolled ? styles.scrolled : ''}`}>
+    <header className={`${styles.header} ${isScrolled ? styles.scrolled : ""}`}>
       <div className={styles.container}>
         <Link to="/" className={styles.logo}>
           <FaUtensils className={styles.logoIcon} />
@@ -36,20 +36,54 @@ const Header = () => {
         </Link>
 
         <nav className={styles.nav}>
-          <NavLink to="/" className={({ isActive }) => isActive ? styles.activeLink : styles.navLink} end>
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              isActive ? styles.activeLink : styles.navLink
+            }
+            end
+          >
             דף הבית
           </NavLink>
-          <NavLink to="/recipes" className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}>
+          <NavLink
+            to="/recipes"
+            className={({ isActive }) =>
+              isActive ? styles.activeLink : styles.navLink
+            }
+          >
             מתכונים
           </NavLink>
-          <NavLink to="/allergy-info" className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}>
+          <NavLink
+            to="/allergy-info"
+            className={({ isActive }) =>
+              isActive ? styles.activeLink : styles.navLink
+            }
+          >
             מידע על אלרגיות
           </NavLink>
-          <NavLink to="/food-scanner" className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}>
+          <NavLink
+            to="/food-scanner"
+            className={({ isActive }) =>
+              isActive ? styles.activeLink : styles.navLink
+            }
+          >
             סורק ברקודים
           </NavLink>
+          <NavLink
+            to="/forum"
+            className={({ isActive }) =>
+              isActive ? styles.activeLink : styles.navLink
+            }
+          >
+            פורום
+          </NavLink>
           {user && (
-            <NavLink to="/my-recipes" className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}>
+            <NavLink
+              to="/my-recipes"
+              className={({ isActive }) =>
+                isActive ? styles.activeLink : styles.navLink
+              }
+            >
               המתכונים שלי
             </NavLink>
           )}
@@ -58,7 +92,10 @@ const Header = () => {
         <div className={styles.actions}>
           {user ? (
             <div className={styles.userMenu}>
-              <button className={styles.userButton} onClick={() => setIsMenuOpen(!isMenuOpen)}>
+              <button
+                className={styles.userButton}
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+              >
                 <FaUser /> {user.username}
               </button>
               <CSSTransition
@@ -73,9 +110,24 @@ const Header = () => {
                 unmountOnExit
               >
                 <div className={styles.userDropdown}>
-                  <Link to="/profile" className={styles.dropdownLink} onClick={() => setIsMenuOpen(false)}>פרופיל</Link>
-                  <Link to="/settings" className={styles.dropdownLink} onClick={() => setIsMenuOpen(false)}>הגדרות</Link>
-                  <button onClick={handleLogout} className={styles.logoutButton}>
+                  <Link
+                    to="/profile"
+                    className={styles.dropdownLink}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    פרופיל
+                  </Link>
+                  <Link
+                    to="/settings"
+                    className={styles.dropdownLink}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    הגדרות
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className={styles.logoutButton}
+                  >
                     <FaSignOutAlt /> התנתק
                   </button>
                 </div>
@@ -83,13 +135,20 @@ const Header = () => {
             </div>
           ) : (
             <>
-              <Link to="/login" className={styles.authLink}>התחבר</Link>
-              <Link to="/register" className={styles.authLink}>הרשם</Link>
+              <Link to="/login" className={styles.authLink}>
+                התחבר
+              </Link>
+              <Link to="/register" className={styles.authLink}>
+                הרשם
+              </Link>
             </>
           )}
         </div>
 
-        <button className={styles.mobileMenuToggle} onClick={() => setIsMenuOpen(!isMenuOpen)}>
+        <button
+          className={styles.mobileMenuToggle}
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
           <FaBars />
         </button>
       </div>
@@ -106,25 +165,82 @@ const Header = () => {
         unmountOnExit
       >
         <div className={styles.mobileMenu}>
-          <NavLink to="/" className={styles.mobileLink} onClick={() => setIsMenuOpen(false)}>דף הבית</NavLink>
-          <NavLink to="/recipes" className={styles.mobileLink} onClick={() => setIsMenuOpen(false)}>מתכונים</NavLink>
-          <NavLink to="/allergy-info" className={styles.mobileLink} onClick={() => setIsMenuOpen(false)}>מידע על אלרגיות</NavLink>
-          <NavLink to="/food-scanner" className={styles.mobileLink} onClick={() => setIsMenuOpen(false)}>סורק ברקודים</NavLink>
+          <NavLink
+            to="/"
+            className={styles.mobileLink}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            דף הבית
+          </NavLink>
+          <NavLink
+            to="/recipes"
+            className={styles.mobileLink}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            מתכונים
+          </NavLink>
+          <NavLink
+            to="/allergy-info"
+            className={styles.mobileLink}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            מידע על אלרגיות
+          </NavLink>
+          <NavLink
+            to="/food-scanner"
+            className={styles.mobileLink}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            סורק ברקודים
+          </NavLink>
           {user && (
-            <NavLink to="/my-recipes" className={styles.mobileLink} onClick={() => setIsMenuOpen(false)}>המתכונים שלי</NavLink>
+            <NavLink
+              to="/my-recipes"
+              className={styles.mobileLink}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              המתכונים שלי
+            </NavLink>
           )}
           {user ? (
             <>
-              <Link to="/profile" className={styles.mobileLink} onClick={() => setIsMenuOpen(false)}>פרופיל</Link>
-              <Link to="/settings" className={styles.mobileLink} onClick={() => setIsMenuOpen(false)}>הגדרות</Link>
-              <button onClick={handleLogout} className={styles.mobileLogoutButton}>
+              <Link
+                to="/profile"
+                className={styles.mobileLink}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                פרופיל
+              </Link>
+              <Link
+                to="/settings"
+                className={styles.mobileLink}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                הגדרות
+              </Link>
+              <button
+                onClick={handleLogout}
+                className={styles.mobileLogoutButton}
+              >
                 <FaSignOutAlt /> התנתק
               </button>
             </>
           ) : (
             <>
-              <Link to="/login" className={styles.mobileLink} onClick={() => setIsMenuOpen(false)}>התחבר</Link>
-              <Link to="/register" className={styles.mobileLink} onClick={() => setIsMenuOpen(false)}>הרשם</Link>
+              <Link
+                to="/login"
+                className={styles.mobileLink}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                התחבר
+              </Link>
+              <Link
+                to="/register"
+                className={styles.mobileLink}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                הרשם
+              </Link>
             </>
           )}
         </div>
