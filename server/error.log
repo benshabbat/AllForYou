@@ -24,3 +24,10 @@
 {"level":"error","message":"Token verification failed: jwt expired","timestamp":"2024-07-20T19:42:27.661Z"}
 {"level":"error","message":"Token verification failed: jwt expired","timestamp":"2024-07-20T19:42:30.968Z"}
 {"level":"error","message":"Token verification failed: jwt expired","timestamp":"2024-07-20T19:42:30.978Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"popular\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-23T10:51:36.061Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"popular\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-23T10:51:37.213Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"popular\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-23T10:51:39.351Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"popular\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-23T10:51:43.492Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"popular\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-23T11:00:38.277Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"popular\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-23T11:00:39.428Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"popular\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-23T11:00:41.572Z"}

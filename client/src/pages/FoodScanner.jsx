@@ -6,9 +6,9 @@ import { useToast } from '../components/Toast';
 import BarcodeScanner from '../components/BarcodeScanner';
 import ProductInfo from '../components/ProductInfo';
 import AddProductForm from '../components/AddProductForm';
-import styles from './EnhancedFoodScanner.module.css';
+import styles from './FoodScanner.module.css';
 
-const EnhancedFoodScanner = () => {
+const FoodScanner = () => {
   const [scannedCode, setScannedCode] = useState('');
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [isScannerActive, setIsScannerActive] = useState(false);
@@ -141,4 +141,4 @@ const EnhancedFoodScanner = () => {
   );
 };
 
-export default EnhancedFoodScanner;
+export default FoodScanner;

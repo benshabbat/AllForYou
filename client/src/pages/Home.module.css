@@ -33,6 +33,7 @@
   display: flex;
   justify-content: center;
   gap: 20px;
+  margin-top: 30px;
 }
 
 .ctaButton {
@@ -47,11 +48,12 @@
   font-size: 1.1em;
 }
 
-.ctaButton:hover {
+.ctaButton:hover, .ctaButton:focus {
   background-color: var(--text-color);
   color: white;
   transform: translateY(-3px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  outline: none;
 }
 
 .features {
@@ -91,22 +93,58 @@
   color: #666;
 }
 
-.popularRecipes, .allergyInfo, .communitySection {
+.dailyTip {
+  background-color: #e6f7ff;
+  border-radius: var(--border-radius);
+  padding: 30px;
+  margin-bottom: 60px;
+  text-align: center;
+  box-shadow: var(--box-shadow);
+}
+
+.dailyTip h2 {
+  color: var(--primary-color);
+  margin-bottom: 15px;
+}
+
+.popularRecipes, .allergyInfo, .communitySection, .faqSection {
   margin-bottom: 60px;
 }
 
-.popularRecipes h2, .allergyInfo h2, .communitySection h2 {
+.popularRecipes h2, .allergyInfo h2, .communitySection h2, .faqSection h2 {
   font-size: 2.5em;
   color: var(--text-color);
   margin-bottom: 30px;
   text-align: center;
 }
 
-.recipeGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 30px;
+.recipeCarousel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
   margin-bottom: 30px;
+}
+
+.carouselButton {
+  background: none;
+  border: none;
+  font-size: 2em;
+  color: var(--primary-color);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.carouselButton:hover, .carouselButton:focus {
+  color: var(--secondary-color);
+  transform: scale(1.1);
+  outline: none;
+}
+
+.recipeSlide {
+  width: 300px;
+  height: 400px;
+  overflow: hidden;
 }
 
 .viewAllButton, .infoButton, .joinButton {
@@ -125,10 +163,12 @@
   cursor: pointer;
 }
 
-.viewAllButton:hover, .infoButton:hover, .joinButton:hover {
+.viewAllButton:hover, .infoButton:hover, .joinButton:hover,
+.viewAllButton:focus, .infoButton:focus, .joinButton:focus {
   background-color: var(--secondary-color);
   transform: translateY(-3px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  outline: none;
 }
 
 .allergyInfo, .communitySection {
@@ -143,6 +183,55 @@
   margin: 0 auto 30px;
   font-size: 1.2em;
   color: #555;
+}
+
+.faqSection {
+  background-color: #fff;
+  padding: 60px 40px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.faqItem {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.faqQuestion {
+  width: 100%;
+  text-align: right;
+  background: none;
+  border: none;
+  padding: 15px;
+  font-size: 1.1em;
+  font-weight: bold;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.faqQuestion:hover, .faqQuestion:focus {
+  color: var(--primary-color);
+  outline: none;
+}
+
+.faqQuestion::after {
+  content: '+';
+  font-size: 1.5em;
+  transition: var(--transition);
+}
+
+.faqQuestion[aria-expanded="true"]::after {
+  transform: rotate(45deg);
+}
+
+.faqAnswer {
+  padding: 0 15px 15px;
+  color: #666;
+  line-height: 1.6;
 }
 
 @media (max-width: 768px) {
@@ -163,7 +252,30 @@
     grid-template-columns: 1fr;
   }
 
-  .popularRecipes h2, .allergyInfo h2, .communitySection h2 {
+  .popularRecipes h2, .allergyInfo h2, .communitySection h2, .faqSection h2 {
     font-size: 2em;
+  }
+
+  .recipeCarousel {
+    flex-direction: column;
+  }
+
+  .carouselButton {
+    transform: rotate(90deg);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.feature, .dailyTip, .recipeSlide, .faqItem {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feature, .dailyTip, .recipeSlide, .faqItem {
+    animation: none;
   }
 }

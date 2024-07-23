@@ -9,7 +9,9 @@ import {
   updateUserProfile,
   addToScanHistory,
   getScanHistory,
-  getUserData  // הוספנו פונקציה חדשה
+  getUserData,
+  getUserAllergens,
+  getUserActivities,
 } from "../controllers/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
@@ -24,6 +26,8 @@ router.put("/allergen-preferences", protect, updateAllergenPreferences);
 router.put("/profile", protect, updateUserProfile);
 router.post("/scan-history", protect, addToScanHistory);
 router.get("/scan-history", protect, getScanHistory);
-router.get("/data", protect, getUserData);  // הוספנו נתיב חדש
+router.get("/data", protect, getUserData); // הוספנו נתיב חדש
+router.get("/allergens", protect, getUserAllergens);
+router.get("/:userId/activities", protect, getUserActivities);
 
 export default router;

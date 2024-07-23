@@ -13,7 +13,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { useAuth } from './hooks/useAuth';
 import { ToastProvider, ToastContainer } from './components/Toast';
 
-import EnhancedFoodScanner from './pages/EnhancedFoodScanner';
+import EnhancedFoodScanner from './pages/FoodScanner';
 const queryClient = new QueryClient();
 
 const Home = lazy(() => import('./pages/Home'));

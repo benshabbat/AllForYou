@@ -1,0 +1,128 @@
+.timeline {
+    position: relative;
+    padding: 20px 0;
+    margin: 20px 0;
+  }
+  
+  .timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--primary-color);
+    right: 20px;
+  }
+  
+  .timelineItem {
+    position: relative;
+    margin-bottom: 30px;
+    padding-right: 60px;
+  }
+  
+  .timelineIcon {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    z-index: 1;
+  }
+  
+  .timelineContent {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .timelineContent p {
+    margin: 0 0 10px 0;
+    color: var(--text-color);
+    font-size: 1rem;
+  }
+  
+  .timelineDate {
+    font-size: 0.85rem;
+    color: #666;
+  }
+  
+  /* אנימציה לכניסת פריטים */
+  @keyframes fadeInRight {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  .timelineItem {
+    animation: fadeInRight 0.5s ease-out forwards;
+    opacity: 0;
+  }
+  
+  /* עיכוב אנימציה לכל פריט */
+  .timelineItem:nth-child(1) { animation-delay: 0.1s; }
+  .timelineItem:nth-child(2) { animation-delay: 0.2s; }
+  .timelineItem:nth-child(3) { animation-delay: 0.3s; }
+  .timelineItem:nth-child(4) { animation-delay: 0.4s; }
+  .timelineItem:nth-child(5) { animation-delay: 0.5s; }
+  
+  /* הוספת חץ לתיבת התוכן */
+  .timelineContent::before {
+    content: '';
+    position: absolute;
+    right: -10px;
+    top: 15px;
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid #f8f9fa;
+  }
+  
+  /* עיצוב רספונסיבי */
+  @media (max-width: 768px) {
+    .timeline::before {
+      right: 10px;
+    }
+  
+    .timelineItem {
+      padding-right: 40px;
+    }
+  
+    .timelineIcon {
+      width: 30px;
+      height: 30px;
+      font-size: 1rem;
+    }
+  
+    .timelineContent {
+      padding: 10px;
+    }
+  
+    .timelineContent p {
+      font-size: 0.9rem;
+    }
+  
+    .timelineDate {
+      font-size: 0.8rem;
+    }
+  }
+  
+  /* נגישות: הפחתת תנועה */
+  @media (prefers-reduced-motion: reduce) {
+    .timelineItem {
+      animation: none;
+    }
+  }
