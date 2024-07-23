@@ -201,7 +201,7 @@ export const getScanHistory = async (req, res) => {
 
 export const getUserAllergens = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).populate('allergenPreferences');
+    const user = await User.findById(req.params.userId).populate('allergenPreferences');
     if (!user) {
       return res.status(404).json({ message: 'משתמש לא נמצא' });
     }
@@ -209,6 +209,20 @@ export const getUserAllergens = async (req, res) => {
   } catch (error) {
     console.error('Get user allergens error:', error);
     res.status(500).json({ message: 'שגיאה בקבלת אלרגנים של המשתמש' });
+  }
+};
+
+export const getUserActivities = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    // כאן תהיה הלוגיקה לקבלת פעילויות המשתמש
+    // לדוגמה:
+    // const activities = await Activity.find({ user: userId }).sort({ createdAt: -1 });
+    // res.json(activities);
+    res.json([]); // כרגע מחזיר מערך ריק
+  } catch (error) {
+    console.error('Error fetching user activities:', error);
+    res.status(500).json({ message: 'שגיאה בטעינת פעילויות המשתמש' });
   }
 };
 
@@ -223,5 +237,5 @@ export default {
   getUserData,
   getScanHistory,
   addToScanHistory,
-  getUserAllergens
+  getUserAllergens,getUserActivities
 };

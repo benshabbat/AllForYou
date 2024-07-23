@@ -1,56 +1,77 @@
-import React from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import api from '../services/api';
 import styles from './AllergenManagement.module.css';
 
-const AllergenManagement = () => {
+const AllergenManagement = ({ userId }) => {
   const queryClient = useQueryClient();
-  const { data: allergens, isLoading, error } = useQuery('allergens', () =>
-    api.get('/users/allergens').then(res => res.data)
+  const [selectedAllergens, setSelectedAllergens] = useState([]);
+
+  // שליפת האלרגנים מהשרת
+  const { data: allergens = [], isLoading: allergensLoading, error: allergensError } = useQuery('allergens', () =>
+    api.get('/allergens').then(res => res.data)
   );
 
+  // שליפת העדפות האלרגנים של המשתמש
+  const { data: userAllergens = [], isLoading: userAllergensLoading, error: userAllergensError } = useQuery(['userAllergens', userId], () =>
+    api.get(`/users/${userId}/allergens`).then(res => res.data),
+    {
+      onSuccess: (data) => {
+        setSelectedAllergens(data.map(allergen => allergen._id));
+      }
+    }
+  );
+
+  // עדכון העדפות האלרגנים בשרת
   const updateAllergensMutation = useMutation(
-    (allergens) => api.put('/users/allergen-preferences', { allergenPreferences: allergens }),
+    (newAllergens) => api.put('/users/allergen-preferences', { allergenPreferences: newAllergens }),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries('allergens');
+        queryClient.invalidateQueries(['userAllergens', userId]);
       },
     }
   );
 
-  if (isLoading) return <div>טוען אלרגנים...</div>;
-  if (error) return <div>שגיאה בטעינת אלרגנים: {error.message}</div>;
+  // עדכון הרשימה המקומית של האלרגנים הנבחרים
+  const handleAllergenToggle = useCallback((allergenId) => {
+    setSelectedAllergens(prevSelected => {
+      const newSelected = prevSelected.includes(allergenId)
+        ? prevSelected.filter(id => id !== allergenId)
+        : [...prevSelected, allergenId];
+      
+      updateAllergensMutation.mutate(newSelected);
+      return newSelected;
+    });
+  }, [updateAllergensMutation]);
 
-  const handleAllergenToggle = (allergenId) => {
-    const updatedAllergens = allergens.includes(allergenId)
-      ? allergens.filter(id => id !== allergenId)
-      : [...allergens, allergenId];
-    updateAllergensMutation.mutate(updatedAllergens);
-  };
+  // מיזוג האלרגנים הכלליים עם האלרגנים של המשתמש
+  const mergedAllergens = useMemo(() => {
+    return allergens.map(allergen => ({
+      ...allergen,
+      isSelected: selectedAllergens.includes(allergen._id)
+    }));
+  }, [allergens, selectedAllergens]);
+
+  if (allergensLoading || userAllergensLoading) return <div>טוען אלרגנים...</div>;
+  if (allergensError) return <div>שגיאה בטעינת אלרגנים: {allergensError.message}</div>;
+  if (userAllergensError) return <div>שגיאה בטעינת אלרגנים של המשתמש: {userAllergensError.message}</div>;
 
   return (
     <div className={styles.allergenManagement}>
       <h2>ניהול אלרגנים</h2>
-      {allergens && allergens.length > 0 ? (
-        <div className={styles.allergenList}>
-          {allergens.map((allergen) => (
-            <div key={allergen._id} className={styles.allergenItem}>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={allergens.includes(allergen._id)}
-                  onChange={() => handleAllergenToggle(allergen._id)}
-                />
-                {allergen.name}
-              </label>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p>אין אלרגנים זמינים כרגע.</p>
-      )}
+      <div className={styles.allergenGrid}>
+        {mergedAllergens.map((allergen) => (
+          <button
+            key={allergen._id}
+            className={`${styles.allergenButton} ${allergen.isSelected ? styles.selected : ''}`}
+            onClick={() => handleAllergenToggle(allergen._id)}
+          >
+            {allergen.icon} {allergen.hebrewName}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
 
-export default AllergenManagement;
+export default React.memo(AllergenManagement);
