@@ -1,0 +1,76 @@
+.topicThread {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .backButton {
+    background-color: #f0f0f0;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  
+  .topicTitle {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 15px;
+  }
+  
+  .topicContent {
+    margin-bottom: 30px;
+  }
+  
+  .topicMeta {
+    font-size: 14px;
+    color: #666;
+    margin-top: 10px;
+  }
+  
+  .replies {
+    margin-top: 30px;
+  }
+  
+  .reply {
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .replyMeta {
+    font-size: 14px;
+    color: #666;
+    margin-top: 10px;
+  }
+  
+  .replyForm {
+    margin-top: 30px;
+  }
+  
+  .replyInput {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    resize: vertical;
+  }
+  
+  .submitReply {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+  }
+  
+  .submitReply:hover {
+    background-color: #357abd;
+  }

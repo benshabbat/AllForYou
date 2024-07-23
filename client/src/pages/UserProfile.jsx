@@ -1,61 +1,66 @@
-import React, { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { FaEdit, FaSave, FaTimes, FaUtensils, FaStar, FaHeart, FaHistory } from 'react-icons/fa';
-import api from '../services/api';
-import UserRecipes from '../components/UserRecipes';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateUserProfile } from '../store/slices/userSlice';
+import { FaEdit, FaSave, FaTimes, FaUtensils, FaStar, FaHeart } from 'react-icons/fa';
 import AllergenManagement from '../components/AllergenManagement';
+import UserRecipes from '../components/UserRecipes';
 import ActivityTimeline from '../components/ActivityTimeline';
+import { useToast } from '../components/Toast';
 import styles from './UserProfile.module.css';
 
 const UserProfile = () => {
-  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
+  const { addToast } = useToast();
+  const user = useSelector(state => state.auth.user);
+  const [profile, setProfile] = useState({
+    username: user?.username || '',
+    email: user?.email || '',
+    bio: user?.bio || '',
+  });
   const [isEditing, setIsEditing] = useState(false);
-  const [editedUser, setEditedUser] = useState({});
 
-  const { data: user, isLoading, error } = useQuery('userData', () =>
-    api.get('/users/me').then(res => res.data)
-  );
-
-  const updateProfileMutation = useMutation(
-    updatedUser => api.put('/users/profile', updatedUser),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries('userData');
-        setIsEditing(false);
-      }
+  useEffect(() => {
+    if (user) {
+      setProfile({
+        username: user.username || '',
+        email: user.email || '',
+        bio: user.bio || '',
+      });
     }
-  );
+  }, [user]);
 
-  const handleEdit = () => {
-    setEditedUser(user);
-    setIsEditing(true);
+  const handleProfileChange = (e) => {
+    setProfile({ ...profile, [e.target.name]: e.target.value });
   };
 
-  const handleSave = () => {
-    updateProfileMutation.mutate(editedUser);
+  const handleSubmit = async () => {
+    try {
+      await dispatch(updateUserProfile(profile)).unwrap();
+      addToast('פרופיל המשתמש עודכן בהצלחה', 'success');
+      setIsEditing(false);
+    } catch (error) {
+      addToast('שגיאה בעדכון הפרופיל', 'error');
+    }
   };
-
-  const handleCancel = () => {
-    setIsEditing(false);
-    setEditedUser({});
-  };
-
-  const handleChange = (e) => {
-    setEditedUser({ ...editedUser, [e.target.name]: e.target.value });
-  };
-
-  if (isLoading) return <div>טוען פרופיל...</div>;
-  if (error) return <div>שגיאה בטעינת הפרופיל: {error.message}</div>;
 
   return (
     <div className={styles.profileContainer}>
       <section className={styles.userInfo}>
         <div className={styles.profileHeader}>
           <h1>{user.username}</h1>
-          {!isEditing && (
-            <button onClick={handleEdit} className={styles.editButton}>
+          {!isEditing ? (
+            <button onClick={() => setIsEditing(true)} className={styles.editButton}>
               <FaEdit /> ערוך פרופיל
             </button>
+          ) : (
+            <>
+              <button onClick={handleSubmit} className={styles.saveButton}>
+                <FaSave /> שמור שינויים
+              </button>
+              <button onClick={() => setIsEditing(false)} className={styles.cancelButton}>
+                <FaTimes /> בטל
+              </button>
+            </>
           )}
         </div>
         {isEditing ? (
@@ -63,31 +68,26 @@ const UserProfile = () => {
             <input
               type="text"
               name="username"
-              value={editedUser.username}
-              onChange={handleChange}
+              value={profile.username}
+              onChange={handleProfileChange}
               placeholder="שם משתמש"
+              className={styles.input}
             />
             <input
               type="email"
               name="email"
-              value={editedUser.email}
-              onChange={handleChange}
+              value={profile.email}
+              onChange={handleProfileChange}
               placeholder="אימייל"
+              className={styles.input}
             />
             <textarea
               name="bio"
-              value={editedUser.bio}
-              onChange={handleChange}
+              value={profile.bio}
+              onChange={handleProfileChange}
               placeholder="ספר לנו על עצמך"
+              className={styles.textarea}
             />
-            <div className={styles.editActions}>
-              <button onClick={handleSave} className={styles.saveButton}>
-                <FaSave /> שמור
-              </button>
-              <button onClick={handleCancel} className={styles.cancelButton}>
-                <FaTimes /> בטל
-              </button>
-            </div>
           </div>
         ) : (
           <div className={styles.userDetails}>
@@ -116,7 +116,10 @@ const UserProfile = () => {
         </div>
       </section>
 
-      <AllergenManagement userId={user._id} />
+      <section className={styles.allergenSection}>
+        <h2>אלרגנים</h2>
+        <AllergenManagement />
+      </section>
 
       <section className={styles.userRecipes}>
         <h2>המתכונים שלי</h2>

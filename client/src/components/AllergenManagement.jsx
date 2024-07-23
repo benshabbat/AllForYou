@@ -1,50 +1,45 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { useSelector, useDispatch } from 'react-redux';
+import { useQuery } from 'react-query';
 import api from '../services/api';
+import { updateUserAllergenPreferences } from '../store/slices/userSlice';
+import AllergenIcon from './AllergenIcon';
+import { useToast } from './Toast';
 import styles from './AllergenManagement.module.css';
 
-const AllergenManagement = ({ userId }) => {
-  const queryClient = useQueryClient();
-  const [selectedAllergens, setSelectedAllergens] = useState([]);
+const AllergenManagement = () => {
+  const dispatch = useDispatch();
+  const { addToast } = useToast();
+  const user = useSelector(state => state.auth.user);
+  const [selectedAllergens, setSelectedAllergens] = useState(user?.allergenPreferences || []);
 
-  // שליפת האלרגנים מהשרת
-  const { data: allergens = [], isLoading: allergensLoading, error: allergensError } = useQuery('allergens', () =>
+  // Fetch all allergens
+  const { data: allergens = [], isLoading, error } = useQuery('allergens', () =>
     api.get('/allergens').then(res => res.data)
   );
 
-  // שליפת העדפות האלרגנים של המשתמש
-  const { data: userAllergens = [], isLoading: userAllergensLoading, error: userAllergensError } = useQuery(['userAllergens', userId], () =>
-    api.get(`/users/${userId}/allergens`).then(res => res.data),
-    {
-      onSuccess: (data) => {
-        setSelectedAllergens(data.map(allergen => allergen._id));
-      }
-    }
-  );
-
-  // עדכון העדפות האלרגנים בשרת
-  const updateAllergensMutation = useMutation(
-    (newAllergens) => api.put('/users/allergen-preferences', { allergenPreferences: newAllergens }),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['userAllergens', userId]);
-      },
-    }
-  );
-
-  // עדכון הרשימה המקומית של האלרגנים הנבחרים
+  // Handle allergen toggle
   const handleAllergenToggle = useCallback((allergenId) => {
     setSelectedAllergens(prevSelected => {
       const newSelected = prevSelected.includes(allergenId)
         ? prevSelected.filter(id => id !== allergenId)
         : [...prevSelected, allergenId];
       
-      updateAllergensMutation.mutate(newSelected);
+      dispatch(updateUserAllergenPreferences(newSelected))
+        .unwrap()
+        .then(() => {
+          addToast('העדפות האלרגנים עודכנו בהצלחה', 'success');
+        })
+        .catch((error) => {
+          addToast('שגיאה בעדכון העדפות האלרגנים', 'error');
+          console.error('Error updating allergen preferences:', error);
+        });
+
       return newSelected;
     });
-  }, [updateAllergensMutation]);
+  }, [dispatch, addToast]);
 
-  // מיזוג האלרגנים הכלליים עם האלרגנים של המשתמש
+  // Merge allergens with user preferences
   const mergedAllergens = useMemo(() => {
     return allergens.map(allergen => ({
       ...allergen,
@@ -52,13 +47,12 @@ const AllergenManagement = ({ userId }) => {
     }));
   }, [allergens, selectedAllergens]);
 
-  if (allergensLoading || userAllergensLoading) return <div>טוען אלרגנים...</div>;
-  if (allergensError) return <div>שגיאה בטעינת אלרגנים: {allergensError.message}</div>;
-  if (userAllergensError) return <div>שגיאה בטעינת אלרגנים של המשתמש: {userAllergensError.message}</div>;
+  if (isLoading) return <div>טוען אלרגנים...</div>;
+  if (error) return <div>שגיאה בטעינת אלרגנים: {error.message}</div>;
 
   return (
     <div className={styles.allergenManagement}>
-      <h2>ניהול אלרגנים</h2>
+      <h3>ניהול אלרגנים</h3>
       <div className={styles.allergenGrid}>
         {mergedAllergens.map((allergen) => (
           <button
@@ -66,7 +60,8 @@ const AllergenManagement = ({ userId }) => {
             className={`${styles.allergenButton} ${allergen.isSelected ? styles.selected : ''}`}
             onClick={() => handleAllergenToggle(allergen._id)}
           >
-            {allergen.icon} {allergen.hebrewName}
+            <AllergenIcon allergen={allergen} />
+            <span>{allergen.hebrewName}</span>
           </button>
         ))}
       </div>

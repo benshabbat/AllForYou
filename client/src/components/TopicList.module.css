@@ -1,0 +1,28 @@
+.topicList {
+    display: grid;
+    gap: 20px;
+  }
+  
+  .topicItem {
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    padding: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .topicItem:hover {
+    background-color: #e8e8e8;
+  }
+  
+  .topicTitle {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .topicAuthor, .topicDate, .topicReplies {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 5px;
+  }

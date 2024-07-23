@@ -105,30 +105,7 @@ export const getFavoriteRecipes = async (req, res) => {
   }
 };
 
-export const updateAllergenPreferences = async (req, res) => {
-  try {
-    const { allergenPreferences } = req.body;
-    
-    if (!Array.isArray(allergenPreferences)) {
-      return res.status(400).json({ message: 'allergenPreferences חייב להיות מערך' });
-    }
 
-    const user = await User.findByIdAndUpdate(
-      req.user.id, 
-      { allergenPreferences },
-      { new: true, runValidators: true }
-    );
-
-    if (!user) {
-      return res.status(404).json({ message: 'משתמש לא נמצא' });
-    }
-
-    res.json({ message: 'העדפות האלרגנים עודכנו בהצלחה', user });
-  } catch (error) {
-    console.error('Update allergen preferences error:', error);
-    res.status(500).json({ message: 'שגיאה בעדכון העדפות האלרגנים' });
-  }
-};
 
 export const updateUserProfile = async (req, res) => {
   try {
@@ -225,6 +202,30 @@ export const getUserActivities = async (req, res) => {
     res.status(500).json({ message: 'שגיאה בטעינת פעילויות המשתמש' });
   }
 };
+export const updateAllergenPreferences = async (req, res) => {
+  try {
+    const { allergenPreferences } = req.body;
+    
+    if (!Array.isArray(allergenPreferences)) {
+      return res.status(400).json({ message: 'allergenPreferences חייב להיות מערך' });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id, 
+      { allergenPreferences },
+      { new: true, runValidators: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: 'משתמש לא נמצא' });
+    }
+
+    res.json({ message: 'העדפות האלרגנים עודכנו בהצלחה', user });
+  } catch (error) {
+    console.error('Update allergen preferences error:', error);
+    res.status(500).json({ message: 'שגיאה בעדכון העדפות האלרגנים' });
+  }
+};
 
 export default {
   register,
@@ -237,5 +238,5 @@ export default {
   getUserData,
   getScanHistory,
   addToScanHistory,
-  getUserAllergens,getUserActivities
+  getUserAllergens,getUserActivities,updateAllergenPreferences
 };

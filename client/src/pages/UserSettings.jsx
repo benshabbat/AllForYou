@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateUserAllergenPreferences, updateUserProfile, changePassword } from '../store/slices/userSlice';
-import { fetchAllergens } from '../store/slices/allergenSlice';
-import AllergenIcon from '../components/AllergenIcon';
+import { updateUserProfile, changePassword } from '../store/slices/userSlice';
+import AllergenManagement from '../components/AllergenManagement';
 import { FaUser, FaPalette, FaBell, FaLock, FaSave, FaTimes } from 'react-icons/fa';
 import { useToast } from '../components/Toast';
 import styles from './UserSettings.module.css';
@@ -11,18 +10,16 @@ const UserSettings = () => {
   const dispatch = useDispatch();
   const { addToast } = useToast();
   const user = useSelector(state => state.auth.user);
-  const allergens = useSelector(state => state.allergens.allergens);
   const [activeTab, setActiveTab] = useState('profile');
   const [profile, setProfile] = useState({
     username: user?.username || '',
     email: user?.email || '',
     bio: user?.bio || '',
   });
-  const [selectedAllergens, setSelectedAllergens] = useState([]);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const [notifications, setNotifications] = useState({
-    email: true,
-    push: false,
+    email: user?.notificationPreferences?.email || false,
+    push: user?.notificationPreferences?.push || false,
   });
   const [passwords, setPasswords] = useState({
     currentPassword: '',
@@ -32,25 +29,21 @@ const UserSettings = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchAllergens());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (user && user.allergenPreferences) {
-      setSelectedAllergens(user.allergenPreferences);
+    if (user) {
+      setProfile({
+        username: user.username || '',
+        email: user.email || '',
+        bio: user.bio || '',
+      });
+      setNotifications({
+        email: user.notificationPreferences?.email || false,
+        push: user.notificationPreferences?.push || false,
+      });
     }
   }, [user]);
 
   const handleProfileChange = (e) => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
-  };
-
-  const handleAllergenToggle = (allergenId) => {
-    setSelectedAllergens(prev => 
-      prev.includes(allergenId)
-        ? prev.filter(id => id !== allergenId)
-        : [...prev, allergenId]
-    );
   };
 
   const handleThemeChange = (newTheme) => {
@@ -69,9 +62,11 @@ const UserSettings = () => {
 
   const handleSubmit = async () => {
     try {
-      await dispatch(updateUserProfile(profile)).unwrap();
-      await dispatch(updateUserAllergenPreferences(selectedAllergens)).unwrap();
-      // Here you would also update theme and notifications on the server
+      await dispatch(updateUserProfile({
+        ...profile,
+        notificationPreferences: notifications,
+        theme
+      })).unwrap();
       addToast('הגדרות המשתמש עודכנו בהצלחה', 'success');
       setIsEditing(false);
     } catch (error) {
@@ -125,28 +120,6 @@ const UserSettings = () => {
         className={styles.textarea}
         disabled={!isEditing}
       />
-    </div>
-  );
-
-  const renderAllergenSettings = () => (
-    <div className={styles.settingsSection}>
-      <h3>העדפות אלרגנים</h3>
-      <div className={styles.allergenList}>
-        {allergens.map(allergen => (
-          <button
-            key={allergen._id}
-            type="button"
-            onClick={() => handleAllergenToggle(allergen._id)}
-            className={`${styles.allergenButton} ${
-              selectedAllergens.includes(allergen._id) ? styles.selected : ''
-            }`}
-            disabled={!isEditing}
-          >
-            <AllergenIcon allergen={allergen} />
-            <span>{allergen.hebrewName}</span>
-          </button>
-        ))}
-      </div>
     </div>
   );
 
@@ -255,7 +228,7 @@ const UserSettings = () => {
       </div>
       <div className={styles.settingsContent}>
         {activeTab === 'profile' && renderProfileSettings()}
-        {activeTab === 'allergens' && renderAllergenSettings()}
+        {activeTab === 'allergens' && <AllergenManagement />}
         {activeTab === 'theme' && renderThemeSettings()}
         {activeTab === 'notifications' && renderNotificationSettings()}
         {activeTab === 'password' && renderPasswordSettings()}
