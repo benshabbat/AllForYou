@@ -33,7 +33,7 @@ const RecipeDetails = () => {
   } = useQuery(
     ["recipe", id],
     () => api.get(`/recipes/${id}`).then((res) => res.data),
-    { staleTime: 5 * 60 * 1000 } // 5 דקות
+    { staleTime: 5 * 60 * 1000 }
   );
 
   useEffect(() => {
@@ -195,7 +195,9 @@ const RecipeDetails = () => {
         ingredients={recipe.ingredients}
         defaultServings={recipe.servings}
       />
+
       <InstructionList instructions={recipe.instructions} />
+      
       {recipe.nutritionInfo && (
         <NutritionInfo
           nutritionInfo={recipe.nutritionInfo}
@@ -203,7 +205,20 @@ const RecipeDetails = () => {
         />
       )}
 
-      {user && user.id === recipe.createdBy && (
+      <section className={styles.additionalInfo}>
+        <h2>מידע נוסף</h2>
+        <p><strong>קטגוריה:</strong> {recipe.category}</p>
+        <p><strong>זמן בישול:</strong> {recipe.cookingTime} דקות</p>
+        <p><strong>זמן הכנה כולל:</strong> {recipe.preparationTime + recipe.cookingTime} דקות</p>
+        {recipe.tags && recipe.tags.length > 0 && (
+          <p><strong>תגיות:</strong> {recipe.tags.join(', ')}</p>
+        )}
+        <p><strong>נוצר על ידי:</strong> {recipe.createdBy.username}</p>
+        <p><strong>תאריך יצירה:</strong> {new Date(recipe.createdAt).toLocaleDateString('he-IL')}</p>
+        <p><strong>עודכן לאחרונה:</strong> {new Date(recipe.updatedAt).toLocaleDateString('he-IL')}</p>
+      </section>
+
+      {user && (user.id === recipe.createdBy._id || user.role === 'admin') && (
         <div className={styles.ownerActions}>
           <button
             onClick={() => navigate(`/edit-recipe/${recipe._id}`)}
