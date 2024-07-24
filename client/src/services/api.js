@@ -66,5 +66,10 @@ api.createForumReply = (topicId, replyData) =>
   api.post(`/forum/topics/${topicId}/replies`, replyData);
 
 
+// הוספת פונקציה חדשה לקבלת כל האלרגנים
+api.getAllAllergens = () => api.get('/allergens');
+
+// עדכון הפונקציה הקיימת לקבלת אלרגנים לפי ID
+api.getAllergensByIds = (ids) => api.get('/allergens/byIds', { params: { ids: ids.join(',') } });
 
 export default api;

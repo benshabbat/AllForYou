@@ -6,17 +6,19 @@ import AllergenIcon from './AllergenIcon';
 import styles from './AllergenList.module.css';
 
 const AllergenList = ({ allergens = [], showTooltips = true }) => {
-  // בדיקה אם האלרגנים הם מזהים או אובייקטים מלאים
   const areAllergenIds = allergens.length > 0 && typeof allergens[0] === 'string';
+
+  const { data: allAllergens } = useQuery('allergens', api.getAllAllergens, {
+    staleTime: Infinity, // קאש לצמיתות, כי רשימת האלרגנים לא משתנה לעתים קרובות
+    cacheTime: Infinity,
+  });
 
   const { data: allergenDetails, isLoading, error } = useQuery(
     ['allergens', allergens],
-    () => areAllergenIds 
-      ? api.get('/allergens/byIds', { params: { ids: allergens.join(',') } }).then(res => res.data)
-      : Promise.resolve(allergens),
+    () => areAllergenIds ? api.getAllergensByIds(allergens) : Promise.resolve(allergens),
     { 
-      enabled: allergens.length > 0,
-      staleTime: 5 * 60 * 1000 // 5 minutes
+      enabled: allergens.length > 0 && areAllergenIds,
+      staleTime: 5 * 60 * 1000 // 5 דקות
     }
   );
 
@@ -27,7 +29,9 @@ const AllergenList = ({ allergens = [], showTooltips = true }) => {
   if (isLoading) return <p>טוען אלרגנים...</p>;
   if (error) return <p>שגיאה בטעינת אלרגנים</p>;
 
-  const displayAllergens = allergenDetails || allergens;
+  const displayAllergens = areAllergenIds 
+    ? (allergenDetails || []).filter(a => allergens.includes(a._id))
+    : allergens;
 
   return (
     <div className={styles.allergenList} aria-label="רשימת אלרגנים">

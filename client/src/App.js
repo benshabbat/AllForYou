@@ -12,8 +12,9 @@ import NotFound from './components/NotFound';
 import ErrorBoundary from './components/ErrorBoundary';
 import { useAuth } from './hooks/useAuth';
 import { ToastProvider, ToastContainer } from './components/Toast';
-
+import api from './services/api';
 import EnhancedFoodScanner from './pages/FoodScanner';
+import { useQueryClient } from 'react-query';
 const queryClient = new QueryClient();
 
 const Home = lazy(() => import('./pages/Home'));
@@ -34,6 +35,7 @@ function AppContent() {
   const { isLoading } = useAuth();
   const location = useLocation();
   const nodeRef = React.useRef(null);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -53,7 +55,10 @@ function AppContent() {
     };
 
     initializeAuth();
-  }, [dispatch]);
+    queryClient.prefetchQuery('allergens', api.getAllAllergens);
+  }, [dispatch, queryClient]);
+
+
 
   if (isLoading) {
     return <Loading />;
