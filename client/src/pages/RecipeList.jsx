@@ -86,7 +86,7 @@ const RecipeList = () => {
             {data.recipes.length === 0 ? (
               <p className={styles.noRecipes}>לא נמצאו מתכונים התואמים לחיפוש שלך.</p>
             ) : (
-              data.recipes.map(recipe => <RecipeCard key={recipe._id} recipe={recipe} />)
+              data.recipes.map(recipe => <RecipeCard key={recipe._id} recipe={recipe} showActions={false} />)
             )}
           </div>
           <Pagination

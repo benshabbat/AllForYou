@@ -1,54 +1,33 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
-import {
-  FaHeart,
-  FaRegHeart,
-  FaClock,
-  FaUtensils,
-  FaUsers,
-} from "react-icons/fa";
-import { useMutation, useQueryClient } from "react-query";
-import { useAuth } from "../hooks/useAuth";
-import api from "../services/api";
-import RatingStars from "./RatingStars";
-import AllergenList from "./AllergenList";
-import { translateDifficulty } from "../utils/recipeUtils";
-import styles from "./RecipeCard.module.css";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { FaHeart, FaRegHeart, FaClock, FaUtensils, FaUsers, FaEdit, FaTrash } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleFavorite } from '../store/slices/recipeSlice';
+import { translateDifficulty } from '../utils/recipeUtils';
+import RatingStars from './RatingStars';
+import AllergenList from './AllergenList';
+import styles from './RecipeCard.module.css';
 
-const RecipeCard = ({ recipe }) => {
-  const queryClient = useQueryClient();
-  const { user } = useAuth();
-
-  const toggleFavoriteMutation = useMutation(
-    () => api.post(`/recipes/${recipe._id}/favorite`),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries("recipes");
-        queryClient.invalidateQueries("favorites");
-      },
-    }
-  );
+const RecipeCard = ({ recipe, showActions = false, onDelete }) => {
+  const dispatch = useDispatch();
+  const { user } = useSelector(state => state.auth);
 
   const handleFavoriteClick = (e) => {
     e.preventDefault();
+    e.stopPropagation();
     if (user) {
-      toggleFavoriteMutation.mutate();
+      dispatch(toggleFavorite(recipe._id));
     } else {
-      alert("יש להתחבר כדי להוסיף למועדפים");
+      alert('עליך להתחבר כדי להוסיף למועדפים');
     }
   };
 
-  // const imageUrl = recipe.image 
-  // ? `${process.env.REACT_APP_API_URL}/${recipe.image}`
-  // : '/placeholder-image.jpg';
   const imageUrl = recipe.image 
     ? `http://localhost:5000/${recipe.image}`
     : '/placeholder-image.jpg';
 
-
-    
-  console.log("Recipe allergens:", recipe.allergens); // לוג לבדיקת נתוני האלרגנים
+  const isOwner = user && user.id === recipe.createdBy;
 
   return (
     <div className={styles.recipeCard}>
@@ -59,9 +38,8 @@ const RecipeCard = ({ recipe }) => {
             alt={recipe.name}
             className={styles.recipeImage}
             onError={(e) => {
-              console.error("Error loading image:", imageUrl);
               e.target.onerror = null;
-              e.target.src = "/placeholder-image.jpg";
+              e.target.src = '/placeholder-image.jpg';
             }}
           />
           <button
@@ -75,15 +53,9 @@ const RecipeCard = ({ recipe }) => {
         <div className={styles.recipeContent}>
           <h3 className={styles.recipeTitle}>{recipe.name}</h3>
           <div className={styles.recipeInfo}>
-            <span>
-              <FaClock /> {recipe.preparationTime + recipe.cookingTime} דקות
-            </span>
-            <span>
-              <FaUtensils /> {translateDifficulty(recipe.difficulty)}
-            </span>
-            <span>
-              <FaUsers /> {recipe.servings} מנות
-            </span>
+            <span><FaClock /> {recipe.preparationTime + recipe.cookingTime} דקות</span>
+            <span><FaUtensils /> {translateDifficulty(recipe.difficulty)}</span>
+            <span><FaUsers /> {recipe.servings} מנות</span>
           </div>
           <RatingStars rating={recipe.averageRating} readOnly={true} />
           <p className={styles.recipeDescription}>{recipe.description}</p>
@@ -92,11 +64,16 @@ const RecipeCard = ({ recipe }) => {
           )}
         </div>
       </Link>
-      <div className={styles.cardFooter}>
-        <Link to={`/recipe/${recipe._id}`} className={styles.viewRecipeButton}>
-          צפה במתכון
-        </Link>
-      </div>
+      {showActions && isOwner && (
+        <div className={styles.cardFooter}>
+          <Link to={`/edit-recipe/${recipe._id}`} className={styles.editButton}>
+            <FaEdit /> ערוך
+          </Link>
+          <button onClick={() => onDelete(recipe._id)} className={styles.deleteButton}>
+            <FaTrash /> מחק
+          </button>
+        </div>
+      )}
     </div>
   );
 };
@@ -112,9 +89,20 @@ RecipeCard.propTypes = {
     servings: PropTypes.number.isRequired,
     averageRating: PropTypes.number,
     description: PropTypes.string.isRequired,
-    allergens: PropTypes.array,
+    allergens: PropTypes.arrayOf(PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.shape({
+        _id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        hebrewName: PropTypes.string,
+        icon: PropTypes.string
+      })
+    ])),
     isFavorite: PropTypes.bool,
+    createdBy: PropTypes.string.isRequired
   }).isRequired,
+  showActions: PropTypes.bool,
+  onDelete: PropTypes.func
 };
 
-export default React.memo(RecipeCard);
+export default RecipeCard;

@@ -1,5 +1,6 @@
 import Recipe from '../models/Recipe.js';
 import logger from '../utils/logger.js';
+import User from '../models/User.js';
 import Fuse from 'fuse.js';
 import { validateRecipe,validateAllergens, validateAlternatives  } from '../utils/validators.js';
 
@@ -227,6 +228,10 @@ export const toggleFavorite = async (req, res) => {
     const userId = req.user._id;
 
     const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
     const isFavorite = user.favorites.includes(recipeId);
 
     if (isFavorite) {
@@ -237,6 +242,7 @@ export const toggleFavorite = async (req, res) => {
 
     res.json({ success: true, isFavorite: !isFavorite });
   } catch (error) {
+    console.error('Error in toggleFavorite:', error);
     res.status(500).json({ message: 'שגיאה בעדכון המועדפים', error: error.message });
   }
 };

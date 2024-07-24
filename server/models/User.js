@@ -37,6 +37,10 @@ const UserSchema = new mongoose.Schema({
     enum: ['user', 'moderator', 'admin'],
     default: 'user'
   },
+  favorites: [{
+  type: mongoose.Schema.Types.ObjectId,
+  ref: 'Recipe'
+}],
   resetPasswordToken: String,
   resetPasswordExpire: Date,
   lastLogin: {

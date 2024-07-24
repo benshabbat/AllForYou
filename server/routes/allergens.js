@@ -30,5 +30,6 @@ router.route('/:id')
   .get(getAllergenById)
   .put(protect, authorize('admin'), updateAllergen)
   .delete(protect, authorize('admin'), deleteAllergen);
+router.get('/byIds', getAllergensByIds);
 
 export default router;

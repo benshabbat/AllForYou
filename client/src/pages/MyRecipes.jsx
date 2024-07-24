@@ -111,7 +111,6 @@ const MyRecipes = () => {
             <option value="קינוחים">קינוחים</option>
             <option value="מנות ראשונות">מנות ראשונות</option>
             <option value="סלטים">סלטים</option>
-            {/* הוסף עוד קטגוריות לפי הצורך */}
           </select>
         </div>
       </div>
@@ -122,8 +121,8 @@ const MyRecipes = () => {
             <RecipeCard 
               key={recipe._id} 
               recipe={recipe} 
+              showActions={true}
               onDelete={() => openDeleteModal(recipe)}
-              showDeleteButton={true}
             />
           ))}
         </div>
