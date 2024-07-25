@@ -46,7 +46,7 @@ const Header = () => {
     setIsMenuOpen(false);
   }, [dispatch, navigate]);
 
-  const renderNavItems = (items) => items.map((item) => (
+  const renderNavItems = useCallback((items) => items.map((item) => (
     <NavLink
       key={item.path}
       to={item.path}
@@ -55,11 +55,16 @@ const Header = () => {
     >
       {item.label}
     </NavLink>
-  ));
+  )), []);
 
-  const renderUserDropdown = () => (
+  const renderUserDropdown = useCallback(() => (
     <div className={styles.userMenu}>
-      <button className={styles.userButton} onClick={() => setIsMenuOpen(!isMenuOpen)}>
+      <button 
+        className={styles.userButton} 
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+        aria-haspopup="true"
+        aria-expanded={isMenuOpen}
+      >
         <FaUser /> {user.username}
       </button>
       <CSSTransition
@@ -73,26 +78,27 @@ const Header = () => {
         }}
         unmountOnExit
       >
-        <div className={styles.userDropdown}>
+        <div className={styles.userDropdown} role="menu">
           {USER_DROPDOWN_ITEMS.map((item) => (
             <Link
               key={item.path}
               to={item.path}
               className={styles.dropdownLink}
               onClick={() => setIsMenuOpen(false)}
+              role="menuitem"
             >
               {item.label}
             </Link>
           ))}
-          <button onClick={handleLogout} className={styles.logoutButton}>
+          <button onClick={handleLogout} className={styles.logoutButton} role="menuitem">
             <FaSignOutAlt /> התנתק
           </button>
         </div>
       </CSSTransition>
     </div>
-  );
+  ), [user, isMenuOpen, handleLogout]);
 
-  const renderMobileMenu = () => (
+  const renderMobileMenu = useCallback(() => (
     <CSSTransition
       in={isMenuOpen}
       timeout={300}
@@ -104,7 +110,7 @@ const Header = () => {
       }}
       unmountOnExit
     >
-      <div className={styles.mobileMenu}>
+      <div className={styles.mobileMenu} role="menu">
         {renderNavItems([...NAV_ITEMS, ...(user ? USER_NAV_ITEMS : [])])}
         {user ? (
           <>
@@ -114,37 +120,38 @@ const Header = () => {
                 to={item.path}
                 className={styles.mobileLink}
                 onClick={() => setIsMenuOpen(false)}
+                role="menuitem"
               >
                 {item.label}
               </Link>
             ))}
-            <button onClick={handleLogout} className={styles.mobileLogoutButton}>
+            <button onClick={handleLogout} className={styles.mobileLogoutButton} role="menuitem">
               <FaSignOutAlt /> התנתק
             </button>
           </>
         ) : (
           <>
-            <Link to="/login" className={styles.mobileLink} onClick={() => setIsMenuOpen(false)}>
+            <Link to="/login" className={styles.mobileLink} onClick={() => setIsMenuOpen(false)} role="menuitem">
               התחבר
             </Link>
-            <Link to="/register" className={styles.mobileLink} onClick={() => setIsMenuOpen(false)}>
+            <Link to="/register" className={styles.mobileLink} onClick={() => setIsMenuOpen(false)} role="menuitem">
               הרשם
             </Link>
           </>
         )}
       </div>
     </CSSTransition>
-  );
+  ), [isMenuOpen, user, renderNavItems, handleLogout]);
 
   return (
     <header className={`${styles.header} ${isScrolled ? styles.scrolled : ""}`}>
       <div className={styles.container}>
         <Link to="/" className={styles.logo}>
-          <FaUtensils className={styles.logoIcon} />
+          <FaUtensils className={styles.logoIcon} aria-hidden="true" />
           <span className={styles.logoText}>מתכונים לאלרגיים</span>
         </Link>
 
-        <nav className={styles.nav}>
+        <nav className={styles.nav} role="navigation">
           {renderNavItems(NAV_ITEMS)}
           {user && renderNavItems(USER_NAV_ITEMS)}
         </nav>
@@ -164,8 +171,9 @@ const Header = () => {
           className={styles.mobileMenuToggle}
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           aria-label="תפריט"
+          aria-expanded={isMenuOpen}
         >
-          <FaBars />
+          <FaBars aria-hidden="true" />
         </button>
       </div>
 
