@@ -1,15 +1,22 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import Quagga from '@ericblade/quagga2';
+import PropTypes from 'prop-types';
 import styles from './BarcodeScanner.module.css';
 
-const BarcodeScanner = ({ onScan, onError, onClose }) => {
+/**
+ * BarcodeScanner component for scanning barcodes using device camera.
+ * 
+ * @param {Object} props
+ * @param {Function} props.onScan - Callback function when barcode is detected
+ * @param {Function} props.onClose - Callback function to close the scanner
+ */
+const BarcodeScanner = ({ onScan, onClose }) => {
   const [error, setError] = useState(null);
-  const scannerRef = useRef(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const scannerRef = useRef(null);
 
   const initializeScanner = useCallback(async () => {
     if (!scannerRef.current) {
-      console.error("Scanner ref is not available");
       setError("Scanner element is not available");
       return;
     }
@@ -41,7 +48,6 @@ const BarcodeScanner = ({ onScan, onError, onClose }) => {
           if (err) {
             console.error("Quagga initialization failed", err);
             setError(`Failed to initialize the scanner: ${err.message}`);
-            onError(err);
             return;
           }
           console.log("Quagga initialization succeeded");
@@ -58,9 +64,8 @@ const BarcodeScanner = ({ onScan, onError, onClose }) => {
     } catch (err) {
       console.error("Quagga initialization failed", err);
       setError(`Failed to initialize the scanner: ${err.message}`);
-      onError(err);
     }
-  }, [onScan, onError]);
+  }, [onScan]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -75,11 +80,11 @@ const BarcodeScanner = ({ onScan, onError, onClose }) => {
     };
   }, [initializeScanner, isInitialized]);
 
-  const retryInitialization = () => {
+  const retryInitialization = useCallback(() => {
     setError(null);
     setIsInitialized(false);
     initializeScanner();
-  };
+  }, [initializeScanner]);
 
   return (
     <div className={styles.scannerContainer}>
@@ -93,13 +98,18 @@ const BarcodeScanner = ({ onScan, onError, onClose }) => {
       ) : (
         <div ref={scannerRef} className={styles.scanner}>
           <div className={styles.scannerOverlay}>
-            <div className={styles.scannerLine}></div>
+            <div className={styles.scannerLine} aria-hidden="true"></div>
           </div>
         </div>
       )}
-      <button onClick={onClose} className={styles.closeButton}>סגור</button>
+      <button onClick={onClose} className={styles.closeButton} aria-label="סגור סורק">סגור</button>
     </div>
   );
 };
 
-export default BarcodeScanner;
+BarcodeScanner.propTypes = {
+  onScan: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired
+};
+
+export default React.memo(BarcodeScanner);
