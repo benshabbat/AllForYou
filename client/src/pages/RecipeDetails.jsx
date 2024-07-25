@@ -17,6 +17,9 @@ import Modal from "../components/Modal";
 import { useToast } from "../components/Toast";
 import styles from "./RecipeDetails.module.css";
 
+/**
+ * RecipeDetails component for displaying detailed information about a recipe.
+ */
 const RecipeDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -30,11 +33,9 @@ const RecipeDetails = () => {
     isLoading,
     error,
     refetch,
-  } = useQuery(
-    ["recipe", id],
-    () => api.get(`/recipes/${id}`).then((res) => res.data),
-    { staleTime: 5 * 60 * 1000 }
-  );
+  } = useQuery(["recipe", id], () => api.get(`/recipes/${id}`).then((res) => res.data), {
+    staleTime: 5 * 60 * 1000
+  });
 
   useEffect(() => {
     refetch();
@@ -126,112 +127,122 @@ const RecipeDetails = () => {
     ? `http://localhost:5000/${recipe.image}`
     : '/placeholder-image.jpg';
 
+  const renderRecipeHeader = () => (
+    <header className={styles.recipeHeader}>
+      <h1 className={styles.recipeTitle}>{recipe.name}</h1>
+      <div className={styles.recipeActions}>
+        <RatingStars rating={recipe.averageRating} onRate={handleRate} />
+        <button
+          onClick={handleToggleFavorite}
+          className={styles.actionButton}
+          aria-label={recipe.isFavorite ? "הסר ממועדפים" : "הוסף למועדפים"}
+        >
+          {recipe.isFavorite ? <FaHeart /> : <FaRegHeart />}
+          {recipe.isFavorite ? "הסר ממועדפים" : "הוסף למועדפים"}
+        </button>
+        <button
+          onClick={handlePrint}
+          className={styles.actionButton}
+          aria-label="הדפס מתכון"
+        >
+          <FaPrint /> הדפס
+        </button>
+        <button
+          onClick={handleShare}
+          className={styles.actionButton}
+          aria-label="שתף מתכון"
+        >
+          <FaShare /> שתף
+        </button>
+      </div>
+    </header>
+  );
+
+  const renderRecipeImage = () => (
+    recipe.image && (
+      <div className={styles.imageContainer}>
+        <img
+          src={imageUrl}
+          alt={recipe.name}
+          className={styles.recipeImage}
+          onError={(e) => {
+            console.error("שגיאה בטעינת תמונה:", imageUrl);
+            e.target.onerror = null;
+            e.target.src = "/placeholder-image.jpg";
+          }}
+        />
+      </div>
+    )
+  );
+
+  const renderRecipeInfo = () => (
+    <section className={styles.recipeInfo}>
+      <div className={styles.infoItem}>
+        <FaClock className={styles.infoIcon} />
+        <span>זמן הכנה: {recipe.preparationTime} דקות</span>
+      </div>
+      <div className={styles.infoItem}>
+        <FaUtensils className={styles.infoIcon} />
+        <span>רמת קושי: {translateDifficulty(recipe.difficulty)}</span>
+      </div>
+      <div className={styles.infoItem}>
+        <FaUsers className={styles.infoIcon} />
+        <span>מספר מנות: {recipe.servings}</span>
+      </div>
+    </section>
+  );
+
+  const renderAdditionalInfo = () => (
+    <section className={styles.additionalInfo}>
+      <h2>מידע נוסף</h2>
+      <p><strong>קטגוריה:</strong> {recipe.category}</p>
+      <p><strong>זמן בישול:</strong> {recipe.cookingTime} דקות</p>
+      <p><strong>זמן הכנה כולל:</strong> {recipe.preparationTime + recipe.cookingTime} דקות</p>
+      {recipe.tags && recipe.tags.length > 0 && (
+        <p><strong>תגיות:</strong> {recipe.tags.join(', ')}</p>
+      )}
+      <p><strong>נוצר על ידי:</strong> {recipe.createdBy.username}</p>
+      <p><strong>תאריך יצירה:</strong> {new Date(recipe.createdAt).toLocaleDateString('he-IL')}</p>
+      <p><strong>עודכן לאחרונה:</strong> {new Date(recipe.updatedAt).toLocaleDateString('he-IL')}</p>
+    </section>
+  );
+
+  const renderOwnerActions = () => (
+    user && (user.id === recipe.createdBy._id || user.role === 'admin') && (
+      <div className={styles.ownerActions}>
+        <button
+          onClick={() => navigate(`/edit-recipe/${recipe._id}`)}
+          className={styles.editButton}
+        >
+          <FaEdit /> ערוך מתכון
+        </button>
+        <button onClick={handleDelete} className={styles.deleteButton}>
+          <FaTrash /> מחק מתכון
+        </button>
+      </div>
+    )
+  );
+
   return (
     <article className={styles.recipeDetails}>
-      <header className={styles.recipeHeader}>
-        <h1 className={styles.recipeTitle}>{recipe.name}</h1>
-        <div className={styles.recipeActions}>
-          <RatingStars rating={recipe.averageRating} onRate={handleRate} />
-          <button
-            onClick={handleToggleFavorite}
-            className={styles.actionButton}
-            aria-label={recipe.isFavorite ? "הסר ממועדפים" : "הוסף למועדפים"}
-          >
-            {recipe.isFavorite ? <FaHeart /> : <FaRegHeart />}
-            {recipe.isFavorite ? "הסר ממועדפים" : "הוסף למועדפים"}
-          </button>
-          <button
-            onClick={handlePrint}
-            className={styles.actionButton}
-            aria-label="הדפס מתכון"
-          >
-            <FaPrint /> הדפס
-          </button>
-          <button
-            onClick={handleShare}
-            className={styles.actionButton}
-            aria-label="שתף מתכון"
-          >
-            <FaShare /> שתף
-          </button>
-        </div>
-      </header>
-
-      {recipe.image && (
-        <div className={styles.imageContainer}>
-          <img
-            src={imageUrl}
-            alt={recipe.name}
-            className={styles.recipeImage}
-            onError={(e) => {
-              console.error("שגיאה בטעינת תמונה:", imageUrl);
-              e.target.onerror = null;
-              e.target.src = "/placeholder-image.jpg";
-            }}
-          />
-        </div>
-      )}
-
-      <section className={styles.recipeInfo}>
-        <div className={styles.infoItem}>
-          <FaClock className={styles.infoIcon} />
-          <span>זמן הכנה: {recipe.preparationTime} דקות</span>
-        </div>
-        <div className={styles.infoItem}>
-          <FaUtensils className={styles.infoIcon} />
-          <span>רמת קושי: {translateDifficulty(recipe.difficulty)}</span>
-        </div>
-        <div className={styles.infoItem}>
-          <FaUsers className={styles.infoIcon} />
-          <span>מספר מנות: {recipe.servings}</span>
-        </div>
-      </section>
-
+      {renderRecipeHeader()}
+      {renderRecipeImage()}
+      {renderRecipeInfo()}
       <p className={styles.recipeDescription}>{recipe.description}</p>
-
       <AllergenWarning allergens={recipe.allergens} />
-
       <IngredientList
         ingredients={recipe.ingredients}
         defaultServings={recipe.servings}
       />
-
       <InstructionList instructions={recipe.instructions} />
-      
       {recipe.nutritionInfo && (
         <NutritionInfo
           nutritionInfo={recipe.nutritionInfo}
           servings={recipe.servings}
         />
       )}
-
-      <section className={styles.additionalInfo}>
-        <h2>מידע נוסף</h2>
-        <p><strong>קטגוריה:</strong> {recipe.category}</p>
-        <p><strong>זמן בישול:</strong> {recipe.cookingTime} דקות</p>
-        <p><strong>זמן הכנה כולל:</strong> {recipe.preparationTime + recipe.cookingTime} דקות</p>
-        {recipe.tags && recipe.tags.length > 0 && (
-          <p><strong>תגיות:</strong> {recipe.tags.join(', ')}</p>
-        )}
-        <p><strong>נוצר על ידי:</strong> {recipe.createdBy.username}</p>
-        <p><strong>תאריך יצירה:</strong> {new Date(recipe.createdAt).toLocaleDateString('he-IL')}</p>
-        <p><strong>עודכן לאחרונה:</strong> {new Date(recipe.updatedAt).toLocaleDateString('he-IL')}</p>
-      </section>
-
-      {user && (user.id === recipe.createdBy._id || user.role === 'admin') && (
-        <div className={styles.ownerActions}>
-          <button
-            onClick={() => navigate(`/edit-recipe/${recipe._id}`)}
-            className={styles.editButton}
-          >
-            <FaEdit /> ערוך מתכון
-          </button>
-          <button onClick={handleDelete} className={styles.deleteButton}>
-            <FaTrash /> מחק מתכון
-          </button>
-        </div>
-      )}
-
+      {renderAdditionalInfo()}
+      {renderOwnerActions()}
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
@@ -241,7 +252,6 @@ const RecipeDetails = () => {
         <p>האם אתה בטוח שברצונך למחוק את המתכון "{recipe.name}"?</p>
         <p>פעולה זו אינה הפיכה.</p>
       </Modal>
-
       <CommentSection comments={recipe.comments} recipeId={recipe._id} />
     </article>
   );
