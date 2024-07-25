@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import api from '../services/api';
@@ -8,8 +8,13 @@ import TopicThread from '../components/TopicThread';
 import NewTopicForm from '../components/NewTopicForm';
 import ForumSearch from '../components/ForumSearch';
 import Pagination from '../components/Pagination';
+import Loading from '../components/Loading';
+import ErrorMessage from '../components/ErrorMessage';
 import styles from './Forum.module.css';
 
+/**
+ * Forum component for displaying and managing forum topics and threads.
+ */
 const Forum = () => {
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [isNewTopicFormOpen, setIsNewTopicFormOpen] = useState(false);
@@ -59,71 +64,79 @@ const Forum = () => {
     }
   );
 
-  const handleCreateTopic = (topicData) => {
+  const handleCreateTopic = useCallback((topicData) => {
     createTopicMutation.mutate({ ...topicData, authorId: user.id });
-  };
+  }, [createTopicMutation, user]);
 
-  const handleDeleteTopic = (topicId) => {
+  const handleDeleteTopic = useCallback((topicId) => {
     if (window.confirm('האם אתה בטוח שברצונך למחוק נושא זה?')) {
       deleteTopicMutation.mutate(topicId);
     }
-  };
+  }, [deleteTopicMutation]);
 
-  const handleSearch = (term) => {
+  const handleSearch = useCallback((term) => {
     setSearchTerm(term);
     setCurrentPage(1);
-  };
+  }, []);
 
-  const isModerator = user && (user.role === 'moderator' || user.role === 'admin');
+  const isModerator = useMemo(() => user && (user.role === 'moderator' || user.role === 'admin'), [user]);
 
-  if (isLoading) return <div className={styles.loading}>טוען את הפורום...</div>;
-  if (error) return <div className={styles.error}>שגיאה בטעינת הפורום: {error.message}</div>;
+  const renderContent = () => {
+    if (isLoading) return <Loading message="טוען את הפורום..." />;
+    if (error) return <ErrorMessage message={`שגיאה בטעינת הפורום: ${error.message}`} />;
 
-  const topics = forumData?.topics || [];
-  const totalPages = forumData?.totalPages || 0;
+    const topics = forumData?.topics || [];
+    const totalPages = forumData?.totalPages || 0;
 
-  return (
-    <div className={styles.forumContainer}>
-      <h1 className={styles.forumTitle}>פורום קהילתי</h1>
-      <ForumSearch onSearch={handleSearch} />
-      {selectedTopic ? (
+    if (selectedTopic) {
+      return (
         <TopicThread 
           topicId={selectedTopic} 
           onBack={() => setSelectedTopic(null)}
           isModerator={isModerator}
           onDeleteTopic={handleDeleteTopic}
         />
-      ) : (
-        <>
-          <button 
-            className={styles.newTopicButton} 
-            onClick={() => setIsNewTopicFormOpen(true)}
-          >
-            פתח נושא חדש
-          </button>
-          {isNewTopicFormOpen && (
-            <NewTopicForm 
-              onSubmit={handleCreateTopic} 
-              onCancel={() => setIsNewTopicFormOpen(false)} 
-            />
-          )}
-          <TopicList 
-            topics={topics} 
-            onSelectTopic={setSelectedTopic}
-            isModerator={isModerator}
-            onDeleteTopic={handleDeleteTopic}
+      );
+    }
+
+    return (
+      <>
+        <button 
+          className={styles.newTopicButton} 
+          onClick={() => setIsNewTopicFormOpen(true)}
+        >
+          פתח נושא חדש
+        </button>
+        {isNewTopicFormOpen && (
+          <NewTopicForm 
+            onSubmit={handleCreateTopic} 
+            onCancel={() => setIsNewTopicFormOpen(false)} 
           />
-          {totalPages > 0 && (
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
-          )}
-        </>
-      )}
+        )}
+        <TopicList 
+          topics={topics} 
+          onSelectTopic={setSelectedTopic}
+          isModerator={isModerator}
+          onDeleteTopic={handleDeleteTopic}
+        />
+        {totalPages > 0 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        )}
+      </>
+    );
+  };
+
+  return (
+    <div className={styles.forumContainer}>
+      <h1 className={styles.forumTitle}>פורום קהילתי</h1>
+      <ForumSearch onSearch={handleSearch} />
+      {renderContent()}
     </div>
   );
 };
 
-export default Forum;
+export default React.memo(Forum);
