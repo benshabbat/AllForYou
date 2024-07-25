@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateUserProfile } from '../store/slices/userSlice';
 import { FaEdit, FaSave, FaTimes, FaUtensils, FaStar, FaHeart } from 'react-icons/fa';
@@ -8,6 +8,9 @@ import ActivityTimeline from '../components/ActivityTimeline';
 import { useToast } from '../components/Toast';
 import styles from './UserProfile.module.css';
 
+/**
+ * UserProfile component for displaying and editing user information.
+ */
 const UserProfile = () => {
   const dispatch = useDispatch();
   const { addToast } = useToast();
@@ -29,11 +32,12 @@ const UserProfile = () => {
     }
   }, [user]);
 
-  const handleProfileChange = (e) => {
-    setProfile({ ...profile, [e.target.name]: e.target.value });
-  };
+  const handleProfileChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setProfile(prevProfile => ({ ...prevProfile, [name]: value }));
+  }, []);
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     try {
       await dispatch(updateUserProfile(profile)).unwrap();
       addToast('פרופיל המשתמש עודכן בהצלחה', 'success');
@@ -41,80 +45,92 @@ const UserProfile = () => {
     } catch (error) {
       addToast('שגיאה בעדכון הפרופיל', 'error');
     }
-  };
+  }, [dispatch, profile, addToast]);
+
+  const renderProfileHeader = () => (
+    <div className={styles.profileHeader}>
+      <h1>{user.username}</h1>
+      {!isEditing ? (
+        <button onClick={() => setIsEditing(true)} className={styles.editButton}>
+          <FaEdit /> ערוך פרופיל
+        </button>
+      ) : (
+        <>
+          <button onClick={handleSubmit} className={styles.saveButton}>
+            <FaSave /> שמור שינויים
+          </button>
+          <button onClick={() => setIsEditing(false)} className={styles.cancelButton}>
+            <FaTimes /> בטל
+          </button>
+        </>
+      )}
+    </div>
+  );
+
+  const renderProfileForm = () => (
+    <div className={styles.editForm}>
+      <input
+        type="text"
+        name="username"
+        value={profile.username}
+        onChange={handleProfileChange}
+        placeholder="שם משתמש"
+        className={styles.input}
+      />
+      <input
+        type="email"
+        name="email"
+        value={profile.email}
+        onChange={handleProfileChange}
+        placeholder="אימייל"
+        className={styles.input}
+      />
+      <textarea
+        name="bio"
+        value={profile.bio}
+        onChange={handleProfileChange}
+        placeholder="ספר לנו על עצמך"
+        className={styles.textarea}
+      />
+    </div>
+  );
+
+  const renderProfileDetails = () => (
+    <div className={styles.userDetails}>
+      <p><strong>אימייל:</strong> {user.email}</p>
+      <p><strong>הצטרף בתאריך:</strong> {new Date(user.createdAt).toLocaleDateString()}</p>
+      <p><strong>ביו:</strong> {user.bio || 'אין ביו עדיין'}</p>
+    </div>
+  );
+
+  const renderUserStats = () => (
+    <section className={styles.userStats}>
+      <div className={styles.statItem}>
+        <FaUtensils />
+        <span>{user.recipes?.length || 0}</span>
+        <p>מתכונים</p>
+      </div>
+      <div className={styles.statItem}>
+        <FaStar />
+        <span>{user.averageRating?.toFixed(1) || 'N/A'}</span>
+        <p>דירוג ממוצע</p>
+      </div>
+      <div className={styles.statItem}>
+        <FaHeart />
+        <span>{user.favorites?.length || 0}</span>
+        <p>מועדפים</p>
+      </div>
+    </section>
+  );
 
   return (
     <div className={styles.profileContainer}>
       <section className={styles.userInfo}>
-        <div className={styles.profileHeader}>
-          <h1>{user.username}</h1>
-          {!isEditing ? (
-            <button onClick={() => setIsEditing(true)} className={styles.editButton}>
-              <FaEdit /> ערוך פרופיל
-            </button>
-          ) : (
-            <>
-              <button onClick={handleSubmit} className={styles.saveButton}>
-                <FaSave /> שמור שינויים
-              </button>
-              <button onClick={() => setIsEditing(false)} className={styles.cancelButton}>
-                <FaTimes /> בטל
-              </button>
-            </>
-          )}
-        </div>
-        {isEditing ? (
-          <div className={styles.editForm}>
-            <input
-              type="text"
-              name="username"
-              value={profile.username}
-              onChange={handleProfileChange}
-              placeholder="שם משתמש"
-              className={styles.input}
-            />
-            <input
-              type="email"
-              name="email"
-              value={profile.email}
-              onChange={handleProfileChange}
-              placeholder="אימייל"
-              className={styles.input}
-            />
-            <textarea
-              name="bio"
-              value={profile.bio}
-              onChange={handleProfileChange}
-              placeholder="ספר לנו על עצמך"
-              className={styles.textarea}
-            />
-          </div>
-        ) : (
-          <div className={styles.userDetails}>
-            <p><strong>אימייל:</strong> {user.email}</p>
-            <p><strong>הצטרף בתאריך:</strong> {new Date(user.createdAt).toLocaleDateString()}</p>
-            <p><strong>ביו:</strong> {user.bio || 'אין ביו עדיין'}</p>
-          </div>
-        )}
+        {renderProfileHeader()}
+        {isEditing ? renderProfileForm() : renderProfileDetails()}
       </section>
 
-      <section className={styles.userStats}>
-        <div className={styles.statItem}>
-          <FaUtensils />
-          <span>{user.recipes?.length || 0}</span>
-          <p>מתכונים</p>
-        </div>
-        <div className={styles.statItem}>
-          <FaStar />
-          <span>{user.averageRating?.toFixed(1) || 'N/A'}</span>
-          <p>דירוג ממוצע</p>
-        </div>
-        <div className={styles.statItem}>
-          <FaHeart />
-          <span>{user.favorites?.length || 0}</span>
-          <p>מועדפים</p>
-        </div>
-      </section>
+      {renderUserStats()}
 
       <section className={styles.allergenSection}>
         <h2>אלרגנים</h2>
@@ -134,4 +150,4 @@ const UserProfile = () => {
   );
 };
 
-export default UserProfile;
+export default React.memo(UserProfile);
