@@ -6,8 +6,13 @@ import { useToast } from '../components/Toast';
 import BarcodeScanner from '../components/BarcodeScanner';
 import ProductInfo from '../components/ProductInfo';
 import AddProductForm from '../components/AddProductForm';
+import Loading from '../components/Loading';
+import ErrorMessage from '../components/ErrorMessage';
 import styles from './FoodScanner.module.css';
 
+/**
+ * FoodScanner component for scanning and managing food product information.
+ */
 const FoodScanner = () => {
   const [scannedCode, setScannedCode] = useState('');
   const [isAddingProduct, setIsAddingProduct] = useState(false);
@@ -68,58 +73,87 @@ const FoodScanner = () => {
     setScannedCode(barcode);
   }, []);
 
-  const handleAddProduct = (productData) => {
+  const handleAddProduct = useCallback((productData) => {
     addProductMutation.mutate({ ...productData, barcode: scannedCode });
-  };
+  }, [addProductMutation, scannedCode]);
 
-  const updateScanHistory = (code, name) => {
+  const updateScanHistory = useCallback((code, name) => {
     setScanHistory(prev => {
       const newHistory = [{ code, name, timestamp: new Date() }, ...prev];
-      return newHistory.slice(0, 10); // שמור רק 10 פריטים אחרונים
+      return newHistory.slice(0, 10); // Keep only the last 10 items
     });
-  };
+  }, []);
 
-  const handleManualSubmit = (e) => {
+  const handleManualSubmit = useCallback((e) => {
     e.preventDefault();
     setScannedCode(manualCode);
     setManualCode('');
-  };
+  }, [manualCode]);
 
   useEffect(() => {
     if (productInfo) {
       updateScanHistory(scannedCode, productInfo.product_name);
     }
-  }, [productInfo, scannedCode]);
+  }, [productInfo, scannedCode, updateScanHistory]);
+
+  const renderScannerControls = () => (
+    <>
+      <button onClick={() => setIsScannerActive(!isScannerActive)} className={styles.toggleButton}>
+        {isScannerActive ? 'כבה סורק' : 'הפעל סורק'}
+      </button>
+      
+      {isScannerActive && <BarcodeScanner onScan={handleScan} />}
+    </>
+  );
+
+  const renderManualInput = () => (
+    <form onSubmit={handleManualSubmit} className={styles.manualInput}>
+      <input
+        type="text"
+        value={manualCode}
+        onChange={(e) => setManualCode(e.target.value)}
+        placeholder="הכנס ברקוד ידנית"
+      />
+      <button type="submit">חפש</button>
+    </form>
+  );
+
+  const renderProductInfo = () => {
+    if (isLoading) return <Loading message="טוען מידע על המוצר..." />;
+    if (error) return <ErrorMessage message="שגיאה בטעינת מידע על המוצר" />;
+    if (productInfo) return <ProductInfo product={productInfo} />;
+    if (scannedCode && !isLoading) {
+      return (
+        <>
+          <p>מוצר לא נמצא. האם תרצה להוסיף אותו?</p>
+          <button onClick={() => setIsAddingProduct(true)}>הוסף מוצר חדש</button>
+        </>
+      );
+    }
+    return null;
+  };
+
+  const renderScanHistory = () => (
+    <div className={styles.scanHistory}>
+      <h3>היסטוריית סריקות</h3>
+      <ul>
+        {scanHistory.map((item, index) => (
+          <li key={index}>
+            {item.name} (ברקוד: {item.code}) - {new Date(item.timestamp).toLocaleString()}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 
   return (
     <div className={styles.scannerContainer}>
       <h2>סורק ברקודים למוצרי מזון</h2>
       
-      <button onClick={() => setIsScannerActive(!isScannerActive)}>
-        {isScannerActive ? 'כבה סורק' : 'הפעל סורק'}
-      </button>
+      {renderScannerControls()}
+      {renderManualInput()}
+      {renderProductInfo()}
       
-      {isScannerActive && <BarcodeScanner onScan={handleScan} />}
-      
-      <form onSubmit={handleManualSubmit} className={styles.manualInput}>
-        <input
-          type="text"
-          value={manualCode}
-          onChange={(e) => setManualCode(e.target.value)}
-          placeholder="הכנס ברקוד ידנית"
-        />
-        <button type="submit">חפש</button>
-      </form>
-
-      {isLoading && <p>טוען מידע על המוצר...</p>}
-      {error && <p>שגיאה בטעינת מידע על המוצר</p>}
-      {productInfo && <ProductInfo product={productInfo} />}
-      {!productInfo && scannedCode && !isLoading && (
-        <>
-          <p>מוצר לא נמצא. האם תרצה להוסיף אותו?</p>
-          <button onClick={() => setIsAddingProduct(true)}>הוסף מוצר חדש</button>
-        </>
-      )}
       {isAddingProduct && (
         <AddProductForm 
           onSubmit={handleAddProduct} 
@@ -127,18 +161,9 @@ const FoodScanner = () => {
         />
       )}
 
-      <div className={styles.scanHistory}>
-        <h3>היסטוריית סריקות</h3>
-        <ul>
-          {scanHistory.map((item, index) => (
-            <li key={index}>
-              {item.name} (ברקוד: {item.code}) - {new Date(item.timestamp).toLocaleString()}
-            </li>
-          ))}
-        </ul>
-      </div>
+      {renderScanHistory()}
     </div>
   );
 };
 
-export default FoodScanner;
+export default React.memo(FoodScanner);
