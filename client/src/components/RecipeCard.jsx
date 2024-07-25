@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { FaHeart, FaRegHeart, FaClock, FaUtensils, FaUsers, FaEdit, FaTrash } from 'react-icons/fa';
@@ -31,32 +31,36 @@ const RecipeCard = ({ recipe, showActions = false, onDelete }) => {
     }
   }, [dispatch, recipe._id, user]);
 
-  const imageUrl = recipe.image 
-    ? `http://localhost:5000/${recipe.image}`
-    : '/placeholder-image.jpg';
+  const imageUrl = useMemo(() => 
+    recipe.image ? `http://localhost:5000/${recipe.image}` : '/placeholder-image.jpg',
+  [recipe.image]);
 
-  const isOwner = user && user.id === recipe.createdBy;
+  const isOwner = useMemo(() => user && user.id === recipe.createdBy, [user, recipe.createdBy]);
 
-  const renderRecipeInfo = () => (
+  const totalTime = useMemo(() => 
+    recipe.preparationTime + recipe.cookingTime,
+  [recipe.preparationTime, recipe.cookingTime]);
+
+  const renderRecipeInfo = useCallback(() => (
     <div className={styles.recipeInfo}>
-      <span><FaClock /> {recipe.preparationTime + recipe.cookingTime} דקות</span>
-      <span><FaUtensils /> {translateDifficulty(recipe.difficulty)}</span>
-      <span><FaUsers /> {recipe.servings} מנות</span>
+      <span><FaClock aria-hidden="true" /> {totalTime} דקות</span>
+      <span><FaUtensils aria-hidden="true" /> {translateDifficulty(recipe.difficulty)}</span>
+      <span><FaUsers aria-hidden="true" /> {recipe.servings} מנות</span>
     </div>
-  );
+  ), [totalTime, recipe.difficulty, recipe.servings]);
 
-  const renderActions = () => (
+  const renderActions = useCallback(() => (
     showActions && isOwner && (
       <div className={styles.cardFooter}>
         <Link to={`/edit-recipe/${recipe._id}`} className={styles.editButton}>
-          <FaEdit /> ערוך
+          <FaEdit aria-hidden="true" /> ערוך
         </Link>
         <button onClick={() => onDelete(recipe._id)} className={styles.deleteButton}>
-          <FaTrash /> מחק
+          <FaTrash aria-hidden="true" /> מחק
         </button>
       </div>
     )
-  );
+  ), [showActions, isOwner, recipe._id, onDelete]);
 
   return (
     <div className={styles.recipeCard}>
