@@ -41,6 +41,7 @@ const AllergenManagement = () => {
 
   // Merge allergens with user preferences
   const mergedAllergens = useMemo(() => {
+    if (!Array.isArray(allergens)) return [];
     return allergens.map(allergen => ({
       ...allergen,
       isSelected: selectedAllergens.includes(allergen._id)
@@ -54,7 +55,8 @@ const AllergenManagement = () => {
     <div className={styles.allergenManagement}>
       <h3>ניהול אלרגנים</h3>
       <div className={styles.allergenGrid}>
-        {mergedAllergens.map((allergen) => (
+      {mergedAllergens.length > 0 ? (
+  mergedAllergens.map((allergen) => (
           <button
             key={allergen._id}
             className={`${styles.allergenButton} ${allergen.isSelected ? styles.selected : ''}`}
@@ -63,7 +65,10 @@ const AllergenManagement = () => {
             <AllergenIcon allergen={allergen} />
             <span>{allergen.hebrewName}</span>
           </button>
-        ))}
+          ))
+        ) : (
+          <p>No allergens available</p>
+        )}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import React, { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Provider, useDispatch } from 'react-redux';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider, useQueryClient } from 'react-query';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { store } from './store/index.js';
 import { loadUser, setInitialized } from './store/slices/authSlice';
@@ -13,13 +13,11 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { useAuth } from './hooks/useAuth';
 import { ToastProvider, ToastContainer } from './components/Toast';
 import api from './services/api';
-import EnhancedFoodScanner from './pages/FoodScanner';
-import { useQueryClient } from 'react-query';
-const queryClient = new QueryClient();
 
+// Lazy-loaded components
 const Home = lazy(() => import('./pages/Home'));
 const RecipeList = lazy(() => import('./pages/RecipeList'));
-const RecipeForm = lazy(() => import('./pages/AddRecipe.jsx'));
+const RecipeForm = lazy(() => import('./pages/AddRecipe'));
 const Register = lazy(() => import('./pages/Register'));
 const Login = lazy(() => import('./pages/Login'));
 const UserProfile = lazy(() => import('./pages/UserProfile'));
@@ -29,7 +27,14 @@ const UserSettings = lazy(() => import('./pages/UserSettings'));
 const FavoritesPage = lazy(() => import('./pages/FavoritesPage'));
 const AllergyInfo = lazy(() => import('./pages/AllergyInfo'));
 const Forum = lazy(() => import('./pages/Forum'));
+const EnhancedFoodScanner = lazy(() => import('./pages/FoodScanner'));
 
+const queryClient = new QueryClient();
+
+/**
+ * Main content component of the application.
+ * Handles routing and authentication initialization.
+ */
 function AppContent() {
   const dispatch = useDispatch();
   const { isLoading } = useAuth();
@@ -57,8 +62,6 @@ function AppContent() {
     initializeAuth();
     queryClient.prefetchQuery('allergens', api.getAllAllergens);
   }, [dispatch, queryClient]);
-
-
 
   if (isLoading) {
     return <Loading />;
@@ -90,7 +93,7 @@ function AppContent() {
                 <Route path="/food-scanner" element={<EnhancedFoodScanner />} />
                 <Route path="/allergy-info" element={<AllergyInfo />} />
                 <Route path="/allergy-info/:allergenId" element={<AllergyInfo />} />
-                <Route path="/forum" element={<Forum/>} />
+                <Route path="/forum" element={<Forum />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
@@ -101,6 +104,10 @@ function AppContent() {
   );
 }
 
+/**
+ * Root component of the application.
+ * Sets up Redux store, React Query, and routing.
+ */
 function App() {
   return (
     <Provider store={store}>
