@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -45,6 +45,9 @@ const recipeSchema = yup.object().shape({
   image: yup.mixed().nullable(),
 });
 
+/**
+ * AddRecipe component for creating a new recipe.
+ */
 const AddRecipe = () => {
   const navigate = useNavigate();
   const [imagePreview, setImagePreview] = useState(null);
@@ -76,7 +79,7 @@ const AddRecipe = () => {
 
   const ingredients = watch("ingredients");
 
-  const onSubmit = async (data) => {
+  const onSubmit = useCallback(async (data) => {
     console.log("Submitting data:", data);
     const formData = new FormData();
 
@@ -87,24 +90,22 @@ const AddRecipe = () => {
         let amount = parts[0];
         let name = parts.slice(1).join(" ");
 
-        // If the first part is not a number, assume it's part of the name
         if (isNaN(parseFloat(amount))) {
-          amount = "1"; // Default amount
+          amount = "1";
           name = ingredient.trim();
         }
 
         return {
-          name: name || "Unknown Ingredient", // Fallback name if empty
+          name: name || "Unknown Ingredient",
           amount: amount,
-          unit: "", // You might want to add logic to extract the unit if possible
+          unit: "",
         };
       })
-      .filter((ingredient) => ingredient.name.trim() !== ""); // Remove any empty ingredients
+      .filter((ingredient) => ingredient.name.trim() !== "");
 
     Object.keys(data).forEach((key) => {
       if (key === "image") {
-        if (data.image && data.image[0])
-          formData.append("image", data.image[0]);
+        if (data.image && data.image[0]) formData.append("image", data.image[0]);
       } else if (key === "ingredients") {
         formData.append("ingredients", JSON.stringify(ingredientsArray));
       } else if (Array.isArray(data[key])) {
@@ -121,25 +122,104 @@ const AddRecipe = () => {
     } catch (error) {
       console.error("Error adding recipe:", error);
     }
-  };
+  }, [addRecipeMutation, navigate]);
 
-  const handleAddIngredient = () => {
+  const handleAddIngredient = useCallback(() => {
     setValue("ingredients", [...ingredients, ""]);
-  };
+  }, [ingredients, setValue]);
 
-  const handleRemoveIngredient = (index) => {
+  const handleRemoveIngredient = useCallback((index) => {
     const newIngredients = [...ingredients];
     newIngredients.splice(index, 1);
     setValue("ingredients", newIngredients);
-  };
+  }, [ingredients, setValue]);
 
-  const handleImageChange = (e) => {
+  const handleImageChange = useCallback((e) => {
     const file = e.target.files[0];
     if (file) {
       setValue("image", e.target.files);
       setImagePreview(URL.createObjectURL(file));
     }
-  };
+  }, [setValue]);
+
+  const renderIngredientInputs = useCallback(() => (
+    <div className={styles.ingredientsSection}>
+      <label>מרכיבים:</label>
+      {ingredients.map((ingredient, index) => (
+        <div key={index} className={styles.ingredientRow}>
+          <Controller
+            name={`ingredients.${index}`}
+            control={control}
+            rules={{ required: "מרכיב לא יכול להיות ריק" }}
+            render={({ field }) => (
+              <input {...field} placeholder={`מרכיב ${index + 1}`} />
+            )}
+          />
+          <button
+            type="button"
+            onClick={() => handleRemoveIngredient(index)}
+            className={styles.removeIngredient}
+          >
+            הסר
+          </button>
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={handleAddIngredient}
+        className={styles.addIngredient}
+      >
+        הוסף מרכיב
+      </button>
+      {errors.ingredients && (
+        <span className={styles.error}>{errors.ingredients.message}</span>
+      )}
+    </div>
+  ), [ingredients, control, errors.ingredients, handleAddIngredient, handleRemoveIngredient]);
+
+  const renderAllergenSelection = useCallback(() => (
+    <div className={styles.allergensSection}>
+      <label>אלרגנים:</label>
+      <div className={styles.allergenGrid}>
+        {allergens.map((allergen) => (
+          <div key={allergen._id} className={styles.allergenItem}>
+            <Controller
+              name="allergens"
+              control={control}
+              render={({ field }) => (
+                <label>
+                  <input
+                    type="checkbox"
+                    onChange={(e) => {
+                      const updatedAllergens = e.target.checked
+                        ? [...field.value, allergen._id]
+                        : field.value.filter((id) => id !== allergen._id);
+                      field.onChange(updatedAllergens);
+                    }}
+                    checked={field.value.includes(allergen._id)}
+                  />
+                  {allergen.icon} {allergen.hebrewName}
+                </label>
+              )}
+            />
+            <div className={styles.allergenAlternatives}>
+              <strong>תחליפים:</strong>
+              <ul>
+                {allergen.alternatives.map((alt, index) => (
+                  <li key={index}>
+                    {alt.name} - {alt.description}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))}
+      </div>
+      {errors.allergens && (
+        <span className={styles.error}>{errors.allergens.message}</span>
+      )}
+    </div>
+  ), [allergens, control, errors.allergens]);
 
   if (allergensLoading) return <div>טוען אלרגנים...</div>;
 
@@ -160,38 +240,7 @@ const AddRecipe = () => {
           error={errors.description}
           as="textarea"
         />
-        <div className={styles.ingredientsSection}>
-          <label>מרכיבים:</label>
-          {ingredients.map((ingredient, index) => (
-            <div key={index} className={styles.ingredientRow}>
-              <Controller
-                name={`ingredients.${index}`}
-                control={control}
-                rules={{ required: "מרכיב לא יכול להיות ריק" }}
-                render={({ field }) => (
-                  <input {...field} placeholder={`מרכיב ${index + 1}`} />
-                )}
-              />
-              <button
-                type="button"
-                onClick={() => handleRemoveIngredient(index)}
-                className={styles.removeIngredient}
-              >
-                הסר
-              </button>
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={handleAddIngredient}
-            className={styles.addIngredient}
-          >
-            הוסף מרכיב
-          </button>
-          {errors.ingredients && (
-            <span className={styles.error}>{errors.ingredients.message}</span>
-          )}
-        </div>
+        {renderIngredientInputs()}
         <FormField
           name="instructions"
           control={control}
@@ -246,47 +295,7 @@ const AddRecipe = () => {
             }))}
           />
         </div>
-        <div className={styles.allergensSection}>
-          <label>אלרגנים:</label>
-          <div className={styles.allergenGrid}>
-            {allergens.map((allergen) => (
-              <div key={allergen._id} className={styles.allergenItem}>
-                <Controller
-                  name="allergens"
-                  control={control}
-                  render={({ field }) => (
-                    <label>
-                      <input
-                        type="checkbox"
-                        onChange={(e) => {
-                          const updatedAllergens = e.target.checked
-                            ? [...field.value, allergen._id]
-                            : field.value.filter((id) => id !== allergen._id);
-                          field.onChange(updatedAllergens);
-                        }}
-                        checked={field.value.includes(allergen._id)}
-                      />
-                      {allergen.icon} {allergen.hebrewName}
-                    </label>
-                  )}
-                />
-                <div className={styles.allergenAlternatives}>
-                  <strong>תחליפים:</strong>
-                  <ul>
-                    {allergen.alternatives.map((alt, index) => (
-                      <li key={index}>
-                        {alt.name} - {alt.description}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            ))}
-          </div>
-          {errors.allergens && (
-            <span className={styles.error}>{errors.allergens.message}</span>
-          )}
-        </div>
+        {renderAllergenSelection()}
         <ImageUpload
           onChange={handleImageChange}
           preview={imagePreview}
@@ -304,4 +313,4 @@ const AddRecipe = () => {
   );
 };
 
-export default AddRecipe;
+export default React.memo(AddRecipe);
