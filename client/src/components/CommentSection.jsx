@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import api from '../services/api';
-import { useToast } from '../hooks/useToast';
+import { useToast } from '../components/Toast';  
 import styles from './CommentSection.module.css';
 
 /**

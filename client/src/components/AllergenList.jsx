@@ -8,11 +8,6 @@ import styles from './AllergenList.module.css';
 const AllergenList = ({ allergens = [], showTooltips = true }) => {
   const areAllergenIds = allergens.length > 0 && typeof allergens[0] === 'string';
 
-  const { data: allAllergens } = useQuery('allergens', api.getAllAllergens, {
-    staleTime: Infinity, // קאש לצמיתות, כי רשימת האלרגנים לא משתנה לעתים קרובות
-    cacheTime: Infinity,
-  });
-
   const { data: allergenDetails, isLoading, error } = useQuery(
     ['allergens', allergens],
     () => areAllergenIds ? api.getAllergensByIds(allergens) : Promise.resolve(allergens),
