@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { FaHeart, FaRegHeart, FaClock, FaUtensils, FaUsers, FaEdit, FaTrash } from 'react-icons/fa';
@@ -9,11 +9,19 @@ import RatingStars from './RatingStars';
 import AllergenList from './AllergenList';
 import styles from './RecipeCard.module.css';
 
+/**
+ * RecipeCard component for displaying a recipe in a card format.
+ * 
+ * @param {Object} props - The component props
+ * @param {Object} props.recipe - The recipe object to display
+ * @param {boolean} [props.showActions=false] - Whether to show edit/delete actions
+ * @param {Function} [props.onDelete] - Callback function for delete action
+ */
 const RecipeCard = ({ recipe, showActions = false, onDelete }) => {
   const dispatch = useDispatch();
   const { user } = useSelector(state => state.auth);
 
-  const handleFavoriteClick = (e) => {
+  const handleFavoriteClick = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
     if (user) {
@@ -21,13 +29,34 @@ const RecipeCard = ({ recipe, showActions = false, onDelete }) => {
     } else {
       alert('עליך להתחבר כדי להוסיף למועדפים');
     }
-  };
+  }, [dispatch, recipe._id, user]);
 
   const imageUrl = recipe.image 
     ? `http://localhost:5000/${recipe.image}`
     : '/placeholder-image.jpg';
 
   const isOwner = user && user.id === recipe.createdBy;
+
+  const renderRecipeInfo = () => (
+    <div className={styles.recipeInfo}>
+      <span><FaClock /> {recipe.preparationTime + recipe.cookingTime} דקות</span>
+      <span><FaUtensils /> {translateDifficulty(recipe.difficulty)}</span>
+      <span><FaUsers /> {recipe.servings} מנות</span>
+    </div>
+  );
+
+  const renderActions = () => (
+    showActions && isOwner && (
+      <div className={styles.cardFooter}>
+        <Link to={`/edit-recipe/${recipe._id}`} className={styles.editButton}>
+          <FaEdit /> ערוך
+        </Link>
+        <button onClick={() => onDelete(recipe._id)} className={styles.deleteButton}>
+          <FaTrash /> מחק
+        </button>
+      </div>
+    )
+  );
 
   return (
     <div className={styles.recipeCard}>
@@ -52,11 +81,7 @@ const RecipeCard = ({ recipe, showActions = false, onDelete }) => {
         </div>
         <div className={styles.recipeContent}>
           <h3 className={styles.recipeTitle}>{recipe.name}</h3>
-          <div className={styles.recipeInfo}>
-            <span><FaClock /> {recipe.preparationTime + recipe.cookingTime} דקות</span>
-            <span><FaUtensils /> {translateDifficulty(recipe.difficulty)}</span>
-            <span><FaUsers /> {recipe.servings} מנות</span>
-          </div>
+          {renderRecipeInfo()}
           <RatingStars rating={recipe.averageRating} readOnly={true} />
           <p className={styles.recipeDescription}>{recipe.description}</p>
           {recipe.allergens && recipe.allergens.length > 0 && (
@@ -64,16 +89,7 @@ const RecipeCard = ({ recipe, showActions = false, onDelete }) => {
           )}
         </div>
       </Link>
-      {showActions && isOwner && (
-        <div className={styles.cardFooter}>
-          <Link to={`/edit-recipe/${recipe._id}`} className={styles.editButton}>
-            <FaEdit /> ערוך
-          </Link>
-          <button onClick={() => onDelete(recipe._id)} className={styles.deleteButton}>
-            <FaTrash /> מחק
-          </button>
-        </div>
-      )}
+      {renderActions()}
     </div>
   );
 };
@@ -105,4 +121,4 @@ RecipeCard.propTypes = {
   onDelete: PropTypes.func
 };
 
-export default RecipeCard;
+export default React.memo(RecipeCard);
