@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import styles from './Toast.module.css';
 
-const ToastContext = createContext();
+export const ToastContext = createContext();
 
 export const useToast = () => useContext(ToastContext);
 

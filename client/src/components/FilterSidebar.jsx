@@ -1,144 +1,67 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useQuery } from 'react-query';
+import React, { useState, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import api from '../services/api';
-import { CATEGORIES, DIFFICULTY_LEVELS } from '../constants';
 import styles from './FilterSidebar.module.css';
 
-/**
- * FilterSidebar component for filtering recipes.
- * 
- * @param {Object} props
- * @param {Object} props.initialFilters - Initial filter values
- * @param {Function} props.onFilterChange - Callback function when filters change
- */
-const FilterSidebar = ({ initialFilters = {}, onFilterChange }) => {
-  const [filters, setFilters] = useState(initialFilters);
-  const [searchAllergen, setSearchAllergen] = useState('');
+const FilterSidebar = ({ allergens, selectedAllergens, onFilterChange, isLoading, error }) => {
+  const safeAllergens = Array.isArray(allergens) ? allergens : [];
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState({
+    allergens: selectedAllergens || []
+  });
 
-  const { data: allergens, isLoading: allergensLoading, error: allergensError } = useQuery('allergens', () => 
-    api.get('/allergens').then(res => res.data)
-  );
+  const filteredAllergens = useMemo(() => {
+    return safeAllergens.filter(allergen => 
+      allergen.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      allergen.hebrewName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [safeAllergens, searchTerm]);
 
-  useEffect(() => {
-    setFilters(prevFilters => ({
-      ...prevFilters,
-      ...initialFilters
-    }));
-  }, [initialFilters]);
-
-  const handleInputChange = useCallback((e) => {
-    const { name, value } = e.target;
-    setFilters(prev => ({ ...prev, [name]: value }));
-  }, []);
-
-  const handleAllergenChange = useCallback((allergenId) => {
-    setFilters(prev => ({
-      ...prev,
-      allergens: prev.allergens.includes(allergenId)
-        ? prev.allergens.filter(id => id !== allergenId)
-        : [...prev.allergens, allergenId]
-    }));
-  }, []);
-
-  const handleApplyFilters = useCallback(() => {
-    onFilterChange(filters);
-  }, [filters, onFilterChange]);
-
-  const handleResetFilters = useCallback(() => {
-    setFilters({
-      category: '',
-      difficulty: '',
-      allergens: []
-    });
-    setSearchAllergen('');
-    onFilterChange({
-      category: '',
-      difficulty: '',
-      allergens: []
+  const handleAllergenToggle = useCallback((allergenId) => {
+    setFilters(prevFilters => {
+      const newAllergens = prevFilters.allergens.includes(allergenId)
+        ? prevFilters.allergens.filter(id => id !== allergenId)
+        : [...prevFilters.allergens, allergenId];
+      
+      const newFilters = { ...prevFilters, allergens: newAllergens };
+      onFilterChange(newFilters);
+      return newFilters;
     });
   }, [onFilterChange]);
 
-  const filteredAllergens = useMemo(() => 
-    allergens?.filter(allergen => 
-      allergen.hebrewName.toLowerCase().includes(searchAllergen.toLowerCase()) ||
-      allergen.name.toLowerCase().includes(searchAllergen.toLowerCase())
-    ),
-    [allergens, searchAllergen]
-  );
-
-  const renderSelect = useCallback((name, label, options) => (
-    <div className={styles.filterSection}>
-      <label htmlFor={name}>{label}</label>
-      <select 
-        id={name}
-        name={name}
-        value={filters[name]}
-        onChange={handleInputChange}
-        className={styles.filterSelect}
-      >
-        <option value="">הכל</option>
-        {options.map(option => (
-          <option key={option} value={option}>{option}</option>
-        ))}
-      </select>
-    </div>
-  ), [filters, handleInputChange]);
-
-  const renderAllergenList = useCallback(() => (
-    <div className={styles.allergenList}>
-      {filteredAllergens?.map(allergen => (
-        <div 
-          key={allergen._id} 
-          className={`${styles.allergenItem} ${filters.allergens.includes(allergen._id) ? styles.selected : ''}`}
-          onClick={() => handleAllergenChange(allergen._id)}
-        >
-          <span className={styles.allergenIcon}>{allergen.icon}</span>
-          <span className={styles.allergenName}>{allergen.hebrewName}</span>
-        </div>
-      ))}
-    </div>
-  ), [filteredAllergens, filters.allergens, handleAllergenChange]);
-
-  if (allergensLoading) return <div className={styles.loading}>טוען אלרגנים...</div>;
-  if (allergensError) return <div className={styles.error}>שגיאה בטעינת אלרגנים: {allergensError.message}</div>;
+  if (isLoading) return <div className={styles.loading}>טוען אלרגנים...</div>;
+  if (error) return <div className={styles.error}>שגיאה בטעינת אלרגנים: {error}</div>;
 
   return (
-    <aside className={styles.filterSidebar}>
-      <h2 className={styles.filterTitle}>סינון מתכונים</h2>
-      
-      {renderSelect('category', 'קטגוריה', CATEGORIES)}
-      {renderSelect('difficulty', 'רמת קושי', DIFFICULTY_LEVELS)}
-
-      <div className={styles.filterSection}>
-        <h3>אלרגנים (ללא)</h3>
-        <input
-          type="text"
-          placeholder="חפש אלרגן..."
-          value={searchAllergen}
-          onChange={(e) => setSearchAllergen(e.target.value)}
-          className={styles.allergenSearch}
-        />
-        {renderAllergenList()}
+    <div className={styles.filterSidebar}>
+      <h3 className={styles.title}>סינון לפי אלרגנים</h3>
+      <input
+        type="text"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        placeholder="חפש אלרגן..."
+        className={styles.searchInput}
+      />
+      <div className={styles.allergenList}>
+        {filteredAllergens.map(allergen => (
+          <button
+            key={allergen._id}
+            className={`${styles.allergenButton} ${filters.allergens.includes(allergen._id) ? styles.selected : ''}`}
+            onClick={() => handleAllergenToggle(allergen._id)}
+          >
+            {allergen.icon} {allergen.hebrewName}
+          </button>
+        ))}
       </div>
-
-      <button onClick={handleApplyFilters} className={styles.applyFiltersButton}>
-        החל סינונים
-      </button>
-      <button onClick={handleResetFilters} className={styles.resetButton}>
-        אפס סינונים
-      </button>
-    </aside>
+    </div>
   );
 };
 
 FilterSidebar.propTypes = {
-  initialFilters: PropTypes.shape({
-    category: PropTypes.string,
-    difficulty: PropTypes.string,
-    allergens: PropTypes.arrayOf(PropTypes.string)
-  }),
-  onFilterChange: PropTypes.func.isRequired
+  allergens: PropTypes.array,
+  selectedAllergens: PropTypes.array,
+  onFilterChange: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool,
+  error: PropTypes.string
 };
 
 export default React.memo(FilterSidebar);

@@ -47,7 +47,8 @@ const Home = () => {
   return (
     <div className={styles.home}>
       <section className={styles.hero}>
-        <h1>ברוכים הבאים למתכונים לאלרגיים</h1>
+        <h1>בריא-לך</h1>
+        <h2>כי לכל אחד מגיע מקום בשולחן - בואו לגלות עולם של אפשרויות</h2>
         <p>מצאו את המתכונים המושלמים שמתאימים לצרכים התזונתיים שלכם</p>
         <SearchBar onSearch={(query) => console.log(query)} placeholder="חפשו מתכון או אלרגן..." />
         <div className={styles.ctaButtons}>
