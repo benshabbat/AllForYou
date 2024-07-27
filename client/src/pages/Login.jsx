@@ -1,28 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { login, clearError } from '../store/slices/authSlice';
-import { toast } from 'react-toastify';
+import { useMutation } from 'react-query';
+import { login } from '../utils/apiUtils';
+import { useToast } from '../components/Toast';
 import styles from './Auth.module.css';
 
 function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
-  const [rememberMe, setRememberMe] = useState(false);
-
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isLoading, error, user } = useSelector((state) => state.auth);
+  const { addToast } = useToast();
 
-  useEffect(() => {
-    return () => dispatch(clearError());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (user) {
+  const loginMutation = useMutation(login, {
+    onSuccess: (data) => {
+      addToast('התחברת בהצלחה!', 'success');
+      // כאן אתה יכול לשמור את הטוקן ומידע המשתמש ב-localStorage או ב-Redux store
+      localStorage.setItem('token', data.token);
       navigate('/profile');
-    }
-  }, [user, navigate]);
+    },
+    onError: (error) => {
+      addToast(`שגיאה בהתחברות: ${error.message}`, 'error');
+    },
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,13 +40,7 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      try {
-        await dispatch(login({ ...formData, rememberMe })).unwrap();
-        toast.success('התחברת בהצלחה!');
-      } catch (err) {
-        console.error('Login error:', err);
-        toast.error(err || 'שגיאה בהתחברות. אנא נסה שוב.');
-      }
+      loginMutation.mutate(formData);
     }
   };
 
@@ -82,21 +75,8 @@ function Login() {
           {errors.password && <span className={styles.errorMessage}>{errors.password}</span>}
         </div>
 
-        <div className={styles.formGroup}>
-          <label>
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-            />
-            זכור אותי
-          </label>
-        </div>
-
-        {error && <div className={styles.serverError}>{error}</div>}
-
-        <button type="submit" className={styles.submitButton} disabled={isLoading}>
-          {isLoading ? 'מתחבר...' : 'התחבר'}
+        <button type="submit" className={styles.submitButton} disabled={loginMutation.isLoading}>
+          {loginMutation.isLoading ? 'מתחבר...' : 'התחבר'}
         </button>
 
         <p className={styles.switchAuthMode}>
