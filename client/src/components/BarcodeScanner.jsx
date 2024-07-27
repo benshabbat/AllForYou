@@ -1,19 +1,25 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import Quagga from '@ericblade/quagga2';
 import PropTypes from 'prop-types';
+import { useMutation } from 'react-query';
+import { addToScanHistory } from '../utils/apiUtils';
+import { useToast } from '../components/Toast';
 import styles from './BarcodeScanner.module.css';
 
-/**
- * BarcodeScanner component for scanning barcodes using device camera.
- * 
- * @param {Object} props
- * @param {Function} props.onScan - Callback function when barcode is detected
- * @param {Function} props.onClose - Callback function to close the scanner
- */
 const BarcodeScanner = ({ onScan, onClose }) => {
   const [error, setError] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const scannerRef = useRef(null);
+  const { addToast } = useToast();
+
+  const addToHistoryMutation = useMutation(addToScanHistory, {
+    onSuccess: () => {
+      addToast('סריקה נשמרה בהיסטוריה', 'success');
+    },
+    onError: (error) => {
+      addToast(`שגיאה בשמירת הסריקה: ${error.message}`, 'error');
+    },
+  });
 
   const initializeScanner = useCallback(async () => {
     if (!scannerRef.current) {
@@ -59,13 +65,17 @@ const BarcodeScanner = ({ onScan, onClose }) => {
       Quagga.onDetected((result) => {
         console.log("Barcode detected", result);
         onScan(result.codeResult.code);
+        addToHistoryMutation.mutate({ 
+          productCode: result.codeResult.code, 
+          productName: 'Unknown' // You might want to update this with actual product name
+        });
       });
 
     } catch (err) {
       console.error("Quagga initialization failed", err);
       setError(`Failed to initialize the scanner: ${err.message}`);
     }
-  }, [onScan]);
+  }, [onScan, addToHistoryMutation]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
