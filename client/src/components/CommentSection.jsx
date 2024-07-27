@@ -3,17 +3,10 @@ import PropTypes from 'prop-types';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { FaEdit, FaTrash } from 'react-icons/fa';
-import api from '../services/api';
-import { useToast } from '../components/Toast';  
+import { addComment, editComment, deleteComment } from '../utils/apiUtils';
+import { useToast } from '../components/Toast';
 import styles from './CommentSection.module.css';
 
-/**
- * CommentSection component for displaying and managing comments on a recipe.
- * 
- * @param {Object} props
- * @param {Array} props.comments - Array of comment objects
- * @param {string} props.recipeId - ID of the recipe
- */
 const CommentSection = ({ comments = [], recipeId }) => {
   const [newComment, setNewComment] = useState('');
   const [editingComment, setEditingComment] = useState(null);
@@ -22,7 +15,7 @@ const CommentSection = ({ comments = [], recipeId }) => {
   const currentUser = useSelector(state => state.auth.user);
 
   const addCommentMutation = useMutation(
-    (commentData) => api.post(`/recipes/${recipeId}/comments`, commentData),
+    (commentData) => addComment(recipeId, commentData),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['recipe', recipeId]);
@@ -36,7 +29,7 @@ const CommentSection = ({ comments = [], recipeId }) => {
   );
 
   const editCommentMutation = useMutation(
-    ({ commentId, content }) => api.put(`/recipes/${recipeId}/comments/${commentId}`, { content }),
+    ({ commentId, content }) => editComment(recipeId, commentId, content),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['recipe', recipeId]);
@@ -50,7 +43,7 @@ const CommentSection = ({ comments = [], recipeId }) => {
   );
 
   const deleteCommentMutation = useMutation(
-    (commentId) => api.delete(`/recipes/${recipeId}/comments/${commentId}`),
+    (commentId) => deleteComment(recipeId, commentId),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['recipe', recipeId]);
