@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { FaClock, FaUtensils, FaUsers, FaHeart, FaRegHeart, FaPrint, FaShare, FaEdit, FaTrash } from "react-icons/fa";
-import api from "../services/api";
+import { fetchRecipeById, rateRecipe, deleteRecipe, toggleFavoriteRecipe } from "../utils/apiUtils";
 import RatingStars from "../components/RatingStars";
 import AllergenWarning from "../components/AllergenWarning";
 import CommentSection from "../components/CommentSection";
@@ -17,9 +17,6 @@ import Modal from "../components/Modal";
 import { useToast } from "../components/Toast";
 import styles from "./RecipeDetails.module.css";
 
-/**
- * RecipeDetails component for displaying detailed information about a recipe.
- */
 const RecipeDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -33,7 +30,7 @@ const RecipeDetails = () => {
     isLoading,
     error,
     refetch,
-  } = useQuery(["recipe", id], () => api.get(`/recipes/${id}`).then((res) => res.data), {
+  } = useQuery(["recipe", id], () => fetchRecipeById(id), {
     staleTime: 5 * 60 * 1000
   });
 
@@ -41,7 +38,7 @@ const RecipeDetails = () => {
     refetch();
   }, [id, refetch]);
 
-  const deleteMutation = useMutation(() => api.delete(`/recipes/${id}`), {
+  const deleteMutation = useMutation(() => deleteRecipe(id), {
     onSuccess: () => {
       queryClient.invalidateQueries("recipes");
       addToast("המתכון נמחק בהצלחה", "success");
@@ -53,7 +50,7 @@ const RecipeDetails = () => {
   });
 
   const rateMutation = useMutation(
-    (rating) => api.post(`/recipes/${id}/rate`, { rating }),
+    (rating) => rateRecipe(id, rating),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["recipe", id]);
@@ -66,7 +63,7 @@ const RecipeDetails = () => {
   );
 
   const toggleFavoriteMutation = useMutation(
-    () => api.post(`/recipes/${id}/favorite`),
+    () => toggleFavoriteRecipe(id),
     {
       onSuccess: (data) => {
         queryClient.invalidateQueries(["recipe", id]);
