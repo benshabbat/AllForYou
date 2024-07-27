@@ -3,11 +3,13 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
-import { useAddRecipe } from "../hooks/useAddRecipe";
+import { useMutation } from 'react-query';
+import { createRecipe } from '../utils/apiUtils';
 import { useAllergens } from "../hooks/useAllergens";
 import FormField from "../components/FormField";
 import ImageUpload from "../components/ImageUpload";
 import { CATEGORIES, DIFFICULTY_LEVELS } from "../constants";
+import { useToast } from "../components/Toast";
 import styles from "./AddRecipe.module.css";
 
 const recipeSchema = yup.object().shape({
@@ -45,12 +47,10 @@ const recipeSchema = yup.object().shape({
   image: yup.mixed().nullable(),
 });
 
-/**
- * AddRecipe component for creating a new recipe.
- */
 const AddRecipe = () => {
   const navigate = useNavigate();
   const [imagePreview, setImagePreview] = useState(null);
+  const { addToast } = useToast();
   const {
     control,
     handleSubmit,
@@ -74,13 +74,21 @@ const AddRecipe = () => {
     },
   });
 
-  const addRecipeMutation = useAddRecipe();
+  const addRecipeMutation = useMutation(createRecipe, {
+    onSuccess: () => {
+      addToast('המתכון נוסף בהצלחה', 'success');
+      navigate("/my-recipes");
+    },
+    onError: (error) => {
+      addToast(`שגיאה בהוספת המתכון: ${error.message}`, 'error');
+    },
+  });
+
   const { allergens, isLoading: allergensLoading } = useAllergens();
 
   const ingredients = watch("ingredients");
 
   const onSubmit = useCallback(async (data) => {
-    console.log("Submitting data:", data);
     const formData = new FormData();
 
     // Transform ingredients
@@ -115,13 +123,7 @@ const AddRecipe = () => {
       }
     });
 
-    try {
-      const result = await addRecipeMutation.mutateAsync(formData);
-      console.log("Recipe added successfully:", result);
-      navigate("/my-recipes");
-    } catch (error) {
-      console.error("Error adding recipe:", error);
-    }
+    addRecipeMutation.mutate(formData);
   }, [addRecipeMutation, navigate]);
 
   const handleAddIngredient = useCallback(() => {
