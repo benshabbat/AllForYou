@@ -30,6 +30,11 @@ export const rateRecipe = async (id, rating) => {
   return response.data;
 };
 
+export const toggleFavoriteRecipe = async (id) => {
+  const response = await api.post(`/recipes/${id}/favorite`);
+  return response.data;
+};
+
 // User related API calls
 export const fetchUserProfile = async () => {
   const response = await api.get('/users/me');
@@ -68,6 +73,15 @@ export const fetchForumTopic = async (topicId) => {
   return response.data;
 };
 
+export const deleteForumTopic = async (topicId) => {
+  await api.delete(`/forum/topics/${topicId}`);
+};
+
+export const createForumReply = async (topicId, replyData) => {
+  const response = await api.post(`/forum/topics/${topicId}/replies`, replyData);
+  return response.data;
+};
+
 // Product related API calls
 export const fetchProductByBarcode = async (barcode) => {
   try {
@@ -83,5 +97,20 @@ export const fetchProductByBarcode = async (barcode) => {
 
 export const createProduct = async (productData) => {
   const response = await api.post('/products', productData);
+  return response.data;
+};
+
+export const searchForumTopics = async (searchTerm, page = 1) => {
+  const response = await api.get(`/forum/search?query=${searchTerm}&page=${page}`);
+  return response.data;
+};
+
+export const addToScanHistory = async (productCode, productName) => {
+  const response = await api.post('/users/scan-history', { productCode, productName });
+  return response.data;
+};
+
+export const fetchScanHistory = async () => {
+  const response = await api.get('/users/scan-history');
   return response.data;
 };
