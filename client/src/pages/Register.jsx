@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
-import { register, clearError } from '../store/slices/authSlice';
-import { toast } from 'react-toastify';
+import { useMutation } from 'react-query';
+import { register } from '../utils/apiUtils';
+import { useToast } from '../components/Toast';
 import styles from './Auth.module.css';
 
 function Register() {
@@ -14,13 +14,18 @@ function Register() {
   });
   const [errors, setErrors] = useState({});
 
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isLoading, error } = useSelector((state) => state.auth);
+  const { addToast } = useToast();
 
-  useEffect(() => {
-    return () => dispatch(clearError());
-  }, [dispatch]);
+  const registerMutation = useMutation(register, {
+    onSuccess: () => {
+      addToast('נרשמת בהצלחה', 'success');
+      navigate('/login');
+    },
+    onError: (error) => {
+      addToast(`שגיאה בהרשמה: ${error.message}`, 'error');
+    },
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,13 +52,7 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      try {
-        await dispatch(register(formData)).unwrap();
-        toast.success('נרשמת בהצלחה');
-        navigate('/profile');
-      } catch (err) {
-        toast.error(err || 'שגיאה בהרשמה. אנא נסה שוב.');
-      }
+      registerMutation.mutate(formData);
     }
   };
 
@@ -114,10 +113,8 @@ function Register() {
           {errors.confirmPassword && <span className={styles.errorMessage}>{errors.confirmPassword}</span>}
         </div>
 
-        {error && <div className={styles.serverError}>{error}</div>}
-
-        <button type="submit" className={styles.submitButton} disabled={isLoading}>
-          {isLoading ? 'מתבצעת הרשמה...' : 'הירשם'}
+        <button type="submit" className={styles.submitButton} disabled={registerMutation.isLoading}>
+          {registerMutation.isLoading ? 'מתבצעת הרשמה...' : 'הירשם'}
         </button>
 
         <p className={styles.switchAuthMode}>
