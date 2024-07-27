@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useQuery } from 'react-query';
-import api from '../services/api';
+import { fetchAllergens } from '../utils/apiUtils';
 import AllergenDetails from '../components/AllergenDetails';
 import { FaInfoCircle, FaExclamationTriangle, FaChartBar, FaClipboardList } from 'react-icons/fa';
 import Loading from '../components/Loading';
@@ -31,14 +31,9 @@ const additionalResources = [
   { title: "קבוצות תמיכה לאנשים עם אלרגיות מזון", url: "#" }
 ];
 
-/**
- * AllergyInfo component for displaying information about food allergies.
- */
 const AllergyInfo = () => {
   const [selectedAllergen, setSelectedAllergen] = useState(null);
-  const { data: allergens, isLoading, error } = useQuery('allergens', () =>
-    api.get('/allergens').then(res => res.data)
-  );
+  const { data: allergens, isLoading, error } = useQuery('allergens', fetchAllergens);
 
   const handleAllergenSelect = useCallback((allergenId) => {
     setSelectedAllergen(allergenId);
@@ -70,7 +65,7 @@ const AllergyInfo = () => {
     <div className={styles.allergenList}>
       <h2>רשימת אלרגנים נפוצים</h2>
       <ul>
-        {allergens.map(allergen => (
+        {allergens?.map(allergen => (
           <li 
             key={allergen._id} 
             className={selectedAllergen === allergen._id ? styles.selected : ''}

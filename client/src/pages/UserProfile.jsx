@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { useSelector } from 'react-redux';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { FaEdit, FaSave, FaTimes, FaUtensils, FaStar, FaHeart } from 'react-icons/fa';
 import { fetchUserProfile, updateUserProfile, fetchUserRecipes } from '../utils/apiUtils';
 import AllergenManagement from '../components/AllergenManagement';
@@ -12,54 +12,62 @@ import ErrorMessage from '../components/ErrorMessage';
 import styles from './UserProfile.module.css';
 
 const UserProfile = () => {
-  const dispatch = useDispatch();
+  const { user: authUser } = useSelector(state => state.auth);
   const { addToast } = useToast();
   const queryClient = useQueryClient();
-  const user = useSelector(state => state.auth.user);
   const [isEditing, setIsEditing] = useState(false);
 
-  const { data: profile, isLoading: profileLoading, error: profileError } = useQuery(
+  const { data: user, isLoading: userLoading, error: userError } = useQuery(
     'userProfile',
     fetchUserProfile,
-    {
-      enabled: !!user,
-      initialData: user
-    }
+    { enabled: !!authUser }
   );
 
   const { data: userRecipes, isLoading: recipesLoading, error: recipesError } = useQuery(
-    ['userRecipes', user?.id],
-    () => fetchUserRecipes(user.id),
-    { enabled: !!user?.id }
+    ['userRecipes', authUser?.id],
+    () => fetchUserRecipes(authUser.id),
+    { enabled: !!authUser }
   );
 
   const updateProfileMutation = useMutation(updateUserProfile, {
-    onSuccess: (updatedProfile) => {
-      queryClient.setQueryData('userProfile', updatedProfile);
+    onSuccess: () => {
+      queryClient.invalidateQueries('userProfile');
       addToast('פרופיל המשתמש עודכן בהצלחה', 'success');
       setIsEditing(false);
     },
     onError: (error) => {
       addToast(`שגיאה בעדכון הפרופיל: ${error.message}`, 'error');
-    }
+    },
   });
+
+  const [profile, setProfile] = useState({
+    username: '',
+    email: '',
+    bio: '',
+  });
+
+  useEffect(() => {
+    if (user) {
+      setProfile({
+        username: user.username || '',
+        email: user.email || '',
+        bio: user.bio || '',
+      });
+    }
+  }, [user]);
 
   const handleProfileChange = useCallback((e) => {
     const { name, value } = e.target;
-    queryClient.setQueryData('userProfile', old => ({ ...old, [name]: value }));
-  }, [queryClient]);
+    setProfile(prevProfile => ({ ...prevProfile, [name]: value }));
+  }, []);
 
-  const handleSubmit = useCallback(async () => {
-    const updatedProfile = queryClient.getQueryData('userProfile');
-    updateProfileMutation.mutate(updatedProfile);
-  }, [queryClient, updateProfileMutation]);
-
-  if (profileLoading || recipesLoading) return <Loading message="טוען פרופיל משתמש..." />;
-  if (profileError || recipesError) return <ErrorMessage message="שגיאה בטעינת פרופיל המשתמש" />;
+  const handleSubmit = useCallback(() => {
+    updateProfileMutation.mutate(profile);
+  }, [updateProfileMutation, profile]);
 
   const renderProfileHeader = () => (
     <div className={styles.profileHeader}>
-      <h1>{profile.username}</h1>
+      <h1>{user?.username}</h1>
       {!isEditing ? (
         <button onClick={() => setIsEditing(true)} className={styles.editButton}>
           <FaEdit /> ערוך פרופיל
@@ -86,7 +94,6 @@ const UserProfile = () => {
         onChange={handleProfileChange}
         placeholder="שם משתמש"
         className={styles.input}
-        disabled={!isEditing}
       />
       <input
         type="email"
@@ -95,7 +102,6 @@ const UserProfile = () => {
         onChange={handleProfileChange}
         placeholder="אימייל"
         className={styles.input}
-        disabled={!isEditing}
       />
       <textarea
         name="bio"
@@ -103,16 +109,15 @@ const UserProfile = () => {
         onChange={handleProfileChange}
         placeholder="ספר לנו על עצמך"
         className={styles.textarea}
-        disabled={!isEditing}
       />
     </div>
   );
 
   const renderProfileDetails = () => (
     <div className={styles.userDetails}>
-      <p><strong>אימייל:</strong> {profile.email}</p>
-      <p><strong>הצטרף בתאריך:</strong> {new Date(profile.createdAt).toLocaleDateString()}</p>
-      <p><strong>ביו:</strong> {profile.bio || 'אין ביו עדיין'}</p>
+      <p><strong>אימייל:</strong> {user?.email}</p>
+      <p><strong>הצטרף בתאריך:</strong> {new Date(user?.createdAt).toLocaleDateString()}</p>
+      <p><strong>ביו:</strong> {user?.bio || 'אין ביו עדיין'}</p>
     </div>
   );
 
@@ -125,16 +130,19 @@ const UserProfile = () => {
       </div>
       <div className={styles.statItem}>
         <FaStar />
-        <span>{profile.averageRating?.toFixed(1) || 'N/A'}</span>
+        <span>{user?.averageRating?.toFixed(1) || 'N/A'}</span>
         <p>דירוג ממוצע</p>
       </div>
       <div className={styles.statItem}>
         <FaHeart />
-        <span>{profile.favorites?.length || 0}</span>
+        <span>{user?.favorites?.length || 0}</span>
         <p>מועדפים</p>
       </div>
     </section>
   );
+
+  if (userLoading || recipesLoading) return <Loading message="טוען פרופיל משתמש..." />;
+  if (userError || recipesError) return <ErrorMessage message="שגיאה בטעינת פרופיל המשתמש" />;
 
   return (
     <div className={styles.profileContainer}>
@@ -157,7 +165,7 @@ const UserProfile = () => {
 
       <section className={styles.activityTimeline}>
         <h2>היסטוריית פעילות</h2>
-        <ActivityTimeline userId={user._id} />
+        <ActivityTimeline userId={user?._id} />
       </section>
     </div>
   );
