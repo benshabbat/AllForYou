@@ -1,20 +1,25 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchFavorites } from '../store/slices/recipeSlice';
+import React from 'react';
+import { useQuery } from 'react-query';
+import { fetchFavoriteRecipes } from '../utils/apiUtils';
 import RecipeCard from '../components/RecipeCard';
+import Loading from '../components/Loading';
+import ErrorMessage from '../components/ErrorMessage';
 import styles from './FavoritesPage.module.css';
 
 const FavoritesPage = () => {
-  const dispatch = useDispatch();
-  const { favorites, isLoading, error } = useSelector((state) => state.recipes);
+  const { data: favorites, isLoading, error } = useQuery('favoriteRecipes', fetchFavoriteRecipes);
 
-  useEffect(() => {
-    dispatch(fetchFavorites());
-  }, [dispatch]);
+  if (isLoading) return <Loading message="טוען מתכונים מועדפים..." />;
+  if (error) return <ErrorMessage message={`שגיאה בטעינת מתכונים מועדפים: ${error.message}`} />;
 
-  if (isLoading) return <div className={styles.loading}>טוען מועדפים...</div>;
-  if (error) return <div className={styles.error}>שגיאה: {error}</div>;
-  if (favorites.length === 0) return <div className={styles.noFavorites}>אין לך מתכונים מועדפים עדיין.</div>;
+  if (favorites.length === 0) {
+    return (
+      <div className={styles.noFavorites}>
+        <h2>אין לך מתכונים מועדפים עדיין.</h2>
+        <p>כשתסמן מתכונים כמועדפים, הם יופיעו כאן.</p>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.favoritesContainer}>
