@@ -1,29 +1,22 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import api from '../services/api';
-import { updateUserAllergenPreferences } from '../store/slices/userSlice';
+import { fetchAllergens, updateUserAllergenPreferences } from '../utils/apiUtils';
 import AllergenIcon from './AllergenIcon';
 import { useToast } from '../hooks/useToast';
 import styles from './AllergenManagement.module.css';
 
-/**
- * AllergenManagement component for managing user's allergen preferences.
- */
 const AllergenManagement = () => {
-  const dispatch = useDispatch();
-  const { addToast } = useToast();
   const queryClient = useQueryClient();
+  const { addToast } = useToast();
   const user = useSelector(state => state.auth.user);
   const [selectedAllergens, setSelectedAllergens] = useState(user?.allergenPreferences || []);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const { data: allergens = [], isLoading, error } = useQuery('allergens', () =>
-    api.get('/allergens').then(res => res.data)
-  );
+  const { data: allergens = [], isLoading, error } = useQuery('allergens', fetchAllergens);
 
   const updateAllergensMutation = useMutation(
-    (newAllergens) => api.put('/users/allergen-preferences', { allergenPreferences: newAllergens }),
+    (newAllergens) => updateUserAllergenPreferences(newAllergens),
     {
       onSuccess: () => {
         queryClient.invalidateQueries('user');
@@ -41,12 +34,11 @@ const AllergenManagement = () => {
         ? prevSelected.filter(id => id !== allergenId)
         : [...prevSelected, allergenId];
       
-      dispatch(updateUserAllergenPreferences(newSelected));
       updateAllergensMutation.mutate(newSelected);
 
       return newSelected;
     });
-  }, [dispatch, updateAllergensMutation]);
+  }, [updateAllergensMutation]);
 
   const filteredAllergens = useMemo(() => {
     return allergens.filter(allergen => 
@@ -75,9 +67,10 @@ const AllergenManagement = () => {
             className={`${styles.allergenButton} ${selectedAllergens.includes(allergen._id) ? styles.selected : ''}`}
             onClick={() => handleAllergenToggle(allergen._id)}
             aria-pressed={selectedAllergens.includes(allergen._id)}
+            type="button"
           >
             <AllergenIcon allergen={allergen} />
-            <span>{allergen.hebrewName}</span>
+            <span className={styles.allergenName}>{allergen.hebrewName}</span>
           </button>
         ))}
       </div>
