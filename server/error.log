@@ -77,3 +77,12 @@
 {"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"popular\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-26T15:18:39.276Z"}
 {"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"popular\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-26T15:18:59.627Z"}
 {"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"popular\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-26T15:19:00.674Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"popular\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-27T18:32:50.802Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"popular\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-27T18:32:51.833Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"popular\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-27T18:32:53.855Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"popular\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-27T18:32:57.876Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"popular\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-27T18:32:59.557Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"popular\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-27T18:33:00.751Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"popular\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-27T18:33:01.827Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"popular\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-27T18:33:03.856Z"}
+{"level":"error","message":"Error in recipe controller: Cast to ObjectId failed for value \"popular\" (type string) at path \"_id\" for model \"Recipe\"","timestamp":"2024-07-27T18:33:07.891Z"}

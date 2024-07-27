@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import PropTypes from 'prop-types';
-import api from '../services/api';
+import { fetchAllergens } from '../utils/apiUtils';
 import { CATEGORIES, DIFFICULTY_LEVELS } from '../constants';
 import styles from './FilterSidebar.module.css';
 
@@ -19,16 +19,14 @@ const FilterSidebar = ({ initialFilters = {}, onFilterChange }) => {
   });
   const [searchAllergen, setSearchAllergen] = useState('');
 
-  const { data: allergens, isLoading: allergensLoading, error: allergensError } = useQuery('allergens', () => 
-    api.get('/allergens').then(res => res.data)
-  );
-
+  const { data: allergens = [], isLoading, error } = useQuery('allergens', fetchAllergens);
+  console.log('Allergens:', allergens);
   useEffect(() => {
     setFilters(prevFilters => ({
       ...prevFilters,
       ...initialFilters
     }));
-  }, [initialFilters]);
+  }, []);
 
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -63,10 +61,10 @@ const FilterSidebar = ({ initialFilters = {}, onFilterChange }) => {
   }, [onFilterChange]);
 
   const filteredAllergens = useMemo(() => 
-    allergens?.filter(allergen => 
+    Array.isArray(allergens) ? allergens.filter(allergen => 
       allergen.hebrewName.toLowerCase().includes(searchAllergen.toLowerCase()) ||
       allergen.name.toLowerCase().includes(searchAllergen.toLowerCase())
-    ),
+    ) : [],
     [allergens, searchAllergen]
   );
 
@@ -103,8 +101,8 @@ const FilterSidebar = ({ initialFilters = {}, onFilterChange }) => {
     </div>
   ), [filteredAllergens, filters.allergens, handleAllergenChange]);
 
-  if (allergensLoading) return <div className={styles.loading}>טוען אלרגנים...</div>;
-  if (allergensError) return <div className={styles.error}>שגיאה בטעינת אלרגנים: {allergensError.message}</div>;
+  if (isLoading) return <div className={styles.loading}>טוען אלרגנים...</div>;
+  if (error) return <div className={styles.error}>שגיאה בטעינת אלרגנים: {error.message}</div>;
 
   return (
     <aside className={styles.filterSidebar}>
