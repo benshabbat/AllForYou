@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
-import api from '../services/api';
+import { fetchForumTopics, createForumTopic, deleteForumTopic, searchForumTopics } from '../utils/apiUtils';
 import { useToast } from '../components/Toast';
 import TopicList from '../components/TopicList';
 import TopicThread from '../components/TopicThread';
@@ -12,9 +12,6 @@ import Loading from '../components/Loading';
 import ErrorMessage from '../components/ErrorMessage';
 import styles from './Forum.module.css';
 
-/**
- * Forum component for displaying and managing forum topics and threads.
- */
 const Forum = () => {
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [isNewTopicFormOpen, setIsNewTopicFormOpen] = useState(false);
@@ -31,38 +28,32 @@ const Forum = () => {
   } = useQuery(
     ['forumTopics', currentPage, searchTerm],
     () => searchTerm
-      ? api.searchForumTopics(searchTerm, currentPage)
-      : api.getForumTopics(currentPage),
+      ? searchForumTopics(searchTerm, currentPage)
+      : fetchForumTopics(currentPage),
     { keepPreviousData: true }
   );
 
-  const createTopicMutation = useMutation(
-    newTopic => api.createForumTopic(newTopic),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries('forumTopics');
-        addToast('הנושא נוצר בהצלחה', 'success');
-        setIsNewTopicFormOpen(false);
-      },
-      onError: () => {
-        addToast('שגיאה ביצירת הנושא', 'error');
-      }
+  const createTopicMutation = useMutation(createForumTopic, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('forumTopics');
+      addToast('הנושא נוצר בהצלחה', 'success');
+      setIsNewTopicFormOpen(false);
+    },
+    onError: (error) => {
+      addToast(`שגיאה ביצירת הנושא: ${error.message}`, 'error');
     }
-  );
+  });
 
-  const deleteTopicMutation = useMutation(
-    topicId => api.deleteForumTopic(topicId),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries('forumTopics');
-        addToast('הנושא נמחק בהצלחה', 'success');
-        setSelectedTopic(null);
-      },
-      onError: () => {
-        addToast('שגיאה במחיקת הנושא', 'error');
-      }
+  const deleteTopicMutation = useMutation(deleteForumTopic, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('forumTopics');
+      addToast('הנושא נמחק בהצלחה', 'success');
+      setSelectedTopic(null);
+    },
+    onError: (error) => {
+      addToast(`שגיאה במחיקת הנושא: ${error.message}`, 'error');
     }
-  );
+  });
 
   const handleCreateTopic = useCallback((topicData) => {
     createTopicMutation.mutate({ ...topicData, authorId: user.id });
