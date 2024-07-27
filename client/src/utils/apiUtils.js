@@ -51,6 +51,21 @@ export const fetchUserRecipes = async (userId) => {
   return response.data;
 };
 
+export const updateUserAllergenPreferences = async (allergens) => {
+  const response = await api.put('/users/allergen-preferences', { allergens });
+  return response.data;
+};
+
+export const fetchFavoriteRecipes = async () => {
+  const response = await api.get('/users/favorites');
+  return response.data;
+};
+
+export const register = async (userData) => {
+  const response = await api.post('/users/register', userData);
+  return response.data;
+};
+
 // Allergen related API calls
 export const fetchAllergens = async () => {
   const response = await api.get('/allergens');
@@ -113,4 +128,19 @@ export const addToScanHistory = async (productCode, productName) => {
 export const fetchScanHistory = async () => {
   const response = await api.get('/users/scan-history');
   return response.data;
+};
+
+// Comment related API calls
+export const addComment = async (recipeId, commentData) => {
+  const response = await api.post(`/recipes/${recipeId}/comments`, commentData);
+  return response.data;
+};
+
+export const editComment = async (recipeId, commentId, commentData) => {
+  const response = await api.put(`/recipes/${recipeId}/comments/${commentId}`, commentData);
+  return response.data;
+};
+
+export const deleteComment = async (recipeId, commentId) => {
+  await api.delete(`/recipes/${recipeId}/comments/${commentId}`);
 };
