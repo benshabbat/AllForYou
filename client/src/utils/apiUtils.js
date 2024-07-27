@@ -66,6 +66,11 @@ export const register = async (userData) => {
   return response.data;
 };
 
+export const login = async (userData) => {
+  const response = await api.post('/users/login', userData);
+  return response.data;
+};
+
 // Allergen related API calls
 export const fetchAllergens = async () => {
   const response = await api.get('/allergens');
