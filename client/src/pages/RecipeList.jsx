@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useQuery } from 'react-query';
-import api from '../services/api';
+import { fetchRecipes } from '../utils/apiUtils';
 import RecipeCard from '../components/RecipeCard';
 import SearchBar from '../components/SearchBar';
 import FilterSidebar from '../components/FilterSidebar';
@@ -9,9 +9,6 @@ import Loading from '../components/Loading';
 import ErrorMessage from '../components/ErrorMessage';
 import styles from './RecipeList.module.css';
 
-/**
- * RecipeList component for displaying a list of recipes with filtering and pagination.
- */
 const RecipeList = () => {
   const [filters, setFilters] = useState({
     search: '',
@@ -26,7 +23,7 @@ const RecipeList = () => {
 
   const { data, isLoading, error, refetch } = useQuery(
     ['recipes', filters, page],
-    () => api.get('/recipes', { params: { ...filters, page, pageSize } }).then(res => res.data),
+    () => fetchRecipes({ ...filters, page, pageSize }),
     { keepPreviousData: true }
   );
 
@@ -66,7 +63,7 @@ const RecipeList = () => {
   );
 
   const renderRecipeGrid = () => {
-    if (data.recipes.length === 0) {
+    if (!data || data.recipes.length === 0) {
       return <p className={styles.noRecipes}>לא נמצאו מתכונים התואמים לחיפוש שלך.</p>;
     }
 
