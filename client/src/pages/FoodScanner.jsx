@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import axios from 'axios';
-import api from '../services/api';
+import { fetchProductByBarcode, createProduct, addToScanHistory, fetchScanHistory } from '../utils/apiUtils';
 import { useToast } from '../components/Toast';
 import BarcodeScanner from '../components/BarcodeScanner';
 import ProductInfo from '../components/ProductInfo';
@@ -10,14 +10,10 @@ import Loading from '../components/Loading';
 import ErrorMessage from '../components/ErrorMessage';
 import styles from './FoodScanner.module.css';
 
-/**
- * FoodScanner component for scanning and managing food product information.
- */
 const FoodScanner = () => {
   const [scannedCode, setScannedCode] = useState('');
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [isScannerActive, setIsScannerActive] = useState(false);
-  const [scanHistory, setScanHistory] = useState([]);
   const [manualCode, setManualCode] = useState('');
   const { addToast } = useToast();
   const queryClient = useQueryClient();
@@ -28,8 +24,8 @@ const FoodScanner = () => {
       if (!scannedCode) return null;
       
       try {
-        const localResponse = await api.get(`/products/${scannedCode}`);
-        if (localResponse.data) return localResponse.data;
+        const localProduct = await fetchProductByBarcode(scannedCode);
+        if (localProduct) return localProduct;
       } catch (err) {
         if (err.response && err.response.status !== 404) throw err;
       }
@@ -47,7 +43,7 @@ const FoodScanner = () => {
       onSuccess: (data) => {
         if (data) {
           addToast('מידע על המוצר נטען בהצלחה', 'success');
-          updateScanHistory(scannedCode, data.product_name);
+          addToScanHistory(scannedCode, data.product_name);
         } else {
           addToast('מוצר לא נמצא במאגר', 'info');
         }
@@ -55,19 +51,18 @@ const FoodScanner = () => {
     }
   );
 
-  const addProductMutation = useMutation(
-    (newProduct) => api.post('/products', newProduct),
-    {
-      onSuccess: () => {
-        addToast('המוצר נוסף בהצלחה', 'success');
-        queryClient.invalidateQueries(['product', scannedCode]);
-        setIsAddingProduct(false);
-      },
-      onError: (err) => {
-        addToast(`שגיאה בהוספת המוצר: ${err.message}`, 'error');
-      },
-    }
-  );
+  const { data: scanHistory } = useQuery('scanHistory', fetchScanHistory);
+
+  const addProductMutation = useMutation(createProduct, {
+    onSuccess: () => {
+      addToast('המוצר נוסף בהצלחה', 'success');
+      queryClient.invalidateQueries(['product', scannedCode]);
+      setIsAddingProduct(false);
+    },
+    onError: (err) => {
+      addToast(`שגיאה בהוספת המוצר: ${err.message}`, 'error');
+    },
+  });
 
   const handleScan = useCallback((barcode) => {
     setScannedCode(barcode);
@@ -77,24 +72,11 @@ const FoodScanner = () => {
     addProductMutation.mutate({ ...productData, barcode: scannedCode });
   }, [addProductMutation, scannedCode]);
 
-  const updateScanHistory = useCallback((code, name) => {
-    setScanHistory(prev => {
-      const newHistory = [{ code, name, timestamp: new Date() }, ...prev];
-      return newHistory.slice(0, 10); // Keep only the last 10 items
-    });
-  }, []);
-
   const handleManualSubmit = useCallback((e) => {
     e.preventDefault();
     setScannedCode(manualCode);
     setManualCode('');
   }, [manualCode]);
-
-  useEffect(() => {
-    if (productInfo) {
-      updateScanHistory(scannedCode, productInfo.product_name);
-    }
-  }, [productInfo, scannedCode, updateScanHistory]);
 
   const renderScannerControls = () => (
     <>
@@ -137,9 +119,9 @@ const FoodScanner = () => {
     <div className={styles.scanHistory}>
       <h3>היסטוריית סריקות</h3>
       <ul>
-        {scanHistory.map((item, index) => (
+        {scanHistory?.map((item, index) => (
           <li key={index}>
-            {item.name} (ברקוד: {item.code}) - {new Date(item.timestamp).toLocaleString()}
+            {item.productName} (ברקוד: {item.productCode}) - {new Date(item.scannedAt).toLocaleString()}
           </li>
         ))}
       </ul>
