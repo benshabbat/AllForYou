@@ -1,4 +1,4 @@
-import api from '../api';
+import api from '../../services/api';
 
 export const fetchRecipes = (params) => api.get('/recipes', { params });
 export const fetchRecipeById = (id) => api.get(`/recipes/${id}`);
