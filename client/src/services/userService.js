@@ -1,4 +1,4 @@
-import api from '../../services/api';
+import api from './api';
 
 export const fetchUserProfile = () => api.get('/users/me');
 export const updateUserProfile = (userData) => api.put('/users/profile', userData);

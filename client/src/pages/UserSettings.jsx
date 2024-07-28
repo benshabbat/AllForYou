@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateUserProfile, changePassword } from '../store/slices/userSlice';
+import { updateUserProfile, changePassword } from '../store/user/userSlice';
 import AllergenManagement from '../components/AllergenManagement';
 import { FaUser, FaPalette, FaBell, FaLock, FaSave, FaTimes } from 'react-icons/fa';
 import { useToast } from '../components/Toast';

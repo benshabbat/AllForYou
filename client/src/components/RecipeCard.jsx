@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { FaHeart, FaRegHeart, FaClock, FaUtensils, FaUsers, FaEdit, FaTrash } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
-import { toggleFavorite } from '../store/slices/recipeSlice';
+import { toggleFavorite } from '../store/recipe/recipeSlice';
 import { translateDifficulty } from '../utils/recipeUtils';
 import RatingStars from './RatingStars';
 import AllergenList from './AllergenList';

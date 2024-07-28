@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUserRecipes, deleteRecipe } from '../store/slices/recipeSlice';
+import { fetchUserRecipes, deleteRecipe } from '../store/recipe/recipeSlice';
 import RecipeCard from '../components/RecipeCard';
 import Loading from '../components/Loading';
 import ErrorMessage from '../components/ErrorMessage';
