@@ -9,7 +9,7 @@ import { useAllergens } from "../hooks/useAllergens";
 import FormField from "../components/FormField";
 import ImageUpload from "../components/ImageUpload";
 import { CATEGORIES, DIFFICULTY_LEVELS } from "../constants";
-import { useToast } from "../components/Toast";
+import {useToast} from '../components/common/toast/Toast';
 import styles from "./AddRecipe.module.css";
 
 const recipeSchema = yup.object().shape({

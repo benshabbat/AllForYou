@@ -1,6 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../services/api';
 
+
+export const fetchUserProfile = createAsyncThunk(
+  'user/fetchProfile',
+  async () => {
+    const response = await api.get('/users/me');
+    return response.data;
+  }
+);
 export const updateUserAllergenPreferences = createAsyncThunk(
   'user/updateAllergenPreferences',
   async (allergenPreferences, thunkAPI) => {
@@ -48,6 +56,17 @@ const userSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+    .addCase(fetchUserProfile.pending, (state) => {
+      state.loading = true;
+    })
+    .addCase(fetchUserProfile.fulfilled, (state, action) => {
+      state.loading = false;
+      state.profile = action.payload;
+    })
+    .addCase(fetchUserProfile.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+    })
       .addCase(updateUserAllergenPreferences.pending, (state) => {
         state.isLoading = true;
       })

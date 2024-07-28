@@ -6,8 +6,8 @@ import { fetchUserProfile, updateUserProfile, fetchUserRecipes } from '../utils/
 import AllergenManagement from '../components/AllergenManagement';
 import UserRecipes from '../components/UserRecipes';
 import ActivityTimeline from '../components/ActivityTimeline';
-import { useToast } from '../components/Toast';
-import Loading from '../components/Loading';
+import {useToast} from '../components/common/toast/Toast';
+import {Loading} from '../components/common';
 import ErrorMessage from '../components/ErrorMessage';
 import styles from './UserProfile.module.css';
 

@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useQuery } from 'react-query';
 import { fetchRecipes } from '../utils/apiUtils';
-import RecipeCard from '../components/RecipeCard';
+import RecipeCard from '../components/recipe/recipeCard/RecipeCard';
 import SearchBar from '../components/SearchBar';
 import FilterSidebar from '../components/FilterSidebar';
 import Pagination from '../components/Pagination';
-import Loading from '../components/Loading';
+import {Loading} from '../components/common';
 import ErrorMessage from '../components/ErrorMessage';
 import styles from './RecipeList.module.css';
 

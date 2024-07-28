@@ -7,14 +7,13 @@ import { fetchRecipeById, rateRecipe, deleteRecipe, toggleFavoriteRecipe } from 
 import RatingStars from "../components/RatingStars";
 import AllergenWarning from "../components/AllergenWarning";
 import CommentSection from "../components/CommentSection";
-import IngredientList from "../components/IngredientList";
-import InstructionList from "../components/InstructionList";
+import IngredientList from "../components/recipe/ingredientList/IngredientList";
+import InstructionList from "../components/recipe/instructionList/InstructionList";
 import NutritionInfo from "../components/NutritionInfo";
-import Loading from "../components/Loading";
 import ErrorMessage from "../components/ErrorMessage";
 import { translateDifficulty } from "../utils/recipeUtils";
-import Modal from "../components/Modal";
-import { useToast } from "../components/Toast";
+import {Modal,Loading} from "../components/common";
+import {useToast} from '../components/common/toast/Toast';
 import styles from "./RecipeDetails.module.css";
 
 const RecipeDetails = () => {

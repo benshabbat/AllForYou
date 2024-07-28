@@ -5,13 +5,11 @@ import { QueryClient, QueryClientProvider, useQueryClient } from 'react-query';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { store } from './store/index.js';
 import { loadUser, setInitialized } from './store/auth/authSlice';
-import Header from './components/Header';
-import Loading from './components/Loading';
+import Header from './components/layout/header/Header';
 import PrivateRoute from './components/PrivateRoute';
 import NotFound from './components/NotFound';
-import ErrorBoundary from './components/common/ErrorBoundary';
 import { useAuth } from './hooks/useAuth';
-import { ToastProvider, ToastContainer } from './components/Toast';
+import {Loading, ErrorBoundary,ToastProvider, ToastContainer } from './components/common';
 import api from './services/api';
 
 // Lazy-loaded components

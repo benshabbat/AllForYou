@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../store/auth/authSlice";
+import { logout } from "../../../store/auth/authSlice";
 import { FaUtensils, FaUser, FaSignOutAlt, FaBars } from "react-icons/fa";
 import { CSSTransition } from "react-transition-group";
 import styles from "./Header.module.css";

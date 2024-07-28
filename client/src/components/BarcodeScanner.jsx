@@ -3,7 +3,7 @@ import Quagga from '@ericblade/quagga2';
 import PropTypes from 'prop-types';
 import { useMutation } from 'react-query';
 import { addToScanHistory } from '../utils/apiUtils';
-import { useToast } from '../components/Toast';
+import { useToast } from '../components/common';
 import styles from './BarcodeScanner.module.css';
 
 const BarcodeScanner = ({ onScan, onClose }) => {

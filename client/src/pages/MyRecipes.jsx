@@ -2,11 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserRecipes, deleteRecipe } from '../store/recipe/recipeSlice';
-import RecipeCard from '../components/RecipeCard';
-import Loading from '../components/Loading';
+import RecipeCard from '../components/recipe/recipeCard/RecipeCard';
 import ErrorMessage from '../components/ErrorMessage';
-import Modal from '../components/Modal';
-import { useToast } from '../components/Toast';
+import {Modal,Loading} from '../components/common';
+import {useToast} from '../components/common/toast/Toast';
 import { FaPlus, FaSort, FaFilter } from 'react-icons/fa';
 import styles from './MyRecipes.module.css';
 

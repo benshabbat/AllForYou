@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { login } from '../utils/apiUtils';
-import { useToast } from '../components/Toast';
+import {useToast} from '../components/common/toast/Toast';
 import styles from './Auth.module.css';
 
 function Login() {
