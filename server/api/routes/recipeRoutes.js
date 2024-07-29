@@ -13,5 +13,5 @@ router.put('/:id', protect, upload.single('image'), recipeController.updateRecip
 router.delete('/:id', protect, recipeController.deleteRecipe.bind(recipeController));
 router.post('/:id/rate', protect, recipeController.rateRecipe.bind(recipeController));
 router.post('/:id/favorite', protect, recipeController.toggleFavorite.bind(recipeController));
-
+router.get('/popular', recipeController.getPopularRecipes.bind(recipeController));
 export default router;

@@ -118,4 +118,13 @@ export class RecipeService {
     const results = fuse.search(keyword);
     return results.slice(0, 5).map(result => result.item.name);
   }
+
+  async getPopularRecipes() {
+    return Recipe.find()
+      .sort({ averageRating: -1 })
+      .limit(10)
+      .populate('allergens');
+  }
 }
+
+

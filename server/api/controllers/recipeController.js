@@ -1,5 +1,5 @@
-import { RecipeService } from '../../services/recipeService.js';
-import { ErrorHandler } from '../../utils/errorHandler.js';
+import { RecipeService } from "../../services/recipeService.js";
+import { ErrorHandler } from "../../utils/errorHandler.js";
 
 export class RecipeController {
   constructor(recipeService) {
@@ -19,7 +19,7 @@ export class RecipeController {
     try {
       const recipe = await this.recipeService.getRecipeById(req.params.id);
       if (!recipe) {
-        return next(new ErrorHandler('Recipe not found', 404));
+        return next(new ErrorHandler("Recipe not found", 404));
       }
       res.json(recipe);
     } catch (error) {
@@ -38,9 +38,13 @@ export class RecipeController {
 
   async updateRecipe(req, res, next) {
     try {
-      const recipe = await this.recipeService.updateRecipe(req.params.id, req.body, req.user);
+      const recipe = await this.recipeService.updateRecipe(
+        req.params.id,
+        req.body,
+        req.user
+      );
       if (!recipe) {
-        return next(new ErrorHandler('Recipe not found', 404));
+        return next(new ErrorHandler("Recipe not found", 404));
       }
       res.json(recipe);
     } catch (error) {
@@ -50,11 +54,14 @@ export class RecipeController {
 
   async deleteRecipe(req, res, next) {
     try {
-      const result = await this.recipeService.deleteRecipe(req.params.id, req.user);
+      const result = await this.recipeService.deleteRecipe(
+        req.params.id,
+        req.user
+      );
       if (!result) {
-        return next(new ErrorHandler('Recipe not found', 404));
+        return next(new ErrorHandler("Recipe not found", 404));
       }
-      res.json({ message: 'Recipe deleted successfully' });
+      res.json({ message: "Recipe deleted successfully" });
     } catch (error) {
       next(new ErrorHandler(error.message, 500));
     }
@@ -63,7 +70,11 @@ export class RecipeController {
   async rateRecipe(req, res, next) {
     try {
       const { rating } = req.body;
-      const recipe = await this.recipeService.rateRecipe(req.params.id, req.user.id, rating);
+      const recipe = await this.recipeService.rateRecipe(
+        req.params.id,
+        req.user.id,
+        rating
+      );
       res.json({ averageRating: recipe.averageRating });
     } catch (error) {
       next(new ErrorHandler(error.message, 400));
@@ -72,7 +83,10 @@ export class RecipeController {
 
   async toggleFavorite(req, res, next) {
     try {
-      const result = await this.recipeService.toggleFavorite(req.params.id, req.user.id);
+      const result = await this.recipeService.toggleFavorite(
+        req.params.id,
+        req.user.id
+      );
       res.json(result);
     } catch (error) {
       next(new ErrorHandler(error.message, 400));
@@ -81,8 +95,19 @@ export class RecipeController {
 
   async getSearchSuggestions(req, res, next) {
     try {
-      const suggestions = await this.recipeService.getSearchSuggestions(req.query.keyword);
+      const suggestions = await this.recipeService.getSearchSuggestions(
+        req.query.keyword
+      );
       res.json(suggestions);
+    } catch (error) {
+      next(new ErrorHandler(error.message, 500));
+    }
+  }
+
+  async getPopularRecipes(req, res, next) {
+    try {
+      const popularRecipes = await this.recipeService.getPopularRecipes();
+      res.json(popularRecipes);
     } catch (error) {
       next(new ErrorHandler(error.message, 500));
     }
