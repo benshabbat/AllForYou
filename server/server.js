@@ -6,6 +6,7 @@ import { connectDB } from './config/db.js';
 import recipeRoutes from './api/routes/recipeRoutes.js';
 import userRoutes from './api/routes/userRoutes.js';
 import allergenRoutes from './api/routes/allergenRoutes.js';
+import tipRoutes from './api/routes/tipRoutes.js';
 import { handleError } from './utils/errorHandler.js';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -28,6 +29,7 @@ app.use(morgan('dev'));
 app.use('/api/recipes', recipeRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/allergens', allergenRoutes);
+app.use('/api/tips', tipRoutes);
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use((err, req, res, next) => {
   handleError(err, res);
