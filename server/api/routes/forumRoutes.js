@@ -1,6 +1,6 @@
 import express from 'express';
-import { protect } from '../middleware/authMiddleware.js';
-import { isModerator } from '../middleware/moderatorMiddleware.js';
+import { protect } from '../middlewares/authMiddleware.js';
+import { isModerator } from '../middlewares/moderatorMiddleware.js';
 import {
   getTopics,
   getTopic,

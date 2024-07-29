@@ -9,7 +9,7 @@ import {
   getAllergensBySymptom,
   getAllergensByIds  // יש להוסיף פונקציה זו לקונטרולר
 } from '../controllers/allergenController.js';
-import { protect, authorize } from '../middleware/authMiddleware.js';
+import { protect, authorize } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
