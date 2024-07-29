@@ -1,5 +1,5 @@
-import Allergen from '../models/Allergen.js';
-import { validateAllergen } from '../utils/validators.js';
+import Allergen from '../../models/Allergen.js';
+import { validateAllergen } from '../../utils/validators.js';
 
 export const getAllergens = async (req, res) => {
   try {

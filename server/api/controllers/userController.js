@@ -1,6 +1,6 @@
-import User from '../models/User.js';
+import User from '../../models/User.js';
 import jwt from 'jsonwebtoken';
-import { updateLastLogin } from '../services/userService.js';
+import { updateLastLogin } from '../../services/userService.js';
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1d' });
