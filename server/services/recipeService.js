@@ -1,98 +1,121 @@
 import Recipe from '../models/Recipe.js';
-import Allergen from '../models/Allergen.js';
+import User from '../models/User.js';
+import { validateRecipe } from '../api/validators/recipeValidator.js';
+import Fuse from 'fuse.js';
 
-export const recipeService = {
-  /**
-   * Calculate and update the average rating for a recipe
-   * @param {string} recipeId - The ID of the recipe
-   * @returns {number} The updated average rating
-   */
-  calculateAverageRating: async (recipeId) => {
+export class RecipeService {
+  async getAllRecipes(filters) {
+    const { keyword, category, difficulty, allergens, maxPrepTime, maxCalories, page = 1, limit = 10 } = filters;
+    const query = {};
+
+    if (category) query.category = category;
+    if (difficulty) query.difficulty = difficulty;
+    if (allergens) query.allergens = { $nin: allergens.split(',') };
+    if (maxPrepTime) query.preparationTime = { $lte: parseInt(maxPrepTime) };
+    if (maxCalories) query['nutritionInfo.calories'] = { $lte: parseInt(maxCalories) };
+
+    let recipes = await Recipe.find(query).populate('allergens');
+
+    if (keyword) {
+      const fuse = new Fuse(recipes, {
+        keys: ['name', 'ingredients.name', 'instructions'],
+        includeScore: true,
+        threshold: 0.4
+      });
+      recipes = fuse.search(keyword).map(result => result.item);
+    }
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    return {
+      recipes: recipes.slice(startIndex, endIndex),
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(recipes.length / limit),
+      totalRecipes: recipes.length
+    };
+  }
+
+  async getRecipeById(id) {
+    return Recipe.findById(id).populate('createdBy', 'username').populate('allergens');
+  }
+
+  async createRecipe(recipeData, user) {
+    const { error } = validateRecipe(recipeData);
+    if (error) throw new Error(error.details[0].message);
+
+    const recipe = new Recipe({
+      ...recipeData,
+      createdBy: user._id
+    });
+    return recipe.save();
+  }
+
+  async updateRecipe(id, recipeData, user) {
+    const { error } = validateRecipe(recipeData);
+    if (error) throw new Error(error.details[0].message);
+
+    const recipe = await Recipe.findById(id);
+    if (!recipe) return null;
+
+    if (recipe.createdBy.toString() !== user._id.toString()) {
+      throw new Error('Not authorized to update this recipe');
+    }
+
+    Object.assign(recipe, recipeData);
+    return recipe.save();
+  }
+
+  async deleteRecipe(id, user) {
+    const recipe = await Recipe.findById(id);
+    if (!recipe) return null;
+
+    if (recipe.createdBy.toString() !== user._id.toString() && user.role !== 'admin') {
+      throw new Error('Not authorized to delete this recipe');
+    }
+
+    return Recipe.findByIdAndDelete(id);
+  }
+
+  async rateRecipe(recipeId, userId, rating) {
     const recipe = await Recipe.findById(recipeId);
-    if (!recipe) {
-      throw new Error('מתכון לא נמצא');
-    }
-    
-    if (recipe.ratings.length === 0) {
-      recipe.averageRating = 0;
-    } else {
-      const sum = recipe.ratings.reduce((acc, item) => acc + item.rating, 0);
-      recipe.averageRating = parseFloat((sum / recipe.ratings.length).toFixed(1));
-    }
-    
-    await recipe.save();
-    return recipe.averageRating;
-  },
+    if (!recipe) throw new Error('Recipe not found');
 
-  /**
-   * Validate that all provided allergen IDs exist in the database
-   * @param {string[]} allergenIds - Array of allergen IDs to validate
-   * @returns {string[]} Array of valid allergen IDs
-   */
-  validateAllergens: async (allergenIds) => {
-    const allergens = await Allergen.find({ _id: { $in: allergenIds } });
-    if (allergens.length !== allergenIds.length) {
-      throw new Error('אחד או יותר מהאלרגנים אינם תקפים');
-    }
-    return allergens.map(a => a._id);
-  },
-
-  /**
-   * Create a new recipe
-   * @param {Object} recipeData - The recipe data
-   * @returns {Object} The created recipe
-   */
-  createRecipe: async (recipeData) => {
-    if (recipeData.allergens) {
-      recipeData.allergens = await recipeService.validateAllergens(recipeData.allergens);
-    }
-    
-    const recipe = new Recipe(recipeData);
-    await recipe.save();
-    return recipe;
-  },
-
-  /**
-   * Update an existing recipe
-   * @param {string} recipeId - The ID of the recipe to update
-   * @param {Object} updateData - The data to update
-   * @returns {Object} The updated recipe
-   */
-  updateRecipe: async (recipeId, updateData) => {
-    if (updateData.allergens) {
-      updateData.allergens = await recipeService.validateAllergens(updateData.allergens);
-    }
-    
-    const recipe = await Recipe.findByIdAndUpdate(recipeId, updateData, { new: true, runValidators: true });
-    if (!recipe) {
-      throw new Error('מתכון לא נמצא');
-    }
-    return recipe;
-  },
-
-  /**
-   * Add a new rating to a recipe
-   * @param {string} recipeId - The ID of the recipe
-   * @param {string} userId - The ID of the user adding the rating
-   * @param {number} rating - The rating value
-   * @returns {number} The updated average rating
-   */
-  addRating: async (recipeId, userId, rating) => {
-    const recipe = await Recipe.findById(recipeId);
-    if (!recipe) {
-      throw new Error('מתכון לא נמצא');
-    }
-
-    const ratingIndex = recipe.ratings.findIndex(r => r.user.toString() === userId.toString());
+    const ratingIndex = recipe.ratings.findIndex(r => r.user.toString() === userId);
     if (ratingIndex !== -1) {
       recipe.ratings[ratingIndex].rating = rating;
     } else {
       recipe.ratings.push({ user: userId, rating });
     }
 
-    await recipe.save();
-    return recipeService.calculateAverageRating(recipeId);
+    recipe.averageRating = recipe.ratings.reduce((acc, curr) => acc + curr.rating, 0) / recipe.ratings.length;
+    return recipe.save();
   }
-};
 
-export default recipeService;
+  async toggleFavorite(recipeId, userId) {
+    const user = await User.findById(userId);
+    if (!user) throw new Error('User not found');
+
+    const isFavorite = user.favorites.includes(recipeId);
+    if (isFavorite) {
+      user.favorites = user.favorites.filter(id => id.toString() !== recipeId);
+    } else {
+      user.favorites.push(recipeId);
+    }
+
+    await user.save();
+    return { isFavorite: !isFavorite };
+  }
+
+  async getSearchSuggestions(keyword) {
+    const recipes = await Recipe.find({}, 'name');
+    const fuse = new Fuse(recipes, {
+      keys: ['name'],
+      includeScore: true,
+      threshold: 0.4
+    });
+
+    const results = fuse.search(keyword);
+    return results.slice(0, 5).map(result => result.item.name);
+  }
+}
