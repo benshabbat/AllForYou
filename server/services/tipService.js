@@ -6,4 +6,13 @@ export class TipService {
     const random = Math.floor(Math.random() * count);
     return Tip.findOne().skip(random);
   }
+
+  async createTip(tipData) {
+    const tip = new Tip(tipData);
+    return tip.save();
+  }
+
+  async getAllTips() {
+    return Tip.find();
+  }
 }
