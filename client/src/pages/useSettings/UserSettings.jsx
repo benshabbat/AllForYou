@@ -1,5 +1,5 @@
 import React, { useReducer } from 'react';
-import { useUser } from '../hooks/useUser';
+import { useUser } from '../../hooks/useUser';
 import styles from './UserSettings.module.css';
 
 const initialState = {

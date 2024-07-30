@@ -4,12 +4,12 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from 'react-query';
-import { createRecipe } from '../utils/apiUtils';
-import { useAllergens } from "../hooks/useAllergens";
-import FormField from "../components/FormField";
-import ImageUpload from "../components/ImageUpload";
-import { CATEGORIES, DIFFICULTY_LEVELS } from "../constants";
-import {useToast} from '../components/common/toast/Toast';
+import { createRecipe } from '../../utils/apiUtils';
+import { useAllergens } from "../../hooks/useAllergens";
+import FormField from "../../components/formField/FormField";
+import ImageUpload from "../../components/imageUpload/ImageUpload";
+import { CATEGORIES, DIFFICULTY_LEVELS } from "../../constants";
+import {useToast} from '../../components/common/toast/Toast';
 import styles from "./AddRecipe.module.css";
 
 const recipeSchema = yup.object().shape({

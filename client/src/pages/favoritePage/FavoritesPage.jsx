@@ -1,9 +1,9 @@
 import React from 'react';
 import { useQuery } from 'react-query';
-import { fetchFavoriteRecipes } from '../utils/apiUtils';
-import RecipeCard from '../components/recipe/recipeCard/RecipeCard';
-import {Loading} from '../components/common';
-import ErrorMessage from '../components/ErrorMessage';
+import { fetchFavoriteRecipes } from '../../utils/apiUtils';
+import RecipeCard from '../../components/recipe/recipeCard/RecipeCard';
+import {Loading} from '../../components/common';
+import ErrorMessage from '../../components/ErrorMessage';
 import styles from './FavoritesPage.module.css';
 
 const FavoritesPage = () => {

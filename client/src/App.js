@@ -13,19 +13,19 @@ import {Loading, ErrorBoundary,ToastProvider, ToastContainer } from './component
 import api from './services/api';
 
 // Lazy-loaded components
-const Home = lazy(() => import('./pages/Home'));
+const Home = lazy(() => import('./pages/home/Home.jsx'));
 const RecipeList = lazy(() => import('./pages/RecipeList'));
-const RecipeForm = lazy(() => import('./pages/AddRecipe'));
-const Register = lazy(() => import('./pages/Register'));
-const Login = lazy(() => import('./pages/Login'));
-const UserProfile = lazy(() => import('./pages/UserProfile'));
+const AddRecipe = lazy(() => import('./pages/addRecipe/AddRecipe'));
+const Register = lazy(() => import('./pages/auth/Register.jsx'));
+const Login = lazy(() => import('./pages/auth/Login'));
+const UserProfile = lazy(() => import('./pages/userProfile/UserProfile'));
 const MyRecipes = lazy(() => import('./pages/MyRecipes'));
 const RecipeDetails = lazy(() => import('./pages/RecipeDetails'));
-const UserSettings = lazy(() => import('./pages/UserSettings'));
-const FavoritesPage = lazy(() => import('./pages/FavoritesPage'));
-const AllergyInfo = lazy(() => import('./pages/AllergyInfo'));
-const Forum = lazy(() => import('./pages/Forum'));
-const EnhancedFoodScanner = lazy(() => import('./pages/FoodScanner'));
+const UserSettings = lazy(() => import('./pages/useSettings/UserSettings'));
+const FavoritesPage = lazy(() => import('./pages/favoritePage/FavoritesPage'));
+const AllergyInfo = lazy(() => import('./pages/allergyInfo/AllergyInfo'));
+const Forum = lazy(() => import('./pages/forum/Forum'));
+const FoodScanner = lazy(() => import('./pages/foodScanner/FoodScanner'));
 
 const queryClient = new QueryClient();
 
@@ -83,12 +83,12 @@ function AppContent() {
                 <Route path="/recipe/:id" element={<RecipeDetails />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/add-recipe" element={<PrivateRoute><RecipeForm /></PrivateRoute>} />
+                <Route path="/add-recipe" element={<PrivateRoute><AddRecipe /></PrivateRoute>} />
                 <Route path="/profile" element={<PrivateRoute><UserProfile /></PrivateRoute>} />
                 <Route path="/my-recipes" element={<PrivateRoute><MyRecipes /></PrivateRoute>} />
                 <Route path="/settings" element={<PrivateRoute><UserSettings /></PrivateRoute>} />
                 <Route path="/favorites" element={<PrivateRoute><FavoritesPage /></PrivateRoute>} />
-                <Route path="/food-scanner" element={<EnhancedFoodScanner />} />
+                <Route path="/food-scanner" element={<FoodScanner />} />
                 <Route path="/allergy-info" element={<AllergyInfo />} />
                 <Route path="/allergy-info/:allergenId" element={<AllergyInfo />} />
                 <Route path="/forum" element={<Forum />} />

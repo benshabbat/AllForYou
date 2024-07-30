@@ -1,15 +1,15 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
-import { fetchForumTopics, createForumTopic, deleteForumTopic, searchForumTopics } from '../utils/apiUtils';
-import {useToast} from '../components/common/toast/Toast';
-import TopicList from '../components/forum/topicList/TopicList';
-import TopicThread from '../components/forum/topicThread/TopicThread';
-import NewTopicForm from '../components/NewTopicForm';
-import ForumSearch from '../components/ForumSearch';
-import Pagination from '../components/Pagination';
-import {Loading} from '../components/common';
-import ErrorMessage from '../components/ErrorMessage';
+import { fetchForumTopics, createForumTopic, deleteForumTopic, searchForumTopics } from '../../utils/apiUtils';
+import {useToast} from '../../components/common/toast/Toast';
+import TopicList from '../../components/forum/topicList/TopicList';
+import TopicThread from '../../components/forum/topicThread/TopicThread';
+import NewTopicForm from '../../components/NewTopicForm';
+import ForumSearch from '../../components/ForumSearch';
+import Pagination from '../../components/Pagination';
+import {Loading} from '../../components/common';
+import ErrorMessage from '../../components/ErrorMessage';
 import styles from './Forum.module.css';
 
 const Forum = () => {
