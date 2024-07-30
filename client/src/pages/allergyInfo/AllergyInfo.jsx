@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { useQuery } from 'react-query';
 import { fetchAllergens } from '../../utils/apiUtils';
-import AllergenDetails from '../../components/AllergenDetails';
+import AllergenDetails from '../../components/allergenDetails/AllergenDetails';
 import { FaInfoCircle, FaExclamationTriangle, FaChartBar, FaClipboardList } from 'react-icons/fa';
 import {Loading} from '../../components/common';
-import ErrorMessage from '../../components/ErrorMessage';
+import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import styles from './AllergyInfo.module.css';
 
 const generalInfo = [

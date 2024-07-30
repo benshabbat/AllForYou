@@ -10,7 +10,7 @@ import CommentSection from "../components/CommentSection";
 import IngredientList from "../components/recipe/ingredientList/IngredientList";
 import InstructionList from "../components/recipe/instructionList/InstructionList";
 import NutritionInfo from "../components/NutritionInfo";
-import ErrorMessage from "../components/ErrorMessage";
+import ErrorMessage from "../components/errorMessage/ErrorMessage";
 import { translateDifficulty } from "../utils/recipeUtils";
 import {Modal,Loading} from "../components/common";
 import {useToast} from '../components/common/toast/Toast';

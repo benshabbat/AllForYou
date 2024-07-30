@@ -6,7 +6,7 @@ import SearchBar from '../components/SearchBar';
 import FilterSidebar from '../components/FilterSidebar';
 import Pagination from '../components/Pagination';
 import {Loading} from '../components/common';
-import ErrorMessage from '../components/ErrorMessage';
+import ErrorMessage from '../components/errorMessage/ErrorMessage';
 import styles from './RecipeList.module.css';
 
 const RecipeList = () => {

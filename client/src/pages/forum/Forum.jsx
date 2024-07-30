@@ -9,7 +9,7 @@ import NewTopicForm from '../../components/NewTopicForm';
 import ForumSearch from '../../components/ForumSearch';
 import Pagination from '../../components/Pagination';
 import {Loading} from '../../components/common';
-import ErrorMessage from '../../components/ErrorMessage';
+import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import styles from './Forum.module.css';
 
 const Forum = () => {

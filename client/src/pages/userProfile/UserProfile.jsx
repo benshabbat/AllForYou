@@ -8,7 +8,7 @@ import UserRecipes from '../../components/UserRecipes';
 import ActivityTimeline from '../../components/ActivityTimeline';
 import {useToast} from '../../components/common/toast/Toast';
 import {Loading} from '../../components/common';
-import ErrorMessage from '../../components/ErrorMessage';
+import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import styles from './UserProfile.module.css';
 
 const UserProfile = () => {

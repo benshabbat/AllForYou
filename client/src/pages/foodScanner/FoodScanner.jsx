@@ -7,7 +7,7 @@ import BarcodeScanner from '../../components/BarcodeScanner';
 import ProductInfo from '../../components/ProductInfo';
 import AddProductForm from '../../components/AddProductForm';
 import {Loading} from '../../components/common';
-import ErrorMessage from '../../components/ErrorMessage';
+import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import styles from './FoodScanner.module.css';
 
 const FoodScanner = () => {
