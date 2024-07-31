@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { fetchAllergens, updateUserAllergenPreferences } from '../utils/apiUtils';
-import AllergenIcon from './AllergenIcon';
-import { useToast } from '../hooks/useToast';
+import { fetchAllergens, updateUserAllergenPreferences } from '../../utils/apiUtils';
+import AllergenIcon from '../AllergenIcon';
+import { useToast } from '../../hooks/useToast';
 import styles from './AllergenManagement.module.css';
 
 const AllergenManagement = () => {

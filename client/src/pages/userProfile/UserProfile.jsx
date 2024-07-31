@@ -3,11 +3,10 @@ import { useSelector } from 'react-redux';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { FaEdit, FaSave, FaTimes, FaUtensils, FaStar, FaHeart } from 'react-icons/fa';
 import { fetchUserProfile, updateUserProfile, fetchUserRecipes } from '../../utils/apiUtils';
-import AllergenManagement from '../../components/AllergenManagement';
-import UserRecipes from '../../components/UserRecipes';
-import ActivityTimeline from '../../components/ActivityTimeline';
-import {useToast} from '../../components/common/toast/Toast';
-import {Loading} from '../../components/common';
+import AllergenManagement from '../../components/allergenManagement/AllergenManagement';
+import UserRecipes from '../../components/userRecipes/UserRecipes';
+import ActivityTimeline from '../../components/activityTimeLine/ActivityTimeline';
+import {Loading,useToast} from '../../components/common';
 import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import styles from './UserProfile.module.css';
 

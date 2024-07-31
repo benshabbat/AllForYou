@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery } from 'react-query';
 import { FaUtensils, FaHeart, FaComment } from 'react-icons/fa';
-import api from '../services/api';
+import api from '../../services/api';
 import styles from './ActivityTimeline.module.css';
 
 const ActivityTimeline = ({ userId }) => {
