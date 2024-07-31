@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { FaEdit, FaTrash } from 'react-icons/fa';
-import { addComment, editComment, deleteComment } from '../utils/apiUtils';
-import { useToast } from './common';
+import { addComment, editComment, deleteComment } from '../../utils/apiUtils';
+import { useToast } from '../common';
 import styles from './CommentSection.module.css';
 
 const CommentSection = ({ comments = [], recipeId }) => {

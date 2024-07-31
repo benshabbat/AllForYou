@@ -3,17 +3,17 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { FaClock, FaUtensils, FaUsers, FaHeart, FaRegHeart, FaPrint, FaShare, FaEdit, FaTrash } from "react-icons/fa";
-import { fetchRecipeById, rateRecipe, deleteRecipe, toggleFavoriteRecipe } from "../utils/apiUtils";
-import RatingStars from "../components/RatingStars";
-import AllergenWarning from "../components/AllergenWarning";
-import CommentSection from "../components/CommentSection";
-import IngredientList from "../components/recipe/ingredientList/IngredientList";
-import InstructionList from "../components/recipe/instructionList/InstructionList";
-import NutritionInfo from "../components/NutritionInfo";
-import ErrorMessage from "../components/errorMessage/ErrorMessage";
-import { translateDifficulty } from "../utils/recipeUtils";
-import {Modal,Loading} from "../components/common";
-import {useToast} from '../components/common/toast/Toast';
+import { fetchRecipeById, rateRecipe, deleteRecipe, toggleFavoriteRecipe } from "../../utils/apiUtils";
+import RatingStars from "../../components/RatingStars";
+import AllergenWarning from "../../components/allergenWarning/AllergenWarning";
+import CommentSection from "../../components/commentSection/CommentSection";
+import IngredientList from "../../components/recipe/ingredientList/IngredientList";
+import InstructionList from "../../components/recipe/instructionList/InstructionList";
+import NutritionInfo from "../../components/nutritionInfo/NutritionInfo";
+import ErrorMessage from "../../components/errorMessage/ErrorMessage";
+import { translateDifficulty } from "../../utils/recipeUtils";
+import {Modal,Loading} from "../../components/common";
+import {useToast} from '../../components/common/toast/Toast';
 import styles from "./RecipeDetails.module.css";
 
 const RecipeDetails = () => {
