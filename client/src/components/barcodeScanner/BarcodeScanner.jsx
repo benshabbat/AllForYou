@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import Quagga from '@ericblade/quagga2';
 import PropTypes from 'prop-types';
 import { useMutation } from 'react-query';
-import { addToScanHistory } from '../utils/apiUtils';
-import { useToast } from '../components/common';
+import { addToScanHistory } from '../../utils/apiUtils';
+import { useToast } from '../common';
 import styles from './BarcodeScanner.module.css';
 
 const BarcodeScanner = ({ onScan, onClose }) => {

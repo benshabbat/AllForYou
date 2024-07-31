@@ -1,11 +1,11 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import axios from 'axios';
 import { fetchProductByBarcode, createProduct, addToScanHistory, fetchScanHistory } from '../../utils/apiUtils';
 import {useToast} from '../../components/common/toast/Toast';
-import BarcodeScanner from '../../components/BarcodeScanner';
-import ProductInfo from '../../components/ProductInfo';
-import AddProductForm from '../../components/AddProductForm';
+import BarcodeScanner from '../../components/barcodeScanner/BarcodeScanner';
+import ProductInfo from '../../components/productInfo/ProductInfo';
+import AddProductForm from '../../components/addProductForm/AddProductForm';
 import {Loading} from '../../components/common';
 import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import styles from './FoodScanner.module.css';
