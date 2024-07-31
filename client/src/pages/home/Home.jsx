@@ -4,7 +4,7 @@ import { useQuery } from 'react-query';
 import { FaSearch, FaUtensils, FaStar, FaBarcode, FaInfoCircle, FaHeart, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import api from '../../services/api';
 import RecipeCard from '../../components/recipe/recipeCard/RecipeCard';
-import SearchBar from '../../components/SearchBar';
+import SearchBar from '../../components/searchBar/SearchBar';
 import styles from './Home.module.css';
 
 const Home = () => {

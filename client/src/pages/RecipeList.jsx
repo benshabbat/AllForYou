@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useQuery } from 'react-query';
 import { fetchRecipes } from '../utils/apiUtils';
 import RecipeCard from '../components/recipe/recipeCard/RecipeCard';
-import SearchBar from '../components/SearchBar';
+import SearchBar from '../components/searchBar/SearchBar';
 import FilterSidebar from '../components/FilterSidebar';
 import Pagination from '../components/pagination/Pagination';
 import {Loading} from '../components/common';
