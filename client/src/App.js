@@ -19,7 +19,7 @@ const AddRecipe = lazy(() => import('./pages/addRecipe/AddRecipe'));
 const Register = lazy(() => import('./pages/auth/Register.jsx'));
 const Login = lazy(() => import('./pages/auth/Login'));
 const UserProfile = lazy(() => import('./pages/userProfile/UserProfile'));
-const MyRecipes = lazy(() => import('./pages/MyRecipes'));
+const MyRecipes = lazy(() => import('./pages/myRecipes/MyRecipes.jsx'));
 const RecipeDetails = lazy(() => import('./pages/RecipeDetails'));
 const UserSettings = lazy(() => import('./pages/useSettings/UserSettings'));
 const FavoritesPage = lazy(() => import('./pages/favoritePage/FavoritesPage'));
