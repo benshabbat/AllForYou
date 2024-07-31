@@ -14,7 +14,7 @@ import api from './services/api';
 
 // Lazy-loaded components
 const Home = lazy(() => import('./pages/home/Home.jsx'));
-const RecipeList = lazy(() => import('./pages/RecipeList'));
+const RecipeList = lazy(() => import('./pages/recipeList/RecipeList.jsx'));
 const AddRecipe = lazy(() => import('./pages/addRecipe/AddRecipe'));
 const Register = lazy(() => import('./pages/auth/Register.jsx'));
 const Login = lazy(() => import('./pages/auth/Login'));

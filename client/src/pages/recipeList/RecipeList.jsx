@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useQuery } from 'react-query';
-import { fetchRecipes } from '../utils/apiUtils';
-import RecipeCard from '../components/recipe/recipeCard/RecipeCard';
-import SearchBar from '../components/searchBar/SearchBar';
-import FilterSidebar from '../components/FilterSidebar';
-import Pagination from '../components/pagination/Pagination';
-import {Loading} from '../components/common';
-import ErrorMessage from '../components/errorMessage/ErrorMessage';
+import { fetchRecipes } from '../../utils/apiUtils';
+import RecipeCard from '../../components/recipe/recipeCard/RecipeCard';
+import SearchBar from '../../components/searchBar/SearchBar';
+import FilterSidebar from '../../components/filterSideBar/FilterSidebar';
+import Pagination from '../../components/pagination/Pagination';
+import {Loading} from '../../components/common';
+import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import styles from './RecipeList.module.css';
 
 const RecipeList = () => {

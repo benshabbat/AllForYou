@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import PropTypes from 'prop-types';
-import { fetchAllergens } from '../utils/apiUtils';
-import { CATEGORIES, DIFFICULTY_LEVELS } from '../constants';
+import { fetchAllergens } from '../../utils/apiUtils';
+import { CATEGORIES, DIFFICULTY_LEVELS } from '../../constants';
 import styles from './FilterSidebar.module.css';
 
 /**
