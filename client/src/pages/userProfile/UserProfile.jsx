@@ -9,6 +9,7 @@ import ActivityTimeline from '../../components/activityTimeLine/ActivityTimeline
 import {Loading,useToast} from '../../components/common';
 import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import styles from './UserProfile.module.css';
+import UserInfo from '../../components/userInfo/UserInfo';
 
 const UserProfile = () => {
   const { user: authUser } = useSelector(state => state.auth);
@@ -147,7 +148,7 @@ const UserProfile = () => {
     <div className={styles.profileContainer}>
       <section className={styles.userInfo}>
         {renderProfileHeader()}
-        {isEditing ? renderProfileForm() : renderProfileDetails()}
+        {isEditing ? renderProfileForm() : <UserInfo user={user}/>}
       </section>
 
       {renderUserStats()}

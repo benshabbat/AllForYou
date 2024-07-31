@@ -5,8 +5,8 @@ import { FaHeart, FaRegHeart, FaClock, FaUtensils, FaUsers, FaEdit, FaTrash } fr
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleFavorite } from '../../../store/recipe/recipeSlice';
 import { translateDifficulty } from '../../../utils/recipeUtils';
-import RatingStars from '../../RatingStars';
-import AllergenList from '../../AllergenList';
+import RatingStars from '../../ratingStars/RatingStars';
+import AllergenList from '../../allergenList/AllergenList';
 import styles from './RecipeCard.module.css';
 
 /**

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Tooltip } from 'react-tooltip';
-import { translateSeverity } from '../utils/allergenUtils';
+import { translateSeverity } from '../../../utils/allergenUtils';
 import styles from './AllergenIcon.module.css';
 
 /**

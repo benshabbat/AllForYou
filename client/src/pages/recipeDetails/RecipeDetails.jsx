@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { FaClock, FaUtensils, FaUsers, FaHeart, FaRegHeart, FaPrint, FaShare, FaEdit, FaTrash } from "react-icons/fa";
 import { fetchRecipeById, rateRecipe, deleteRecipe, toggleFavoriteRecipe } from "../../utils/apiUtils";
-import RatingStars from "../../components/RatingStars";
+import RatingStars from "../../components/ratingStars/RatingStars";
 import AllergenWarning from "../../components/allergenWarning/AllergenWarning";
 import CommentSection from "../../components/commentSection/CommentSection";
 import IngredientList from "../../components/recipe/ingredientList/IngredientList";

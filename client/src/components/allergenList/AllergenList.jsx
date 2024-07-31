@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-query';
-import api from '../services/api';
-import AllergenIcon from './AllergenIcon';
+import api from '../../services/api';
+import AllergenIcon from '../allergenManagement/allergenIcon/AllergenIcon';
 import styles from './AllergenList.module.css';
 
 const AllergenList = ({ allergens = [], showTooltips = true }) => {

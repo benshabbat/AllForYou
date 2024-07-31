@@ -1,8 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { fetchForumTopic, createForumReply, deleteForumTopic } from '../../../utils/apiUtils';
-import {useToast} from '../../common/toast/Toast';
-import {Loading} from '../../common';
+import {Loading,useToast} from '../../common';
 import ErrorMessage from '../../errorMessage/ErrorMessage';
 import styles from './TopicThread.module.css';
 
