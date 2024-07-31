@@ -4,7 +4,7 @@ import { fetchRecipes } from '../utils/apiUtils';
 import RecipeCard from '../components/recipe/recipeCard/RecipeCard';
 import SearchBar from '../components/SearchBar';
 import FilterSidebar from '../components/FilterSidebar';
-import Pagination from '../components/Pagination';
+import Pagination from '../components/pagination/Pagination';
 import {Loading} from '../components/common';
 import ErrorMessage from '../components/errorMessage/ErrorMessage';
 import styles from './RecipeList.module.css';
