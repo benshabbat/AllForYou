@@ -24,25 +24,14 @@ export const deleteRecipe = async (id) => {await api.delete(`/recipes/${id}`);};
 
 
 // User related API calls
-export const fetchUserProfile = async () => {
-  const response = await api.get('/users/me');
-  return extractData(response);
-};
+export const fetchUserProfile = () => apiCall('get','/users/me');
+export const updateUserProfile = (userData) => apiCall('put','/users/profile',userData);
+export const fetchUserRecipes = (userId) => apiCall('get',`/recipes/user/${userId}`);
+export const updateUserAllergenPreferences = (allergens) => apiCall('put','/users/allergen-preferences',null, allergens);
 
-export const updateUserProfile = async (userData) => {
-  const response = await api.put('/users/profile', userData);
-  return extractData(response);
-};
 
-export const fetchUserRecipes = async (userId) => {
-  const response = await api.get(`/recipes/user/${userId}`);
-  return extractData(response);
-};
 
-export const updateUserAllergenPreferences = async (allergens) => {
-  const response = await api.put('/users/allergen-preferences', { allergens });
-  return extractData(response);
-};
+
 
 export const fetchFavoriteRecipes = async () => {
   const response = await api.get('/users/favorites');
