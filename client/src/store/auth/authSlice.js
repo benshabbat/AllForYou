@@ -1,62 +1,50 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '../../services/api';
+import { createSlice } from '@reduxjs/toolkit';
+import { apiUtils } from '../../utils/apiUtils';
 
-export const register = createAsyncThunk(
-  'auth/register',
-  async (userData, thunkAPI) => {
+const createAsyncThunk = (typePrefix, payloadCreator) => {
+  return createAsyncThunk(typePrefix, async (arg, thunkAPI) => {
     try {
-      const response = await api.post('/users/register', userData);
-      localStorage.setItem('token', response.data.token);
-      return response.data;
+      return await payloadCreator(arg);
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'שגיאה בהרשמה');
+      return thunkAPI.rejectWithValue(error.response?.data?.message || `Error in ${typePrefix}`);
     }
-  }
-);
+  });
+};
 
-export const login = createAsyncThunk(
-  'auth/login',
-  async (userData, thunkAPI) => {
-    try {
-      const response = await api.post('/users/login', userData);
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
-        // נוודא שאנחנו מחזירים את כל המידע הדרוש
-        return { token: response.data.token, user: response.data.user };
-      }
-      return thunkAPI.rejectWithValue('לא התקבל טוקן מהשרת');
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'שגיאה בהתחברות');
-    }
-  }
-);
+export const register = createAsyncThunk('auth/register', apiUtils.register);
+export const login = createAsyncThunk('auth/login', apiUtils.login);
+export const loadUser = createAsyncThunk('auth/loadUser', apiUtils.fetchUserProfile);
 
-export const loadUser = createAsyncThunk(
-  'auth/loadUser',
-  async (_, thunkAPI) => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        return thunkAPI.rejectWithValue('No token found');
-      }
-      const response = await api.get('/users/me');
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'שגיאה בטעינת המשתמש');
-    }
-  }
-);
+const initialState = {
+  user: null,
+  token: localStorage.getItem('token'),
+  isLoading: false,
+  error: null,
+  isInitialized: false,
+  isAuthenticated: false,
+};
+
+const updateUserState = (state, action) => {
+  state.isLoading = false;
+  state.user = action.payload.user;
+  state.token = action.payload.token;
+  state.isAuthenticated = true;
+  state.error = null;
+  localStorage.setItem('token', action.payload.token);
+};
+
+const handleAuthError = (state, action) => {
+  state.isLoading = false;
+  state.error = action.payload;
+  state.isAuthenticated = false;
+  state.user = null;
+  state.token = null;
+  localStorage.removeItem('token');
+};
 
 const authSlice = createSlice({
   name: 'auth',
-  initialState: {
-    user: null,
-    token: localStorage.getItem('token'),
-    isLoading: false,
-    error: null,
-    isInitialized: false,
-    isAuthenticated: false,
-  },
+  initialState,
   reducers: {
     logout: (state) => {
       localStorage.removeItem('token');
@@ -78,58 +66,24 @@ const authSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(register.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
-        state.error = null;
-        state.isInitialized = true;
-      })
-      .addCase(register.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload;
-        state.isInitialized = true;
-      })
+      .addCase(register.fulfilled, updateUserState)
+      .addCase(register.rejected, handleAuthError)
       .addCase(login.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(login.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
-        state.error = null;
-        state.isInitialized = true;
-        state.isAuthenticated = true;
-      })
-      .addCase(login.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload;
-        state.isInitialized = true;
-      })
+      .addCase(login.fulfilled, updateUserState)
+      .addCase(login.rejected, handleAuthError)
       .addCase(loadUser.pending, (state) => {
         state.isLoading = true;
-      })      
+      })
       .addCase(loadUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload;
         state.isInitialized = true;
         state.isAuthenticated = true;
-        if (action.payload && action.payload._id) {
-          state.user.id = action.payload._id;
-        }
-        console.log('User loaded successfully:', action.payload);
       })
-      .addCase(loadUser.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload;
-        state.user = null;
-        state.token = null;
-        state.isInitialized = true;
-        state.isAuthenticated = false;
-        localStorage.removeItem('token');
-        console.log('Failed to load user:', action.payload);
-      });
+      .addCase(loadUser.rejected, handleAuthError);
   },
 });
 
