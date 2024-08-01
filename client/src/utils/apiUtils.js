@@ -1,24 +1,30 @@
 import api from '../services/api';
 
+
+
+const extractData = (response) => response.data;
+
+
+
 // Recipe related API calls
 export const fetchRecipes = async (params) => {
   const response = await api.get('/recipes', { params });
-  return response.data;
+  return extractData(response);
 };
 
 export const fetchRecipeById = async (id) => {
   const response = await api.get(`/recipes/${id}`);
-  return response.data;
+  return extractData(response);
 };
 
 export const createRecipe = async (recipeData) => {
   const response = await api.post('/recipes', recipeData);
-  return response.data;
+  return extractData(response);
 };
 
 export const updateRecipe = async (id, recipeData) => {
   const response = await api.put(`/recipes/${id}`, recipeData);
-  return response.data;
+  return extractData(response);
 };
 
 export const deleteRecipe = async (id) => {
@@ -27,70 +33,70 @@ export const deleteRecipe = async (id) => {
 
 export const rateRecipe = async (id, rating) => {
   const response = await api.post(`/recipes/${id}/rate`, { rating });
-  return response.data;
+  return extractData(response);
 };
 
 export const toggleFavoriteRecipe = async (id) => {
   const response = await api.post(`/recipes/${id}/favorite`);
-  return response.data;
+  return extractData(response);
 };
 
 // User related API calls
 export const fetchUserProfile = async () => {
   const response = await api.get('/users/me');
-  return response.data;
+  return extractData(response);
 };
 
 export const updateUserProfile = async (userData) => {
   const response = await api.put('/users/profile', userData);
-  return response.data;
+  return extractData(response);
 };
 
 export const fetchUserRecipes = async (userId) => {
   const response = await api.get(`/recipes/user/${userId}`);
-  return response.data;
+  return extractData(response);
 };
 
 export const updateUserAllergenPreferences = async (allergens) => {
   const response = await api.put('/users/allergen-preferences', { allergens });
-  return response.data;
+  return extractData(response);
 };
 
 export const fetchFavoriteRecipes = async () => {
   const response = await api.get('/users/favorites');
-  return response.data;
+  return extractData(response);
 };
 
 export const register = async (userData) => {
   const response = await api.post('/users/register', userData);
-  return response.data;
+  return extractData(response);
 };
 
 export const login = async (userData) => {
   const response = await api.post('/users/login', userData);
-  return response.data;
+  return extractData(response);
 };
 
 // Allergen related API calls
 export const fetchAllergens = async () => {
   const response = await api.get('/allergens');
-  return response.data;
+  return extractData(response);
 };
 
 // Forum related API calls
 export const fetchForumTopics = async (page = 1) => {
   const response = await api.get(`/forum/topics?page=${page}`);
-  return response.data;
+  return extractData(response);
 };
 
 export const createForumTopic = async (topicData) => {
   const response = await api.post('/forum/topics', topicData);
-  return response.data;
+  return extractData(response);
 };
 
 export const fetchForumTopic = async (topicId) => {
   const response = await api.get(`/forum/topics/${topicId}`);
-  return response.data;
+  return extractData(response);
 };
 
 export const deleteForumTopic = async (topicId) => {
@@ -99,14 +105,14 @@ export const deleteForumTopic = async (topicId) => {
 
 export const createForumReply = async (topicId, replyData) => {
   const response = await api.post(`/forum/topics/${topicId}/replies`, replyData);
-  return response.data;
+  return extractData(response);
 };
 
 // Product related API calls
 export const fetchProductByBarcode = async (barcode) => {
   try {
     const response = await api.get(`/products/${barcode}`);
-    return response.data;
+    return extractData(response);
   } catch (error) {
     if (error.response && error.response.status === 404) {
       return null;
@@ -117,33 +123,33 @@ export const fetchProductByBarcode = async (barcode) => {
 
 export const createProduct = async (productData) => {
   const response = await api.post('/products', productData);
-  return response.data;
+  return extractData(response);
 };
 
 export const searchForumTopics = async (searchTerm, page = 1) => {
   const response = await api.get(`/forum/search?query=${searchTerm}&page=${page}`);
-  return response.data;
+  return extractData(response);
 };
 
 export const addToScanHistory = async (productCode, productName) => {
   const response = await api.post('/users/scan-history', { productCode, productName });
-  return response.data;
+  return extractData(response);
 };
 
 export const fetchScanHistory = async () => {
   const response = await api.get('/users/scan-history');
-  return response.data;
+  return extractData(response);
 };
 
 // Comment related API calls
 export const addComment = async (recipeId, commentData) => {
   const response = await api.post(`/recipes/${recipeId}/comments`, commentData);
-  return response.data;
+  return extractData(response);
 };
 
 export const editComment = async (recipeId, commentId, commentData) => {
   const response = await api.put(`/recipes/${recipeId}/comments/${commentId}`, commentData);
-  return response.data;
+  return extractData(response);
 };
 
 export const deleteComment = async (recipeId, commentId) => {

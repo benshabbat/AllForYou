@@ -83,6 +83,7 @@ const AddRecipe = () => {
     },
   });
 
+
   const ingredients = watch("ingredients");
 
   const onSubmit = useCallback(async (data) => {
