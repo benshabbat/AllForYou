@@ -1,5 +1,4 @@
 import React, { useReducer } from 'react';
-import { useUser } from '../../hooks/useUser';
 import styles from './UserSettings.module.css';
 
 const initialState = {
@@ -29,11 +28,7 @@ function settingsReducer(state, action) {
 
 const UserSettings = () => {
   const [state, dispatch] = useReducer(settingsReducer, initialState);
-  const { updateUserSettings } = useUser();
-
-  const handleSave = () => {
-    updateUserSettings(state);
-  };
+  
 
   return (
     <div className={styles.settings}>
@@ -65,7 +60,7 @@ const UserSettings = () => {
           התראות דחיפה
         </label>
       </div>
-      <button onClick={handleSave}>שמור הגדרות</button>
+      <button>שמור הגדרות</button>
     </div>
   );
 };

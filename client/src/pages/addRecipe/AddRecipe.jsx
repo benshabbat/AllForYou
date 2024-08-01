@@ -5,7 +5,6 @@ import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from 'react-query';
 import { createRecipe } from '../../utils/apiUtils';
-import { useAllergens } from "../../hooks/useAllergens";
 import FormField from "../../components/formField/FormField";
 import ImageUpload from "../../components/imageUpload/ImageUpload";
 import { CATEGORIES, DIFFICULTY_LEVELS } from "../../constants";
@@ -83,8 +82,6 @@ const AddRecipe = () => {
       addToast(`שגיאה בהוספת המתכון: ${error.message}`, 'error');
     },
   });
-
-  const { allergens, isLoading: allergensLoading } = useAllergens();
 
   const ingredients = watch("ingredients");
 
