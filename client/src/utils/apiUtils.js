@@ -5,27 +5,20 @@ import api from '../services/api';
 const extractData = (response) => response.data;
 
 
+const apiCall = async (method, endpoint, data = null, params = null) => {
+  const config = { params };
+  const response = await api[method](endpoint, data, config);
+  return extractData(response);
+};
 
 // Recipe related API calls
-export const fetchRecipes = async (params) => {
-  const response = await api.get('/recipes', { params });
-  return extractData(response);
-};
+export const fetchRecipes = (params) => apiCall('get', '/recipes', null, params);
+export const createRecipe = (recipeData) => apiCall('post', '/recipes', recipeData);
+export const fetchRecipeById = (id) => apiCall('get', `/recipes/${id}`);
+export const updateRecipe = (id,recipeData) => apiCall('put', `/recipes/${id}`, recipeData);
 
-export const fetchRecipeById = async (id) => {
-  const response = await api.get(`/recipes/${id}`);
-  return extractData(response);
-};
 
-export const createRecipe = async (recipeData) => {
-  const response = await api.post('/recipes', recipeData);
-  return extractData(response);
-};
 
-export const updateRecipe = async (id, recipeData) => {
-  const response = await api.put(`/recipes/${id}`, recipeData);
-  return extractData(response);
-};
 
 export const deleteRecipe = async (id) => {
   await api.delete(`/recipes/${id}`);
