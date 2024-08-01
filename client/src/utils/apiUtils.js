@@ -16,23 +16,12 @@ export const fetchRecipes = (params) => apiCall('get', '/recipes', null, params)
 export const createRecipe = (recipeData) => apiCall('post', '/recipes', recipeData);
 export const fetchRecipeById = (id) => apiCall('get', `/recipes/${id}`);
 export const updateRecipe = (id,recipeData) => apiCall('put', `/recipes/${id}`, recipeData);
+export const rateRecipe = (id,rating) => apiCall('post',`/recipes/${id}/rate`, null, rating);
+export const toggleFavoriteRecipe = (id) => apiCall('post',`/recipes/${id}/favorite`);
+export const deleteRecipe = async (id) => {await api.delete(`/recipes/${id}`);};
 
 
 
-
-export const deleteRecipe = async (id) => {
-  await api.delete(`/recipes/${id}`);
-};
-
-export const rateRecipe = async (id, rating) => {
-  const response = await api.post(`/recipes/${id}/rate`, { rating });
-  return extractData(response);
-};
-
-export const toggleFavoriteRecipe = async (id) => {
-  const response = await api.post(`/recipes/${id}/favorite`);
-  return extractData(response);
-};
 
 // User related API calls
 export const fetchUserProfile = async () => {
