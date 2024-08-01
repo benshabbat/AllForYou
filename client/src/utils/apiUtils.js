@@ -1,128 +1,91 @@
 import api from '../services/api';
 
+// Constants for API paths
+const API_PATHS = {
+  RECIPES: '/recipes',
+  USERS: '/users',
+  FORUM: '/forum',
+  PRODUCTS: '/products',
+  ALLERGENS: '/allergens',
+};
 
-
+// Helper function to extract data from API response
 const extractData = (response) => response.data;
 
-
+// Helper function for making API calls
 const apiCall = async (method, endpoint, data = null, params = null) => {
-  const config = { params };
-  const response = await api[method](endpoint, data, config);
-  return extractData(response);
-};
-
-// Recipe related API calls
-export const fetchRecipes = (params) => apiCall('get', '/recipes', null, params);
-export const createRecipe = (recipeData) => apiCall('post', '/recipes', recipeData);
-export const fetchRecipeById = (id) => apiCall('get', `/recipes/${id}`);
-export const updateRecipe = (id,recipeData) => apiCall('put', `/recipes/${id}`, recipeData);
-export const rateRecipe = (id,rating) => apiCall('post',`/recipes/${id}/rate`, null, rating);
-export const toggleFavoriteRecipe = (id) => apiCall('post',`/recipes/${id}/favorite`);
-export const deleteRecipe = async (id) => {await api.delete(`/recipes/${id}`);};
-
-
-
-
-// User related API calls
-export const fetchUserProfile = () => apiCall('get','/users/me');
-export const updateUserProfile = (userData) => apiCall('put','/users/profile',userData);
-export const fetchUserRecipes = (userId) => apiCall('get',`/recipes/user/${userId}`);
-export const updateUserAllergenPreferences = (allergens) => apiCall('put','/users/allergen-preferences',null, allergens);
-
-
-
-
-
-export const fetchFavoriteRecipes = async () => {
-  const response = await api.get('/users/favorites');
-  return extractData(response);
-};
-
-export const register = async (userData) => {
-  const response = await api.post('/users/register', userData);
-  return extractData(response);
-};
-
-export const login = async (userData) => {
-  const response = await api.post('/users/login', userData);
-  return extractData(response);
-};
-
-// Allergen related API calls
-export const fetchAllergens = async () => {
-  const response = await api.get('/allergens');
-  return extractData(response);
-};
-
-// Forum related API calls
-export const fetchForumTopics = async (page = 1) => {
-  const response = await api.get(`/forum/topics?page=${page}`);
-  return extractData(response);
-};
-
-export const createForumTopic = async (topicData) => {
-  const response = await api.post('/forum/topics', topicData);
-  return extractData(response);
-};
-
-export const fetchForumTopic = async (topicId) => {
-  const response = await api.get(`/forum/topics/${topicId}`);
-  return extractData(response);
-};
-
-export const deleteForumTopic = async (topicId) => {
-  await api.delete(`/forum/topics/${topicId}`);
-};
-
-export const createForumReply = async (topicId, replyData) => {
-  const response = await api.post(`/forum/topics/${topicId}/replies`, replyData);
-  return extractData(response);
-};
-
-// Product related API calls
-export const fetchProductByBarcode = async (barcode) => {
   try {
-    const response = await api.get(`/products/${barcode}`);
+    const config = { params };
+    const response = await api[method](endpoint, data, config);
     return extractData(response);
   } catch (error) {
-    if (error.response && error.response.status === 404) {
-      return null;
-    }
+    console.error(`API call failed: ${method} ${endpoint}`, error);
     throw error;
   }
 };
 
-export const createProduct = async (productData) => {
-  const response = await api.post('/products', productData);
-  return extractData(response);
+// Recipe related functions
+const recipeApi = {
+  fetchRecipes: (params) => apiCall('get', API_PATHS.RECIPES, null, params),
+  fetchRecipeById: (id) => apiCall('get', `${API_PATHS.RECIPES}/${id}`),
+  createRecipe: (recipeData) => apiCall('post', API_PATHS.RECIPES, recipeData),
+  updateRecipe: (id, recipeData) => apiCall('put', `${API_PATHS.RECIPES}/${id}`, recipeData),
+  deleteRecipe: (id) => apiCall('delete', `${API_PATHS.RECIPES}/${id}`),
+  rateRecipe: (id, rating) => apiCall('post', `${API_PATHS.RECIPES}/${id}/rate`, { rating }),
+  toggleFavoriteRecipe: (id) => apiCall('post', `${API_PATHS.RECIPES}/${id}/favorite`),
+  addComment: (recipeId, commentData) => apiCall('post', `${API_PATHS.RECIPES}/${recipeId}/comments`, commentData),
+  editComment: (recipeId, commentId, commentData) => apiCall('put', `${API_PATHS.RECIPES}/${recipeId}/comments/${commentId}`, commentData),
+  deleteComment: (recipeId, commentId) => apiCall('delete', `${API_PATHS.RECIPES}/${recipeId}/comments/${commentId}`),
 };
 
-export const searchForumTopics = async (searchTerm, page = 1) => {
-  const response = await api.get(`/forum/search?query=${searchTerm}&page=${page}`);
-  return extractData(response);
+// User related functions
+const userApi = {
+  fetchUserProfile: () => apiCall('get', `${API_PATHS.USERS}/me`),
+  updateUserProfile: (userData) => apiCall('put', `${API_PATHS.USERS}/profile`, userData),
+  fetchUserRecipes: (userId) => apiCall('get', `${API_PATHS.RECIPES}/user/${userId}`),
+  updateUserAllergenPreferences: (allergens) => apiCall('put', `${API_PATHS.USERS}/allergen-preferences`, { allergens }),
+  fetchFavoriteRecipes: () => apiCall('get', `${API_PATHS.USERS}/favorites`),
+  register: (userData) => apiCall('post', `${API_PATHS.USERS}/register`, userData),
+  login: (userData) => apiCall('post', `${API_PATHS.USERS}/login`, userData),
+  addToScanHistory: (productCode, productName) => apiCall('post', `${API_PATHS.USERS}/scan-history`, { productCode, productName }),
+  fetchScanHistory: () => apiCall('get', `${API_PATHS.USERS}/scan-history`),
 };
 
-export const addToScanHistory = async (productCode, productName) => {
-  const response = await api.post('/users/scan-history', { productCode, productName });
-  return extractData(response);
+// Allergen related functions
+const allergenApi = {
+  fetchAllergens: () => apiCall('get', API_PATHS.ALLERGENS),
 };
 
-export const fetchScanHistory = async () => {
-  const response = await api.get('/users/scan-history');
-  return extractData(response);
+// Forum related functions
+const forumApi = {
+  fetchForumTopics: (page = 1) => apiCall('get', `${API_PATHS.FORUM}/topics`, null, { page }),
+  createForumTopic: (topicData) => apiCall('post', `${API_PATHS.FORUM}/topics`, topicData),
+  fetchForumTopic: (topicId) => apiCall('get', `${API_PATHS.FORUM}/topics/${topicId}`),
+  deleteForumTopic: (topicId) => apiCall('delete', `${API_PATHS.FORUM}/topics/${topicId}`),
+  createForumReply: (topicId, replyData) => apiCall('post', `${API_PATHS.FORUM}/topics/${topicId}/replies`, replyData),
+  searchForumTopics: (searchTerm, page = 1) => apiCall('get', `${API_PATHS.FORUM}/search`, null, { query: searchTerm, page }),
 };
 
-// Comment related API calls
-export const addComment = async (recipeId, commentData) => {
-  const response = await api.post(`/recipes/${recipeId}/comments`, commentData);
-  return extractData(response);
+// Product related functions
+const productApi = {
+  fetchProductByBarcode: async (barcode) => {
+    try {
+      return await apiCall('get', `${API_PATHS.PRODUCTS}/${barcode}`);
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        return null;
+      }
+      throw error;
+    }
+  },
+  createProduct: (productData) => apiCall('post', API_PATHS.PRODUCTS, productData),
 };
 
-export const editComment = async (recipeId, commentId, commentData) => {
-  const response = await api.put(`/recipes/${recipeId}/comments/${commentId}`, commentData);
-  return extractData(response);
-};
-
-export const deleteComment = async (recipeId, commentId) => {
-  await api.delete(`/recipes/${recipeId}/comments/${commentId}`);
+// Export all API functions
+export const apiUtils = {
+  ...recipeApi,
+  ...userApi,
+  ...allergenApi,
+  ...forumApi,
+  ...productApi,
 };
