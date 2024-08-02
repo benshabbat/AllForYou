@@ -9,14 +9,19 @@ import RatingStars from '../../ratingStars/RatingStars';
 import AllergenList from '../../allergenList/AllergenList';
 import styles from './RecipeCard.module.css';
 
-/**
- * RecipeCard component for displaying a recipe in a card format.
- * 
- * @param {Object} props - The component props
- * @param {Object} props.recipe - The recipe object to display
- * @param {boolean} [props.showActions=false] - Whether to show edit/delete actions
- * @param {Function} [props.onDelete] - Callback function for delete action
- */
+const IconWithText = ({ Icon, text }) => (
+  <span className={styles.infoItem}>
+    <Icon aria-hidden="true" />
+    {text}
+  </span>
+);
+
+const ActionButton = ({ onClick, Icon, text, ariaLabel }) => (
+  <button onClick={onClick} className={styles.actionButton} aria-label={ariaLabel}>
+    <Icon /> {text}
+  </button>
+);
+
 const RecipeCard = ({ recipe, showActions = false, onDelete }) => {
   const dispatch = useDispatch();
   const { user } = useSelector(state => state.auth);
@@ -43,9 +48,9 @@ const RecipeCard = ({ recipe, showActions = false, onDelete }) => {
 
   const renderRecipeInfo = useCallback(() => (
     <div className={styles.recipeInfo}>
-      <span><FaClock aria-hidden="true" /> {totalTime} דקות</span>
-      <span><FaUtensils aria-hidden="true" /> {translateDifficulty(recipe.difficulty)}</span>
-      <span><FaUsers aria-hidden="true" /> {recipe.servings} מנות</span>
+      <IconWithText Icon={FaClock} text={`${totalTime} דקות`} />
+      <IconWithText Icon={FaUtensils} text={translateDifficulty(recipe.difficulty)} />
+      <IconWithText Icon={FaUsers} text={`${recipe.servings} מנות`} />
     </div>
   ), [totalTime, recipe.difficulty, recipe.servings]);
 
@@ -55,9 +60,12 @@ const RecipeCard = ({ recipe, showActions = false, onDelete }) => {
         <Link to={`/edit-recipe/${recipe._id}`} className={styles.editButton}>
           <FaEdit aria-hidden="true" /> ערוך
         </Link>
-        <button onClick={() => onDelete(recipe._id)} className={styles.deleteButton}>
-          <FaTrash aria-hidden="true" /> מחק
-        </button>
+        <ActionButton
+          onClick={() => onDelete(recipe._id)}
+          Icon={FaTrash}
+          text="מחק"
+          ariaLabel="מחק מתכון"
+        />
       </div>
     )
   ), [showActions, isOwner, recipe._id, onDelete]);
@@ -75,13 +83,12 @@ const RecipeCard = ({ recipe, showActions = false, onDelete }) => {
               e.target.src = '/placeholder-image.jpg';
             }}
           />
-          <button
-            className={styles.favoriteButton}
+          <ActionButton
             onClick={handleFavoriteClick}
-            aria-label={recipe.isFavorite ? "הסר ממועדפים" : "הוסף למועדפים"}
-          >
-            {recipe.isFavorite ? <FaHeart color="red" /> : <FaRegHeart />}
-          </button>
+            Icon={recipe.isFavorite ? FaHeart : FaRegHeart}
+            text=""
+            ariaLabel={recipe.isFavorite ? "הסר ממועדפים" : "הוסף למועדפים"}
+          />
         </div>
         <div className={styles.recipeContent}>
           <h3 className={styles.recipeTitle}>{recipe.name}</h3>
