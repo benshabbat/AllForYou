@@ -9,7 +9,7 @@ import ActivityTimeline from '../../components/activityTimeLine/ActivityTimeline
 import {Loading,useToast} from '../../components/common';
 import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import styles from './UserProfile.module.css';
-import UserInfo from '../../components/userInfo/UserInfo';
+import UserInfo from '../../components/user/userInfo/UserInfo';
 
 const UserProfile = () => {
   const { user: authUser } = useSelector(state => state.auth);

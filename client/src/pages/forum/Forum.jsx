@@ -7,7 +7,7 @@ import TopicList from '../../components/forum/topicList/TopicList';
 import TopicThread from '../../components/forum/topicThread/TopicThread';
 import NewTopicForm from '../../components/newTopicForm/NewTopicForm';
 import ForumSearch from '../../components/forumSearch/ForumSearch';
-import Pagination from '../../components/pagination/Pagination';
+import Pagination from '../../components/common/pagination/Pagination';
 import {Loading} from '../../components/common';
 import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import styles from './Forum.module.css';

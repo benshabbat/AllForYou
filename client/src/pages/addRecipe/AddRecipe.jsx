@@ -5,7 +5,7 @@ import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from 'react-query';
 import { createRecipe } from '../../utils/apiUtils';
-import FormField from "../../components/formField/FormField";
+import FormField from "../../components/common/formField/FormField";
 import ImageUpload from "../../components/imageUpload/ImageUpload";
 import { CATEGORIES, DIFFICULTY_LEVELS } from "../../constants";
 import {useToast} from '../../components/common/toast/Toast';
