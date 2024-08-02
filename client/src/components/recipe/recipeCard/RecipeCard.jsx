@@ -8,7 +8,7 @@ import { translateDifficulty } from '../../../utils/recipeUtils';
 import RatingStars from '../../ratingStars/RatingStars';
 import AllergenList from '../../allergenList/AllergenList';
 import styles from './RecipeCard.module.css';
-
+import { RecipePropTypes } from '../../../propTypes/recipePropTypes';
 const IconWithText = ({ Icon, text }) => (
   <span className={styles.infoItem}>
     <Icon aria-hidden="true" />
@@ -105,29 +105,21 @@ const RecipeCard = ({ recipe, showActions = false, onDelete }) => {
   );
 };
 
+
+IconWithText.propTypes = {
+  Icon: PropTypes.elementType.isRequired,
+  text: PropTypes.string.isRequired
+};
+
+ActionButton.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  Icon: PropTypes.elementType.isRequired,
+  text: PropTypes.string.isRequired,
+  ariaLabel: PropTypes.string.isRequired
+};
+
 RecipeCard.propTypes = {
-  recipe: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    image: PropTypes.string,
-    preparationTime: PropTypes.number.isRequired,
-    cookingTime: PropTypes.number.isRequired,
-    difficulty: PropTypes.string.isRequired,
-    servings: PropTypes.number.isRequired,
-    averageRating: PropTypes.number,
-    description: PropTypes.string.isRequired,
-    allergens: PropTypes.arrayOf(PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.shape({
-        _id: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-        hebrewName: PropTypes.string,
-        icon: PropTypes.string
-      })
-    ])),
-    isFavorite: PropTypes.bool,
-    createdBy: PropTypes.string.isRequired
-  }).isRequired,
+  recipe: PropTypes.shape(RecipePropTypes).isRequired,
   showActions: PropTypes.bool,
   onDelete: PropTypes.func
 };
