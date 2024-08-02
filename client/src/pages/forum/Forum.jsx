@@ -5,8 +5,8 @@ import { fetchForumTopics, createForumTopic, deleteForumTopic, searchForumTopics
 import {useToast} from '../../components/common/toast/Toast';
 import TopicList from '../../components/forum/topicList/TopicList';
 import TopicThread from '../../components/forum/topicThread/TopicThread';
-import NewTopicForm from '../../components/newTopicForm/NewTopicForm';
-import ForumSearch from '../../components/forumSearch/ForumSearch';
+import NewTopicForm from '../../components/forum/newTopicForm/NewTopicForm';
+import ForumSearch from '../../components/forum/forumSearch/ForumSearch';
 import Pagination from '../../components/common/pagination/Pagination';
 import {Loading} from '../../components/common';
 import ErrorMessage from '../../components/errorMessage/ErrorMessage';
