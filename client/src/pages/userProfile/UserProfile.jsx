@@ -2,10 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { FaEdit, FaSave, FaTimes, FaUtensils, FaStar, FaHeart } from 'react-icons/fa';
-import { fetchUserProfile, updateUserProfile, fetchUserRecipes } from '../../utils/apiUtils';
-import AllergenManagement from '../../components/allergenManagement/AllergenManagement';
-import UserRecipes from '../../components/userRecipes/UserRecipes';
-import ActivityTimeline from '../../components/activityTimeLine/ActivityTimeline';
+import {apiUtils } from '../../utils/apiUtils';
+import AllergenManagement from '../../components/allergen/allergenManagement/AllergenManagement';
+import UserRecipes from '../../components/user/userRecipes/UserRecipes';
+import ActivityTimeline from '../../components/user/activityTimeLine/ActivityTimeline';
 import {Loading,useToast} from '../../components/common';
 import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import styles from './UserProfile.module.css';
@@ -19,17 +19,17 @@ const UserProfile = () => {
 
   const { data: user, isLoading: userLoading, error: userError } = useQuery(
     'userProfile',
-    fetchUserProfile,
+    apiUtils?.fetchUserProfile,
     { enabled: !!authUser }
   );
 
   const { data: userRecipes, isLoading: recipesLoading, error: recipesError } = useQuery(
     ['userRecipes', authUser?.id],
-    () => fetchUserRecipes(authUser.id),
+    () => apiUtils?.fetchUserRecipes(authUser.id),
     { enabled: !!authUser }
   );
 
-  const updateProfileMutation = useMutation(updateUserProfile, {
+  const updateProfileMutation = useMutation(apiUtils?.updateUserProfile, {
     onSuccess: () => {
       queryClient.invalidateQueries('userProfile');
       addToast('פרופיל המשתמש עודכן בהצלחה', 'success');
@@ -113,13 +113,6 @@ const UserProfile = () => {
     </div>
   );
 
-  const renderProfileDetails = () => (
-    <div className={styles.userDetails}>
-      <p><strong>אימייל:</strong> {user?.email}</p>
-      <p><strong>הצטרף בתאריך:</strong> {new Date(user?.createdAt).toLocaleDateString()}</p>
-      <p><strong>ביו:</strong> {user?.bio || 'אין ביו עדיין'}</p>
-    </div>
-  );
 
   const renderUserStats = () => (
     <section className={styles.userStats}>

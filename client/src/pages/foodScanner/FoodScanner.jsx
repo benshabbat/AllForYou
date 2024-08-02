@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import axios from 'axios';
-import { fetchProductByBarcode, createProduct, addToScanHistory, fetchScanHistory } from '../../utils/apiUtils';
+import { apiUtils } from '../../utils/apiUtils';
 import {useToast} from '../../components/common/toast/Toast';
 import BarcodeScanner from '../../components/barcodeScanner/BarcodeScanner';
 import ProductInfo from '../../components/product/productInfo/ProductInfo';
@@ -24,7 +24,7 @@ const FoodScanner = () => {
       if (!scannedCode) return null;
       
       try {
-        const localProduct = await fetchProductByBarcode(scannedCode);
+        const localProduct = await apiUtils?.fetchProductByBarcode(scannedCode);
         if (localProduct) return localProduct;
       } catch (err) {
         if (err.response && err.response.status !== 404) throw err;
@@ -51,9 +51,9 @@ const FoodScanner = () => {
     }
   );
 
-  const { data: scanHistory } = useQuery('scanHistory', fetchScanHistory);
+  const { data: scanHistory } = useQuery('scanHistory', apiUtils?.fetchScanHistory);
 
-  const addProductMutation = useMutation(createProduct, {
+  const addProductMutation = useMutation(apiUtils?.createProduct, {
     onSuccess: () => {
       addToast('המוצר נוסף בהצלחה', 'success');
       queryClient.invalidateQueries(['product', scannedCode]);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useQuery } from 'react-query';
-import { fetchRecipes } from '../../utils/apiUtils';
+import { apiUtils } from '../../utils/apiUtils';
 import RecipeCard from '../../components/recipe/recipeCard/RecipeCard';
 import SearchBar from '../../components/search/searchBar/SearchBar';
 import FilterSidebar from '../../components/filterSideBar/FilterSidebar';
@@ -23,7 +23,7 @@ const RecipeList = () => {
 
   const { data, isLoading, error, refetch } = useQuery(
     ['recipes', filters, page],
-    () => fetchRecipes({ ...filters, page, pageSize }),
+    () => apiUtils?.fetchRecipes({ ...filters, page, pageSize }),
     { keepPreviousData: true }
   );
 

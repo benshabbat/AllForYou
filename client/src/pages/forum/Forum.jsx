@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
-import { fetchForumTopics, createForumTopic, deleteForumTopic, searchForumTopics } from '../../utils/apiUtils';
+import { apiUtils} from '../../utils/apiUtils';
 import {useToast} from '../../components/common/toast/Toast';
 import TopicList from '../../components/forum/topicList/TopicList';
 import TopicThread from '../../components/forum/topicThread/TopicThread';
@@ -33,7 +33,7 @@ const Forum = () => {
     { keepPreviousData: true }
   );
 
-  const createTopicMutation = useMutation(createForumTopic, {
+  const createTopicMutation = useMutation(apiUtils?.createForumTopic, {
     onSuccess: () => {
       queryClient.invalidateQueries('forumTopics');
       addToast('הנושא נוצר בהצלחה', 'success');
@@ -44,7 +44,7 @@ const Forum = () => {
     }
   });
 
-  const deleteTopicMutation = useMutation(deleteForumTopic, {
+  const deleteTopicMutation = useMutation(apiUtils?.deleteForumTopic, {
     onSuccess: () => {
       queryClient.invalidateQueries('forumTopics');
       addToast('הנושא נמחק בהצלחה', 'success');

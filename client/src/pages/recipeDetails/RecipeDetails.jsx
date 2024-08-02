@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { FaClock, FaUtensils, FaUsers, FaHeart, FaRegHeart, FaPrint, FaShare, FaEdit, FaTrash } from "react-icons/fa";
-import { fetchRecipeById, rateRecipe, deleteRecipe, toggleFavoriteRecipe } from "../../utils/apiUtils";
+import { apiUtils} from "../../utils/apiUtils";
 import RatingStars from "../../components/ratingStars/RatingStars";
 import AllergenWarning from "../../components/recipe/allergenWarning/AllergenWarning";
 import CommentSection from "../../components/commentSection/CommentSection";
@@ -29,7 +29,7 @@ const RecipeDetails = () => {
     isLoading,
     error,
     refetch,
-  } = useQuery(["recipe", id], () => fetchRecipeById(id), {
+  } = useQuery(["recipe", id], () => apiUtils?.fetchRecipeById(id), {
     staleTime: 5 * 60 * 1000
   });
 
@@ -37,7 +37,7 @@ const RecipeDetails = () => {
     refetch();
   }, [id, refetch]);
 
-  const deleteMutation = useMutation(() => deleteRecipe(id), {
+  const deleteMutation = useMutation(() => apiUtils?.deleteRecipe(id), {
     onSuccess: () => {
       queryClient.invalidateQueries("recipes");
       addToast("המתכון נמחק בהצלחה", "success");
@@ -49,7 +49,7 @@ const RecipeDetails = () => {
   });
 
   const rateMutation = useMutation(
-    (rating) => rateRecipe(id, rating),
+    (rating) => apiUtils?.rateRecipe(id, rating),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["recipe", id]);
@@ -62,7 +62,7 @@ const RecipeDetails = () => {
   );
 
   const toggleFavoriteMutation = useMutation(
-    () => toggleFavoriteRecipe(id),
+    () => apiUtils?.toggleFavoriteRecipe(id),
     {
       onSuccess: (data) => {
         queryClient.invalidateQueries(["recipe", id]);
