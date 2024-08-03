@@ -862,3 +862,10 @@
 {"level":"info","message":"::1 - - [28/Jul/2024:20:28:31 +0000] \"GET /api/allergens HTTP/1.1\" 304 - \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-28T20:28:31.432Z"}
 {"level":"info","message":"::1 - - [28/Jul/2024:20:28:31 +0000] \"GET /api/recipes?search=&category=&difficulty=&sortBy=createdAt&order=desc&page=1&pageSize=12 HTTP/1.1\" 304 - \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-28T20:28:31.711Z"}
 {"level":"info","message":"::1 - - [28/Jul/2024:20:28:32 +0000] \"GET /api/allergens HTTP/1.1\" 304 - \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\"","timestamp":"2024-07-28T20:28:32.040Z"}
+{"level":"error","message":"Token verification failed: jwt expired","timestamp":"2024-08-03T21:24:01.633Z"}
+{"level":"error","message":"Token verification failed: jwt expired","timestamp":"2024-08-03T21:24:01.675Z"}
+{"level":"warn","message":"No token provided for protected route","timestamp":"2024-08-03T21:24:33.115Z"}
+{"level":"warn","message":"No token provided for protected route","timestamp":"2024-08-03T21:24:34.132Z"}
+{"level":"warn","message":"No token provided for protected route","timestamp":"2024-08-03T21:24:36.158Z"}
+{"level":"warn","message":"No token provided for protected route","timestamp":"2024-08-03T21:24:50.804Z"}
+{"level":"warn","message":"No token provided for protected route","timestamp":"2024-08-03T21:24:51.840Z"}
