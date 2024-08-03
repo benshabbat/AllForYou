@@ -1,19 +1,28 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk,createSlice } from '@reduxjs/toolkit';
 import { apiUtils } from '../../utils/apiUtils';
+export const register = createAsyncThunk('auth/register', async (userData, thunkAPI) => {
+  try {
+    return await apiUtils.register(userData);
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Registration error');
+  }
+});
 
-const createAsyncThunk = (typePrefix, payloadCreator) => {
-  return createAsyncThunk(typePrefix, async (arg, thunkAPI) => {
-    try {
-      return await payloadCreator(arg);
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || `Error in ${typePrefix}`);
-    }
-  });
-};
+export const login = createAsyncThunk('auth/login', async (userData, thunkAPI) => {
+  try {
+    return await apiUtils.login(userData);
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Login error');
+  }
+});
 
-export const register = createAsyncThunk('auth/register', apiUtils.register);
-export const login = createAsyncThunk('auth/login', apiUtils.login);
-export const loadUser = createAsyncThunk('auth/loadUser', apiUtils.fetchUserProfile);
+export const loadUser = createAsyncThunk('auth/loadUser', async (_, thunkAPI) => {
+  try {
+    return await apiUtils.fetchUserProfile();
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Load user error');
+  }
+});
 
 const initialState = {
   user: null,

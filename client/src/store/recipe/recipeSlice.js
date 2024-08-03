@@ -1,24 +1,70 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { apiUtils } from '../../utils/apiUtils';
 
-const createAsyncThunk = (typePrefix, payloadCreator) => {
-  return createAsyncThunk(typePrefix, async (arg, thunkAPI) => {
-    try {
-      return await payloadCreator(arg);
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || `Error in ${typePrefix}`);
-    }
-  });
-};
+export const fetchRecipes = createAsyncThunk('recipes/fetchRecipes', async (_, thunkAPI) => {
+  try {
+    return await apiUtils.fetchRecipes();
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Error fetching recipes');
+  }
+});
 
-export const fetchRecipes = createAsyncThunk('recipes/fetchRecipes', apiUtils.fetchRecipes);
-export const fetchRecipeById = createAsyncThunk('recipes/fetchRecipeById', apiUtils.fetchRecipeById);
-export const createRecipe = createAsyncThunk('recipes/createRecipe', apiUtils.createRecipe);
-export const updateRecipe = createAsyncThunk('recipes/updateRecipe', apiUtils.updateRecipe);
-export const deleteRecipe = createAsyncThunk('recipes/deleteRecipe', apiUtils.deleteRecipe);
-export const rateRecipe = createAsyncThunk('recipes/rateRecipe', apiUtils.rateRecipe);
-export const toggleFavorite = createAsyncThunk('recipes/toggleFavorite', apiUtils.toggleFavoriteRecipe);
-export const fetchUserRecipes = createAsyncThunk('recipes/fetchUserRecipes', apiUtils.fetchUserRecipes);
+export const fetchRecipeById = createAsyncThunk('recipes/fetchRecipeById', async (id, thunkAPI) => {
+  try {
+    return await apiUtils.fetchRecipeById(id);
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Error fetching recipe');
+  }
+});
+
+export const createRecipe = createAsyncThunk('recipes/createRecipe', async (recipeData, thunkAPI) => {
+  try {
+    return await apiUtils.createRecipe(recipeData);
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Error creating recipe');
+  }
+});
+
+export const updateRecipe = createAsyncThunk('recipes/updateRecipe', async ({ id, recipeData }, thunkAPI) => {
+  try {
+    return await apiUtils.updateRecipe(id, recipeData);
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Error updating recipe');
+  }
+});
+
+export const deleteRecipe = createAsyncThunk('recipes/deleteRecipe', async (id, thunkAPI) => {
+  try {
+    await apiUtils.deleteRecipe(id);
+    return id;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Error deleting recipe');
+  }
+});
+
+export const rateRecipe = createAsyncThunk('recipes/rateRecipe', async ({ id, rating }, thunkAPI) => {
+  try {
+    return await apiUtils.rateRecipe(id, rating);
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Error rating recipe');
+  }
+});
+
+export const toggleFavorite = createAsyncThunk('recipes/toggleFavorite', async (id, thunkAPI) => {
+  try {
+    return await apiUtils.toggleFavoriteRecipe(id);
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Error toggling favorite');
+  }
+});
+
+export const fetchUserRecipes = createAsyncThunk('recipes/fetchUserRecipes', async (userId, thunkAPI) => {
+  try {
+    return await apiUtils.fetchUserRecipes(userId);
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Error fetching user recipes');
+  }
+});
 
 const initialState = {
   recipes: {
@@ -35,22 +81,6 @@ const initialState = {
   userRecipes: [],
 };
 
-const createAsyncReducers = (builder, thunk, stateProp = 'recipes') => {
-  builder
-    .addCase(thunk.pending, (state) => {
-      state[stateProp].isLoading = true;
-      state[stateProp].error = null;
-    })
-    .addCase(thunk.fulfilled, (state, action) => {
-      state[stateProp].isLoading = false;
-      state[stateProp].data = action.payload;
-    })
-    .addCase(thunk.rejected, (state, action) => {
-      state[stateProp].isLoading = false;
-      state[stateProp].error = action.payload;
-    });
-};
-
 const recipeSlice = createSlice({
   name: 'recipes',
   initialState,
@@ -61,12 +91,32 @@ const recipeSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    createAsyncReducers(builder, fetchRecipes);
-    createAsyncReducers(builder, fetchRecipeById, 'currentRecipe');
-    createAsyncReducers(builder, createRecipe);
-    createAsyncReducers(builder, updateRecipe, 'currentRecipe');
-    
     builder
+      .addCase(fetchRecipes.pending, (state) => {
+        state.recipes.isLoading = true;
+        state.recipes.error = null;
+      })
+      .addCase(fetchRecipes.fulfilled, (state, action) => {
+        state.recipes.isLoading = false;
+        state.recipes.data = action.payload;
+      })
+      .addCase(fetchRecipes.rejected, (state, action) => {
+        state.recipes.isLoading = false;
+        state.recipes.error = action.payload;
+      })
+      .addCase(fetchRecipeById.pending, (state) => {
+        state.currentRecipe.isLoading = true;
+        state.currentRecipe.error = null;
+      })
+      .addCase(fetchRecipeById.fulfilled, (state, action) => {
+        state.currentRecipe.isLoading = false;
+        state.currentRecipe.data = action.payload;
+      })
+      .addCase(fetchRecipeById.rejected, (state, action) => {
+        state.currentRecipe.isLoading = false;
+        state.currentRecipe.error = action.payload;
+      })
+      // Add similar cases for other async thunks...
       .addCase(deleteRecipe.fulfilled, (state, action) => {
         state.recipes.data = state.recipes.data.filter(recipe => recipe.id !== action.payload);
       })
