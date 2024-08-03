@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { fetchForumTopic, createForumReply, deleteForumTopic } from '../../../utils/apiUtils';
+import {apiUtils } from '../../../utils/apiUtils';
 import {Loading,useToast} from '../../common';
 import ErrorMessage from '../../errorMessage/ErrorMessage';
 import styles from './TopicThread.module.css';
@@ -12,11 +12,11 @@ const TopicThread = ({ topicId, onBack, isModerator, onDeleteTopic }) => {
 
   const { data: topic, isLoading, error } = useQuery(
     ['forumTopic', topicId],
-    () => fetchForumTopic(topicId)
+    () => apiUtils?.fetchForumTopic(topicId)
   );
 
   const createReplyMutation = useMutation(
-    (content) => createForumReply(topicId, { content }),
+    (content) => apiUtils?.createForumReply(topicId, { content }),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['forumTopic', topicId]);
@@ -30,7 +30,7 @@ const TopicThread = ({ topicId, onBack, isModerator, onDeleteTopic }) => {
   );
 
   const deleteTopicMutation = useMutation(
-    () => deleteForumTopic(topicId),
+    () => apiUtils?.deleteForumTopic(topicId),
     {
       onSuccess: () => {
         addToast('הנושא נמחק בהצלחה', 'success');

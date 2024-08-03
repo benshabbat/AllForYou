@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import Quagga from '@ericblade/quagga2';
 import PropTypes from 'prop-types';
 import { useMutation } from 'react-query';
-import { addToScanHistory } from '../../utils/apiUtils';
-import { useToast } from '../common';
+import { apiUtils } from '../../../utils/apiUtils';
+import { useToast } from '../../common';
 import styles from './BarcodeScanner.module.css';
 
 const BarcodeScanner = ({ onScan, onClose }) => {
@@ -12,7 +12,7 @@ const BarcodeScanner = ({ onScan, onClose }) => {
   const scannerRef = useRef(null);
   const { addToast } = useToast();
 
-  const addToHistoryMutation = useMutation(addToScanHistory, {
+  const addToHistoryMutation = useMutation(apiUtils?.addToScanHistory, {
     onSuccess: () => {
       addToast('סריקה נשמרה בהיסטוריה', 'success');
     },

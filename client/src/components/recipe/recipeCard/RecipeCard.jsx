@@ -5,7 +5,7 @@ import { FaHeart, FaRegHeart, FaClock, FaUtensils, FaUsers, FaEdit, FaTrash } fr
 import { useSelector } from 'react-redux';
 import { translateDifficulty } from '../../../utils/recipeUtils';
 import RatingStars from '../../ratingStars/RatingStars';
-import AllergenList from '../../allergenList/AllergenList';
+import AllergenList from '../../allergen/allergenList/AllergenList';
 import RecipeImage from '../recipeImage/RecipeImage';
 import { RecipePropTypes } from '../../../propTypes/recipePropTypes';
 import { useFavorite } from '../../../hooks/useFavorite';
