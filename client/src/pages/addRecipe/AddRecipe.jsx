@@ -4,7 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from 'react-query';
-import { createRecipe } from '../../utils/apiUtils';
+import { apiUtils } from '../../utils/apiUtils';
 import FormField from "../../components/common/formField/FormField";
 import ImageUpload from "../../components/imageUpload/ImageUpload";
 import { CATEGORIES, DIFFICULTY_LEVELS } from "../../constants";
@@ -73,7 +73,7 @@ const AddRecipe = () => {
     },
   });
 
-  const addRecipeMutation = useMutation(createRecipe, {
+  const addRecipeMutation = useMutation(apiUtils?.createRecipe, {
     onSuccess: () => {
       addToast('המתכון נוסף בהצלחה', 'success');
       navigate("/my-recipes");
