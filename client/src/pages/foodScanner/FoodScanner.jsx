@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import axios from 'axios';
 import { apiUtils } from '../../utils/apiUtils';
 import {useToast} from '../../components/common/toast/Toast';
-import BarcodeScanner from '../../components/barcodeScanner/BarcodeScanner';
+import BarcodeScanner from '../../components/product/barcodeScanner/BarcodeScanner';
 import ProductInfo from '../../components/product/productInfo/ProductInfo';
 import AddProductForm from '../../components/product/addProductForm/AddProductForm';
 import {Loading} from '../../components/common';

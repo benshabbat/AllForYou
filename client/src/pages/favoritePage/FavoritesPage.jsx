@@ -1,13 +1,13 @@
 import React from 'react';
 import { useQuery } from 'react-query';
-import { fetchFavoriteRecipes } from '../../utils/apiUtils';
+import { apiUtils } from '../../utils/apiUtils';
 import RecipeCard from '../../components/recipe/recipeCard/RecipeCard';
 import {Loading} from '../../components/common';
 import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import styles from './FavoritesPage.module.css';
 
 const FavoritesPage = () => {
-  const { data: favorites, isLoading, error } = useQuery('favoriteRecipes', fetchFavoriteRecipes);
+  const { data: favorites, isLoading, error } = useQuery('favoriteRecipes', apiUtils?.fetchFavoriteRecipes);
 
   if (isLoading) return <Loading message="טוען מתכונים מועדפים..." />;
   if (error) return <ErrorMessage message={`שגיאה בטעינת מתכונים מועדפים: ${error.message}`} />;

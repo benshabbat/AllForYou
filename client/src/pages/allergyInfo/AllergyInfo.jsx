@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useQuery } from 'react-query';
-import { fetchAllergens } from '../../utils/apiUtils';
+import { apiUtils } from '../../utils/apiUtils';
 import AllergenDetails from '../../components/allergenDetails/AllergenDetails';
 import { FaInfoCircle, FaExclamationTriangle, FaChartBar, FaClipboardList } from 'react-icons/fa';
 import {Loading} from '../../components/common';
@@ -33,7 +33,7 @@ const additionalResources = [
 
 const AllergyInfo = () => {
   const [selectedAllergen, setSelectedAllergen] = useState(null);
-  const { data: allergens, isLoading, error } = useQuery('allergens', fetchAllergens);
+  const { data: allergens, isLoading, error } = useQuery('allergens', apiUtils?.fetchAllergens);
 
   const handleAllergenSelect = useCallback((allergenId) => {
     setSelectedAllergen(allergenId);

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useMutation } from 'react-query';
-import { login } from '../../utils/apiUtils';
+import { apiUtils } from '../../utils/apiUtils';
 import {useToast} from '../../components/common/toast/Toast';
 import styles from './Auth.module.css';
 
@@ -11,7 +11,7 @@ function Login() {
   const navigate = useNavigate();
   const { addToast } = useToast();
 
-  const loginMutation = useMutation(login, {
+  const loginMutation = useMutation(apiUtils?.login, {
     onSuccess: (data) => {
       addToast('התחברת בהצלחה!', 'success');
       // כאן אתה יכול לשמור את הטוקן ומידע המשתמש ב-localStorage או ב-Redux store

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useMutation } from 'react-query';
-import { register } from '../../utils/apiUtils';
+import { apiUtils } from '../../utils/apiUtils';
 import {useToast} from '../../components/common/toast/Toast';
 import styles from './Auth.module.css';
 
@@ -17,7 +17,7 @@ function Register() {
   const navigate = useNavigate();
   const { addToast } = useToast();
 
-  const registerMutation = useMutation(register, {
+  const registerMutation = useMutation(apiUtils?.register, {
     onSuccess: () => {
       addToast('נרשמת בהצלחה', 'success');
       navigate('/login');
