@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { FaEdit, FaTrash } from 'react-icons/fa';
-import { addComment, editComment, deleteComment } from '../../utils/apiUtils';
+import { apiUtils } from '../../utils/apiUtils';
 import { useToast } from '../common';
 import styles from './CommentSection.module.css';
 
@@ -15,7 +15,7 @@ const CommentSection = ({ comments = [], recipeId }) => {
   const currentUser = useSelector(state => state.auth.user);
 
   const addCommentMutation = useMutation(
-    (commentData) => addComment(recipeId, commentData),
+    (commentData) => apiUtils?.addComment(recipeId, commentData),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['recipe', recipeId]);
@@ -29,7 +29,7 @@ const CommentSection = ({ comments = [], recipeId }) => {
   );
 
   const editCommentMutation = useMutation(
-    ({ commentId, content }) => editComment(recipeId, commentId, content),
+    ({ commentId, content }) => apiUtils?.editComment(recipeId, commentId, content),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['recipe', recipeId]);
@@ -43,7 +43,7 @@ const CommentSection = ({ comments = [], recipeId }) => {
   );
 
   const deleteCommentMutation = useMutation(
-    (commentId) => deleteComment(recipeId, commentId),
+    (commentId) => apiUtils?.deleteComment(recipeId, commentId),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['recipe', recipeId]);

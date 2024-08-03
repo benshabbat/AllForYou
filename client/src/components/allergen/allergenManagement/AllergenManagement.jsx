@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { fetchAllergens, updateUserAllergenPreferences } from '../../utils/apiUtils';
-import AllergenIcon from './allergenIcon/AllergenIcon';
-import { useToast } from '../../hooks/useToast';
+import { apiUtils } from '../../../utils/apiUtils';
+import AllergenIcon from '../allergenIcon/AllergenIcon';
+import { useToast } from '../../../hooks/useToast';
 import styles from './AllergenManagement.module.css';
 
 const AllergenManagement = () => {
@@ -13,10 +13,10 @@ const AllergenManagement = () => {
   const [selectedAllergens, setSelectedAllergens] = useState(user?.allergenPreferences || []);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const { data: allergens = [], isLoading, error } = useQuery('allergens', fetchAllergens);
+  const { data: allergens = [], isLoading, error } = useQuery('allergens', apiUtils?.fetchAllergens);
 
   const updateAllergensMutation = useMutation(
-    (newAllergens) => updateUserAllergenPreferences(newAllergens),
+    (newAllergens) => apiUtils?.updateUserAllergenPreferences(newAllergens),
     {
       onSuccess: () => {
         queryClient.invalidateQueries('user');

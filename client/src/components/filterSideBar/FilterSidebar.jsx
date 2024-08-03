@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import PropTypes from 'prop-types';
-import { fetchAllergens } from '../../utils/apiUtils';
+import { apiUtils } from '../../utils/apiUtils';
 import { CATEGORIES, DIFFICULTY_LEVELS } from '../../constants';
 import styles from './FilterSidebar.module.css';
 
@@ -19,7 +19,7 @@ const FilterSidebar = ({ initialFilters = {}, onFilterChange }) => {
   });
   const [searchAllergen, setSearchAllergen] = useState('');
 
-  const { data: allergens = [], isLoading, error } = useQuery('allergens', fetchAllergens);
+  const { data: allergens = [], isLoading, error } = useQuery('allergens', apiUtils?.fetchAllergens);
   console.log('Allergens:', allergens);
   useEffect(() => {
     setFilters(prevFilters => ({

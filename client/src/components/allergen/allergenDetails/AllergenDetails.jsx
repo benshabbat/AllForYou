@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from 'react-query';
-import api from '../../services/api';
+import api from '../../../services/api';
 import { FaExclamationCircle, FaBan, FaCheckCircle } from 'react-icons/fa';
 import styles from './AllergenDetails.module.css';
 
