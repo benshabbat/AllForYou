@@ -1,12 +1,12 @@
 import React from 'react';
 import { useQuery } from 'react-query';
 import { FaUtensils, FaHeart, FaComment } from 'react-icons/fa';
-import api from '../../services/api';
+import { apiUtils } from '../../../utils/apiUtils';
 import styles from './ActivityTimeline.module.css';
 
 const ActivityTimeline = ({ userId }) => {
   const { data: activities, isLoading, error } = useQuery(['userActivities', userId], () =>
-    api.get(`/users/${userId}/activities`).then(res => res.data)
+    apiUtils?.activityTimeline(userId)
   );
 
   if (isLoading) return <div>טוען פעילויות...</div>;

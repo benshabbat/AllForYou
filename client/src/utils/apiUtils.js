@@ -49,6 +49,8 @@ const userApi = {
   login: (userData) => apiCall('post', `${API_PATHS.USERS}/login`, userData),
   addToScanHistory: (productCode, productName) => apiCall('post', `${API_PATHS.USERS}/scan-history`, { productCode, productName }),
   fetchScanHistory: () => apiCall('get', `${API_PATHS.USERS}/scan-history`),
+  activityTimeline: (userId) => apiCall('get', `${API_PATHS.USERS}/${userId}/activities`),
+  
 };
 
 // Allergen related functions
