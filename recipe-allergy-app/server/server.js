@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import userRoutes from './routes/userRoutes.js';
 
 dotenv.config();
 
@@ -15,6 +16,9 @@ mongoose.connect(process.env.MONGO_URI, {
 })
 .then(() => console.log('MongoDB Connected'))
 .catch(err => console.log(err));
+
+// שימוש בנתיבי משתמש
+app.use('/api/users', userRoutes);
 
 // נתיב בדיקה
 app.get('/', (req, res) => {
