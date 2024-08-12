@@ -45,7 +45,7 @@ export const login = async (req, res) => {
     const user = await User.findOne({ username });
 
     if (user && (await user.matchPassword(password))) {
-      res.status(201).json({
+      res.json({
         _id: user._id,
         username: user.username,
         fitsName:user.fitsName,
@@ -60,3 +60,17 @@ export const login = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+export const getUser = async(req, res) => {
+  try {
+    const user = await User.findById(req.user.id)
+    if (!user) {
+      return res.status(404).json({ message: 'משתמש לא נמצא' });
+    }
+    res.json(user);
+  } catch (error) {
+    console.error('Get user error:', error);
+    res.status(500).json({ message: 'שגיאה בקבלת פרטי המשתמש' });
+  }
+}
