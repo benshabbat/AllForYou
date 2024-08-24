@@ -23,7 +23,7 @@ The Allergy-Friendly Recipe App is an online platform that allows users to find,
 ### Prerequisites
 - Node.js (version 14 or higher)
 - MongoDB
-
+<!-- 
 ### Installation Steps
 
 1. Clone the repository:
@@ -56,7 +56,7 @@ The Allergy-Friendly Recipe App is an online platform that allows users to find,
    cd client && npm start
    ```
 
-6. Open your browser and navigate to `http://localhost:3000`
+6. Open your browser and navigate to `http://localhost:3000` -->
 
 ## Usage
 - Register or log in to your account
@@ -65,18 +65,18 @@ The Allergy-Friendly Recipe App is an online platform that allows users to find,
 - Rate and review recipes
 - Manage your personal profile and favorite recipes
 
-## Contributing
+<!-- ## Contributing
 We appreciate all contributions to the project. If you'd like to contribute:
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+5. Open a Pull Request -->
 
 ## License
 This project is distributed under the MIT License. See `LICENSE` file for more information.
 
-## Contact
+<!-- ## Contact
 Developer Name - [your.email@example.com](mailto:your.email@example.com)
 
-Project Link: [https://github.com/your-username/allergy-friendly-recipes](https://github.com/your-username/allergy-friendly-recipes)
+Project Link: [https://github.com/your-username/allergy-friendly-recipes](https://github.com/your-username/allergy-friendly-recipes) -->
