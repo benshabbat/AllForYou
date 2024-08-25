@@ -7,8 +7,13 @@ export const login = async (email, password) => {
   return response.data;
 };
 
-export const register = async (username, email, password) => {
-  const response = await axios.post(`${API_URL}/users/register`, { username, email, password });
+export const register = async (username, email, password, allergies) => {
+  const response = await axios.post(`${API_URL}/users/register`, { 
+    username, 
+    email, 
+    password,
+    allergies
+  });
   return response.data;
 };
 

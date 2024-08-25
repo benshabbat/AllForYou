@@ -10,6 +10,7 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [allergies, setAllergies] = useState('');
   const [error, setError] = useState(null);
 
   const dispatch = useDispatch();
@@ -30,7 +31,7 @@ const Register = () => {
       return;
     }
     try {
-      const userData = await register(username, email, password);
+      const userData = await register(username, email, password, allergies.split(',').map(a => a.trim()));
       dispatch(setCredentials(userData));
     } catch (err) {
       setError(err.response?.data?.message || 'An error occurred');
@@ -80,6 +81,15 @@ const Register = () => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
+          />
+        </div>
+        <div>
+          <label htmlFor="allergies">Allergies (comma separated):</label>
+          <input
+            type="text"
+            id="allergies"
+            value={allergies}
+            onChange={(e) => setAllergies(e.target.value)}
           />
         </div>
         <button type="submit">Register</button>
