@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 import AddRecipe from './pages/AddRecipe';
+import RecipeDetails from './pages/RecipeDetails';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/add-recipe" element={<AddRecipe />} />
+              <Route path="/recipe/:id" element={<RecipeDetails />} />
             </Routes>
           </main>
         </div>
