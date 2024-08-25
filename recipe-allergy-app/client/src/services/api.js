@@ -24,3 +24,9 @@ export const updateUserProfile = async (userData) => {
     const response = await axios.put(`${API_URL}/users/profile`, userData, config);
     return response.data;
   };
+
+
+  export const getRecipes = async () => {
+    const response = await axios.get(`${API_URL}/recipes`);
+    return response.data;
+  };
