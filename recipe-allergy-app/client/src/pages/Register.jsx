@@ -6,7 +6,8 @@ import { register } from '../services/api';
 import ErrorMessage from '../components/ErrorMessage';
 
 const Register = () => {
-  const [username, setUsername] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -31,7 +32,7 @@ const Register = () => {
       return;
     }
     try {
-      const userData = await register(username, email, password, allergies.split(',').map(a => a.trim()));
+      const userData = await register(firstName, lastName,email, password, allergies.split(',').map(a => a.trim()));
       dispatch(setCredentials(userData));
     } catch (err) {
       setError(err.response?.data?.message || 'An error occurred');
@@ -44,12 +45,22 @@ const Register = () => {
       {error && <ErrorMessage message={error} />}
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="username">Username:</label>
+          <label htmlFor="firstName">First Name:</label>
           <input
             type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            id="firstName"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="lastName">Last Name:</label>
+          <input
+            type="text"
+            id="lastName"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
             required
           />
         </div>

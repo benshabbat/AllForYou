@@ -7,9 +7,10 @@ export const login = async (email, password) => {
   return response.data;
 };
 
-export const register = async (username, email, password, allergies) => {
+export const register = async (firstName,lastName, email, password, allergies) => {
   const response = await axios.post(`${API_URL}/users/register`, { 
-    username, 
+    firstName, 
+    lastName, 
     email, 
     password,
     allergies
