@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setCredentials } from '../redux/slices/userSlice';
+import { register } from '../services/api';
+import ErrorMessage from '../components/ErrorMessage';
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -28,18 +30,17 @@ const Register = () => {
       return;
     }
     try {
-      // כאן נוסיף בהמשך קריאה לשרת
-      const userData = { email, username }; // זה זמני, נעדכן בהמשך
+      const userData = await register(username, email, password);
       dispatch(setCredentials(userData));
     } catch (err) {
-      setError(err.message || 'An error occurred');
+      setError(err.response?.data?.message || 'An error occurred');
     }
   };
 
   return (
     <div>
       <h1>Register</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <ErrorMessage message={error} />}
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="username">Username:</label>

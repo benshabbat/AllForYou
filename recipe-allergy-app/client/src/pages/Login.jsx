@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setCredentials } from '../redux/slices/userSlice';
+import { login } from '../services/api';
+import ErrorMessage from '../components/ErrorMessage';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -22,18 +24,17 @@ const Login = () => {
     e.preventDefault();
     setError(null);
     try {
-      // כאן נוסיף בהמשך קריאה לשרת
-      const userData = { email, username: 'TestUser' }; // זה זמני, נעדכן בהמשך
+      const userData = await login(email, password);
       dispatch(setCredentials(userData));
     } catch (err) {
-      setError(err.message || 'An error occurred');
+      setError(err.response?.data?.message || 'An error occurred');
     }
   };
 
   return (
     <div>
       <h1>Login</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <ErrorMessage message={error} />}
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="email">Email:</label>
