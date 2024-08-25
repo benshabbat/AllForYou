@@ -30,3 +30,8 @@ export const updateUserProfile = async (userData) => {
     const response = await axios.get(`${API_URL}/recipes`);
     return response.data;
   };
+
+  export const getRecipeById = async (id) => {
+    const response = await axios.get(`${API_URL}/recipes/${id}`);
+    return response.data;
+  };ש
