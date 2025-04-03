@@ -61,7 +61,7 @@ const AddRecipe = () => {
     defaultValues: {
       name: "",
       description: "",
-      ingredients: [""],
+      ingredients: [],
       instructions: "",
       preparationTime: "",
       cookingTime: "",
@@ -177,51 +177,51 @@ const AddRecipe = () => {
     </div>
   ), [ingredients, control, errors.ingredients, handleAddIngredient, handleRemoveIngredient]);
 
-  const renderAllergenSelection = useCallback(() => (
-    <div className={styles.allergensSection}>
-      <label>אלרגנים:</label>
-      <div className={styles.allergenGrid}>
-        {allergens.map((allergen) => (
-          <div key={allergen._id} className={styles.allergenItem}>
-            <Controller
-              name="allergens"
-              control={control}
-              render={({ field }) => (
-                <label>
-                  <input
-                    type="checkbox"
-                    onChange={(e) => {
-                      const updatedAllergens = e.target.checked
-                        ? [...field.value, allergen._id]
-                        : field.value.filter((id) => id !== allergen._id);
-                      field.onChange(updatedAllergens);
-                    }}
-                    checked={field.value.includes(allergen._id)}
-                  />
-                  {allergen.icon} {allergen.hebrewName}
-                </label>
-              )}
-            />
-            <div className={styles.allergenAlternatives}>
-              <strong>תחליפים:</strong>
-              <ul>
-                {allergen.alternatives.map((alt, index) => (
-                  <li key={index}>
-                    {alt.name} - {alt.description}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        ))}
-      </div>
-      {errors.allergens && (
-        <span className={styles.error}>{errors.allergens.message}</span>
-      )}
-    </div>
-  ), [allergens, control, errors.allergens]);
+  // const renderAllergenSelection = useCallback(() => (
+  //   <div className={styles.allergensSection}>
+  //     <label>אלרגנים:</label>
+  //     <div className={styles.allergenGrid}>
+  //       {allergens.map((allergen) => (
+  //         <div key={allergen._id} className={styles.allergenItem}>
+  //           <Controller
+  //             name="allergens"
+  //             control={control}
+  //             render={({ field }) => (
+  //               <label>
+  //                 <input
+  //                   type="checkbox"
+  //                   onChange={(e) => {
+  //                     const updatedAllergens = e.target.checked
+  //                       ? [...field.value, allergen._id]
+  //                       : field.value.filter((id) => id !== allergen._id);
+  //                     field.onChange(updatedAllergens);
+  //                   }}
+  //                   checked={field.value.includes(allergen._id)}
+  //                 />
+  //                 {allergen.icon} {allergen.hebrewName}
+  //               </label>
+  //             )}
+  //           />
+  //           <div className={styles.allergenAlternatives}>
+  //             <strong>תחליפים:</strong>
+  //             <ul>
+  //               {allergen.alternatives.map((alt, index) => (
+  //                 <li key={index}>
+  //                   {alt.name} - {alt.description}
+  //                 </li>
+  //               ))}
+  //             </ul>
+  //           </div>
+  //         </div>
+  //       ))}
+  //     </div>
+  //     {errors.allergens && (
+  //       <span className={styles.error}>{errors.allergens.message}</span>
+  //     )}
+  //   </div>
+  // ), [allergens, control, errors.allergens]);
 
-  if (allergensLoading) return <div>טוען אלרגנים...</div>;
+  // if (allergensLoading) return <div>טוען אלרגנים...</div>;
 
   return (
     <div className={styles.addRecipeContainer}>
@@ -295,7 +295,7 @@ const AddRecipe = () => {
             }))}
           />
         </div>
-        {renderAllergenSelection()}
+        {/* {renderAllergenSelection()} */}
         <ImageUpload
           onChange={handleImageChange}
           preview={imagePreview}

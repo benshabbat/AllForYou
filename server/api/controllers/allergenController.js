@@ -1,9 +1,17 @@
 import Allergen from '../../models/Allergen.js';
 import { validateAllergen } from '../../utils/validators.js';
+import { ERROR_MESSAGES } from '../../constants/errorMessages.js';
 
+// Pagination helper
+const paginate = (query, page, limit) => {
+  const skip = (page - 1) * limit;
+  return query.skip(skip).limit(parseInt(limit));
+};
+
+// Get all allergens with pagination
 export const getAllergens = async (req, res) => {
   try {
-    const { name, severity } = req.query;
+    const { name, severity, page = 1, limit = 10 } = req.query;
     let query = {};
 
     if (name) {
@@ -18,19 +26,20 @@ export const getAllergens = async (req, res) => {
       query.severity = severity;
     }
 
-    const allergens = await Allergen.find(query);
+    const allergens = await paginate(Allergen.find(query), page, limit);
     res.json(allergens);
   } catch (error) {
     console.error('Error fetching allergens:', error);
-    res.status(500).json({ message: 'שגיאה בטעינת האלרגנים', error: error.message });
+    res.status(500).json({ message: ERROR_MESSAGES.FETCH_ERROR, error: error.message });
   }
 };
 
+// Get allergen by ID
 export const getAllergenById = async (req, res) => {
   try {
     const allergen = await Allergen.findById(req.params.id);
     if (!allergen) {
-      return res.status(404).json({ message: 'Allergen not found' });
+      return res.status(404).json({ message: ERROR_MESSAGES.ALLERGEN_NOT_FOUND });
     }
     res.json(allergen);
   } catch (error) {
@@ -38,6 +47,7 @@ export const getAllergenById = async (req, res) => {
   }
 };
 
+// Create a new allergen
 export const createAllergen = async (req, res) => {
   const { error } = validateAllergen(req.body);
   if (error) {
@@ -53,6 +63,7 @@ export const createAllergen = async (req, res) => {
   }
 };
 
+// Update an allergen
 export const updateAllergen = async (req, res) => {
   const { error } = validateAllergen(req.body);
   if (error) {
@@ -62,7 +73,7 @@ export const updateAllergen = async (req, res) => {
   try {
     const updatedAllergen = await Allergen.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!updatedAllergen) {
-      return res.status(404).json({ message: 'Allergen not found' });
+      return res.status(404).json({ message: ERROR_MESSAGES.ALLERGEN_NOT_FOUND });
     }
     res.json(updatedAllergen);
   } catch (error) {
@@ -70,11 +81,12 @@ export const updateAllergen = async (req, res) => {
   }
 };
 
+// Delete an allergen
 export const deleteAllergen = async (req, res) => {
   try {
     const allergen = await Allergen.findByIdAndDelete(req.params.id);
     if (!allergen) {
-      return res.status(404).json({ message: 'Allergen not found' });
+      return res.status(404).json({ message: ERROR_MESSAGES.ALLERGEN_NOT_FOUND });
     }
     res.json({ message: 'Allergen deleted successfully' });
   } catch (error) {
@@ -82,9 +94,10 @@ export const deleteAllergen = async (req, res) => {
   }
 };
 
+// Search allergens with filters
 export const searchAllergens = async (req, res) => {
   try {
-    const { query, severity, symptom } = req.query;
+    const { query, severity, symptom, page = 1, limit = 10 } = req.query;
     let searchQuery = {};
 
     if (query) {
@@ -103,8 +116,11 @@ export const searchAllergens = async (req, res) => {
       searchQuery.symptoms = { $regex: symptom, $options: 'i' };
     }
 
-    const allergens = await Allergen.find(searchQuery)
-      .select('name hebrewName icon description symptoms avoidList alternatives severity');
+    const allergens = await paginate(
+      Allergen.find(searchQuery).select('name hebrewName icon description symptoms avoidList alternatives severity'),
+      page,
+      limit
+    );
 
     res.json(allergens);
   } catch (error) {
@@ -112,6 +128,7 @@ export const searchAllergens = async (req, res) => {
   }
 };
 
+// Get allergens by symptom
 export const getAllergensBySymptom = async (req, res) => {
   try {
     const { symptom } = req.params;
@@ -124,11 +141,12 @@ export const getAllergensBySymptom = async (req, res) => {
   }
 };
 
+// Get allergens by IDs
 export const getAllergensByIds = async (req, res) => {
   try {
     const { ids } = req.query;
     if (!ids) {
-      return res.status(400).json({ message: 'יש לספק רשימת מזהים של אלרגנים' });
+      return res.status(400).json({ message: ERROR_MESSAGES.INVALID_IDS });
     }
 
     const allergenIds = ids.split(',');
@@ -137,6 +155,6 @@ export const getAllergensByIds = async (req, res) => {
     res.json(allergens);
   } catch (error) {
     console.error('Error fetching allergens by IDs:', error);
-    res.status(500).json({ message: 'שגיאה בטעינת האלרגנים', error: error.message });
+    res.status(500).json({ message: ERROR_MESSAGES.FETCH_ERROR, error: error.message });
   }
 };
