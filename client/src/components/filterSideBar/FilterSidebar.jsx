@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { apiUtils } from '../../utils/apiUtils';
 import { CATEGORIES, DIFFICULTY_LEVELS } from '../../constants';
 import styles from './FilterSidebar.module.css';
@@ -20,14 +21,16 @@ const FilterSidebar = ({ initialFilters = {}, onFilterChange }) => {
   const [searchAllergen, setSearchAllergen] = useState('');
 
   const { data: allergens = [], isLoading, error } = useQuery('allergens', apiUtils?.fetchAllergens);
-  console.log('Allergens:', allergens);
+
+  // Sync filters with initialFilters when they change
   useEffect(() => {
     setFilters(prevFilters => ({
       ...prevFilters,
       ...initialFilters
     }));
-  }, []);
+  }, [initialFilters]);
 
+  // Handlers
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
     setFilters(prev => ({ ...prev, [name]: value }));
@@ -47,19 +50,17 @@ const FilterSidebar = ({ initialFilters = {}, onFilterChange }) => {
   }, [filters, onFilterChange]);
 
   const handleResetFilters = useCallback(() => {
-    setFilters({
+    const resetFilters = {
       category: '',
       difficulty: '',
       allergens: []
-    });
+    };
+    setFilters(resetFilters);
     setSearchAllergen('');
-    onFilterChange({
-      category: '',
-      difficulty: '',
-      allergens: []
-    });
+    onFilterChange(resetFilters);
   }, [onFilterChange]);
 
+  // Memoized values
   const filteredAllergens = useMemo(() => 
     Array.isArray(allergens) ? allergens.filter(allergen => 
       allergen.hebrewName.toLowerCase().includes(searchAllergen.toLowerCase()) ||
@@ -68,7 +69,7 @@ const FilterSidebar = ({ initialFilters = {}, onFilterChange }) => {
     [allergens, searchAllergen]
   );
 
-  const renderSelect = useCallback((name, label, options) => (
+  const renderSelect = useMemo(() => (name, label, options) => (
     <div className={styles.filterSection}>
       <label htmlFor={name}>{label}</label>
       <select 
@@ -86,12 +87,14 @@ const FilterSidebar = ({ initialFilters = {}, onFilterChange }) => {
     </div>
   ), [filters, handleInputChange]);
 
-  const renderAllergenList = useCallback(() => (
+  const renderAllergenList = useMemo(() => () => (
     <div className={styles.allergenList}>
       {filteredAllergens?.map(allergen => (
         <div 
           key={allergen._id} 
-          className={`${styles.allergenItem} ${filters.allergens.includes(allergen._id) ? styles.selected : ''}`}
+          className={classNames(styles.allergenItem, {
+            [styles.selected]: filters.allergens.includes(allergen._id)
+          })}
           onClick={() => handleAllergenChange(allergen._id)}
         >
           <span className={styles.allergenIcon}>{allergen.icon}</span>
@@ -101,6 +104,7 @@ const FilterSidebar = ({ initialFilters = {}, onFilterChange }) => {
     </div>
   ), [filteredAllergens, filters.allergens, handleAllergenChange]);
 
+  // Render loading, error, or content
   if (isLoading) return <div className={styles.loading}>טוען אלרגנים...</div>;
   if (error) return <div className={styles.error}>שגיאה בטעינת אלרגנים: {error.message}</div>;
 
