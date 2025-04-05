@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserRecipes, deleteRecipe } from '../../store/recipe/recipeSlice';
 import RecipeCard from '../../components/recipe/recipeCard/RecipeCard';
 import ErrorMessage from '../../components/errorMessage/ErrorMessage';
-import {Modal,Loading} from '../../components/common';
-import {useToast} from '../../components/common/toast/Toast';
+import { Modal, Loading } from '../../components/common';
+import { useToast } from '../../components/common/toast/Toast';
 import { FaPlus, FaSort, FaFilter } from 'react-icons/fa';
 import styles from './MyRecipes.module.css';
 
@@ -13,7 +13,7 @@ const MyRecipes = () => {
   const dispatch = useDispatch();
   const { addToast } = useToast();
   const { user } = useSelector((state) => state.auth);
-  const { userRecipes, isLoading, error } = useSelector((state) => state.recipes);
+  const { userRecipes = [], isLoading, error } = useSelector((state) => state.recipes); // Default to empty array
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState('desc');
   const [filterCategory, setFilterCategory] = useState('');
@@ -60,16 +60,23 @@ const MyRecipes = () => {
     }
   }, [dispatch, recipeToDelete, addToast, closeDeleteModal]);
 
-  const sortedAndFilteredRecipes = userRecipes
-    .filter(recipe => !filterCategory || recipe.category === filterCategory)
-    .sort((a, b) => {
-      if (sortBy === 'createdAt') {
-        return sortOrder === 'desc' ? new Date(b.createdAt) - new Date(a.createdAt) : new Date(a.createdAt) - new Date(b.createdAt);
-      } else if (sortBy === 'name') {
-        return sortOrder === 'desc' ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name);
-      }
-      return 0;
-    });
+  // Memoize sorted and filtered recipes
+  const sortedAndFilteredRecipes = useMemo(() => {
+    return userRecipes
+      .filter((recipe) => !filterCategory || recipe.category === filterCategory)
+      .sort((a, b) => {
+        if (sortBy === 'createdAt') {
+          return sortOrder === 'desc'
+            ? new Date(b.createdAt) - new Date(a.createdAt)
+            : new Date(a.createdAt) - new Date(b.createdAt);
+        } else if (sortBy === 'name') {
+          return sortOrder === 'desc'
+            ? b.name.localeCompare(a.name)
+            : a.name.localeCompare(b.name);
+        }
+        return 0;
+      });
+  }, [userRecipes, filterCategory, sortBy, sortOrder]);
 
   if (isLoading) return <Loading message="טוען את המתכונים שלך..." />;
   if (error) return <ErrorMessage message={error} />;
@@ -80,10 +87,12 @@ const MyRecipes = () => {
       <Link to="/add-recipe" className={styles.addRecipeButton}>
         <FaPlus /> הוסף מתכון חדש
       </Link>
-      
+
       <div className={styles.controls}>
         <div className={styles.sortContainer}>
-          <label htmlFor="sort" className={styles.sortLabel}><FaSort /> מיין לפי: </label>
+          <label htmlFor="sort" className={styles.sortLabel}>
+            <FaSort /> מיין לפי:
+          </label>
           <select
             id="sort"
             value={`${sortBy}-${sortOrder}`}
@@ -96,9 +105,11 @@ const MyRecipes = () => {
             <option value="name-desc">שם (ת-א)</option>
           </select>
         </div>
-        
+
         <div className={styles.filterContainer}>
-          <label htmlFor="filter" className={styles.filterLabel}><FaFilter /> סנן לפי קטגוריה: </label>
+          <label htmlFor="filter" className={styles.filterLabel}>
+            <FaFilter /> סנן לפי קטגוריה:
+          </label>
           <select
             id="filter"
             value={filterCategory}
@@ -116,10 +127,10 @@ const MyRecipes = () => {
 
       {sortedAndFilteredRecipes.length > 0 ? (
         <div className={styles.recipeGrid}>
-          {sortedAndFilteredRecipes.map(recipe => (
-            <RecipeCard 
-              key={recipe._id} 
-              recipe={recipe} 
+          {sortedAndFilteredRecipes.map((recipe) => (
+            <RecipeCard
+              key={recipe._id}
+              recipe={recipe}
               showActions={true}
               onDelete={() => openDeleteModal(recipe)}
             />
@@ -129,7 +140,7 @@ const MyRecipes = () => {
         <p className={styles.noRecipes}>
           {filterCategory
             ? `אין מתכונים בקטגוריה "${filterCategory}".`
-            : 'עדיין לא הוספת מתכונים. '} 
+            : 'עדיין לא הוספת מתכונים. '}
           <Link to="/add-recipe">הוסף את המתכון הראשון שלך!</Link>
         </p>
       )}
