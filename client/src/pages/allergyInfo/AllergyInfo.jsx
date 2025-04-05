@@ -65,7 +65,7 @@ const AllergyInfo = () => {
     <div className={styles.allergenList}>
       <h2>רשימת אלרגנים נפוצים</h2>
       <ul>
-        {allergens?.map(allergen => (
+        {Array.isArray(allergens) && allergens.map(allergen => (
           <li 
             key={allergen._id} 
             className={selectedAllergen === allergen._id ? styles.selected : ''}
