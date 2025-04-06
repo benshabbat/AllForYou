@@ -1,14 +1,13 @@
 import React, { useState, useCallback } from 'react';
 import { useAllergens } from '../../hooks/useAllergens';
-import GeneralInfo from '../../components/GeneralInfo';
-import WarningBox from '../../components/WarningBox';
-import AllergenList from '../../components/AllergenList';
 import AllergenDetails from '../../components/allergen/allergenDetails/AllergenDetails';
-import AdditionalResources from '../../components/AdditionalResources';
 import { generalInfo, additionalResources } from '../../constants/allergyInfo';
 import { Loading } from '../../components/common';
 import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import styles from './AllergyInfo.module.css';
+import AllergenList from '../../components/allergen/allergenList/AllergenList';
+import AdditionalResources from '../../components/additionalResources/AdditionalResources';
+import GeneralInfo from '../../components/GeneralInfo';
 
 const AllergyInfo = () => {
   const [selectedAllergen, setSelectedAllergen] = useState(null);
@@ -25,12 +24,11 @@ const AllergyInfo = () => {
     <div className={styles.allergyInfoContainer}>
       <h1 className={styles.mainTitle}>מידע על אלרגיות מזון</h1>
       <GeneralInfo info={generalInfo} />
-      <WarningBox />
       <div className={styles.content}>
-        <AllergenList 
-          allergens={allergens} 
-          selectedAllergen={selectedAllergen} 
-          onSelect={handleAllergenSelect} 
+        <AllergenList
+          allergens={allergens}
+          selectedAllergen={selectedAllergen}
+          onSelect={handleAllergenSelect}
         />
         <AllergenDetails allergenId={selectedAllergen} />
       </div>

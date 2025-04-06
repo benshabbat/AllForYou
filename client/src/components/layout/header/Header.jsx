@@ -1,147 +1,16 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import React from "react";
+import { Link, NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../../../store/auth/authSlice";
-import { FaUtensils, FaUser, FaSignOutAlt, FaBars } from "react-icons/fa";
-import { CSSTransition } from "react-transition-group";
+import { FaUtensils, FaBars } from "react-icons/fa";
+import { useHeaderState } from "../../../hooks/useHeaderState";
+import UserDropdown from "./UserDropdown";
+import MobileMenu from "./MobileMenu";
+import NavItems from "./NavItems";
 import styles from "./Header.module.css";
 
-const NAV_ITEMS = [
-  { path: "/", label: "דף הבית" },
-  { path: "/recipes", label: "מתכונים" },
-  { path: "/allergy-info", label: "מידע על אלרגיות" },
-  { path: "/food-scanner", label: "סורק ברקודים" },
-  { path: "/forum", label: "פורום" },
-];
-
-const USER_NAV_ITEMS = [
-  { path: "/my-recipes", label: "המתכונים שלי" },
-];
-
-const USER_DROPDOWN_ITEMS = [
-  { path: "/profile", label: "פרופיל" },
-  { path: "/settings", label: "הגדרות" },
-];
-
-/**
- * Header component for the application.
- * Handles navigation, user authentication state, and responsive design.
- */
 const Header = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const handleLogout = useCallback(() => {
-    dispatch(logout());
-    navigate("/");
-    setIsMenuOpen(false);
-  }, [dispatch, navigate]);
-
-  const renderNavItems = useCallback((items) => items.map((item) => (
-    <NavLink
-      key={item.path}
-      to={item.path}
-      className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}
-      end
-    >
-      {item.label}
-    </NavLink>
-  )), []);
-
-  const renderUserDropdown = useCallback(() => (
-    <div className={styles.userMenu}>
-      <button 
-        className={styles.userButton} 
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
-        aria-haspopup="true"
-        aria-expanded={isMenuOpen}
-      >
-        <FaUser /> {user.username}
-      </button>
-      <CSSTransition
-        in={isMenuOpen}
-        timeout={300}
-        classNames={{
-          enter: styles.dropdownEnter,
-          enterActive: styles.dropdownEnterActive,
-          exit: styles.dropdownExit,
-          exitActive: styles.dropdownExitActive,
-        }}
-        unmountOnExit
-      >
-        <div className={styles.userDropdown} role="menu">
-          {USER_DROPDOWN_ITEMS.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={styles.dropdownLink}
-              onClick={() => setIsMenuOpen(false)}
-              role="menuitem"
-            >
-              {item.label}
-            </Link>
-          ))}
-          <button onClick={handleLogout} className={styles.logoutButton} role="menuitem">
-            <FaSignOutAlt /> התנתק
-          </button>
-        </div>
-      </CSSTransition>
-    </div>
-  ), [user, isMenuOpen, handleLogout]);
-
-  const renderMobileMenu = useCallback(() => (
-    <CSSTransition
-      in={isMenuOpen}
-      timeout={300}
-      classNames={{
-        enter: styles.mobileMenuEnter,
-        enterActive: styles.mobileMenuEnterActive,
-        exit: styles.mobileMenuExit,
-        exitActive: styles.mobileMenuExitActive,
-      }}
-      unmountOnExit
-    >
-      <div className={styles.mobileMenu} role="menu">
-        {renderNavItems([...NAV_ITEMS, ...(user ? USER_NAV_ITEMS : [])])}
-        {user ? (
-          <>
-            {USER_DROPDOWN_ITEMS.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={styles.mobileLink}
-                onClick={() => setIsMenuOpen(false)}
-                role="menuitem"
-              >
-                {item.label}
-              </Link>
-            ))}
-            <button onClick={handleLogout} className={styles.mobileLogoutButton} role="menuitem">
-              <FaSignOutAlt /> התנתק
-            </button>
-          </>
-        ) : (
-          <>
-            <Link to="/login" className={styles.mobileLink} onClick={() => setIsMenuOpen(false)} role="menuitem">
-              התחבר
-            </Link>
-            <Link to="/register" className={styles.mobileLink} onClick={() => setIsMenuOpen(false)} role="menuitem">
-              הרשם
-            </Link>
-          </>
-        )}
-      </div>
-    </CSSTransition>
-  ), [isMenuOpen, user, renderNavItems, handleLogout]);
+  const { isMenuOpen, isScrolled, toggleMenu } = useHeaderState();
 
   return (
     <header className={`${styles.header} ${isScrolled ? styles.scrolled : ""}`}>
@@ -152,13 +21,12 @@ const Header = () => {
         </Link>
 
         <nav className={styles.nav} role="navigation">
-          {renderNavItems(NAV_ITEMS)}
-          {user && renderNavItems(USER_NAV_ITEMS)}
+          <NavItems />
         </nav>
 
         <div className={styles.actions}>
           {user ? (
-            renderUserDropdown()
+            <UserDropdown />
           ) : (
             <>
               <Link to="/login" className={styles.authLink}>התחבר</Link>
@@ -169,7 +37,7 @@ const Header = () => {
 
         <button
           className={styles.mobileMenuToggle}
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          onClick={toggleMenu}
           aria-label="תפריט"
           aria-expanded={isMenuOpen}
         >
@@ -177,7 +45,7 @@ const Header = () => {
         </button>
       </div>
 
-      {renderMobileMenu()}
+      <MobileMenu isMenuOpen={isMenuOpen} />
     </header>
   );
 };
