@@ -122,7 +122,7 @@ const AddRecipe = () => {
     });
 
     addRecipeMutation.mutate(formData);
-  }, [addRecipeMutation, navigate]);
+  }, [addRecipeMutation]);
 
   const handleAddIngredient = useCallback(() => {
     setValue("ingredients", [...ingredients, ""]);

@@ -1,17 +1,26 @@
 import express from 'express';
-import { recipeController } from '../controllers/recipeController.js';
-import { protect, optionalAuth } from '../middlewares/authMiddleware.js';
-import { upload } from '../middlewares/uploadMiddleware.js';
+import {
+  getAllRecipes,
+  getRecipe,
+  createRecipe,
+  updateRecipe,
+  deleteRecipe,
+  rateRecipe,
+  toggleFavorite,
+  getSearchSuggestions,
+  getPopularRecipes,
+} from '../controllers/recipeController.js';
 
 const router = express.Router();
 
-router.get('/', optionalAuth, recipeController.getAllRecipes.bind(recipeController));
-router.get('/suggestions', recipeController.getSearchSuggestions.bind(recipeController));
-router.get('/:id', optionalAuth, recipeController.getRecipe.bind(recipeController));
-router.post('/', protect, upload.single('image'), recipeController.createRecipe.bind(recipeController));
-router.put('/:id', protect, upload.single('image'), recipeController.updateRecipe.bind(recipeController));
-router.delete('/:id', protect, recipeController.deleteRecipe.bind(recipeController));
-router.post('/:id/rate', protect, recipeController.rateRecipe.bind(recipeController));
-router.post('/:id/favorite', protect, recipeController.toggleFavorite.bind(recipeController));
-router.get('/popular', recipeController.getPopularRecipes.bind(recipeController));
+router.get('/', getAllRecipes);
+router.get('/suggestions', getSearchSuggestions);
+router.get('/:id', getRecipe);
+router.post('/', createRecipe);
+router.put('/:id', updateRecipe);
+router.delete('/:id', deleteRecipe);
+router.post('/:id/rate', rateRecipe);
+router.post('/:id/favorite', toggleFavorite);
+router.get('/popular', getPopularRecipes);
+
 export default router;

@@ -1,6 +1,6 @@
 import React from "react";
-import { Link, NavLink } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { FaUtensils, FaBars } from "react-icons/fa";
 import { useHeaderState } from "../../../hooks/useHeaderState";
 import UserDropdown from "./UserDropdown";

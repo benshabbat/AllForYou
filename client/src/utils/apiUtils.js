@@ -83,6 +83,17 @@ const productApi = {
   createProduct: (productData) => apiCall('post', API_PATHS.PRODUCTS, productData),
 };
 
+// הוסף את הפונקציה בקובץ apiUtils.js
+export const addToScanHistory = (barcode, productName) => {
+  const history = JSON.parse(localStorage.getItem('scanHistory')) || [];
+  history.push({
+    productCode: barcode,
+    productName,
+    scannedAt: new Date().toISOString(),
+  });
+  localStorage.setItem('scanHistory', JSON.stringify(history));
+};
+
 // Export all API functions
 export const apiUtils = {
   ...recipeApi,

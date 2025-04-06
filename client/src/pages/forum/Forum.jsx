@@ -11,6 +11,7 @@ import Pagination from '../../components/common/pagination/Pagination';
 import {Loading} from '../../components/common';
 import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import styles from './Forum.module.css';
+import { searchForumTopics, fetchForumTopics } from '../../api/forumApi';
 
 const Forum = () => {
   const [selectedTopic, setSelectedTopic] = useState(null);

@@ -10,6 +10,8 @@ import {Loading} from '../../components/common';
 import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import styles from './FoodScanner.module.css';
 
+const { addToScanHistory } = apiUtils;
+
 const FoodScanner = () => {
   const [scannedCode, setScannedCode] = useState('');
   const [isAddingProduct, setIsAddingProduct] = useState(false);
@@ -147,5 +149,8 @@ const FoodScanner = () => {
     </div>
   );
 };
+
+// ודא שהפונקציה 'addToScanHistory' מוגדרת או מיובאת
+addToScanHistory(); // ודא שהפונקציה מוגדרת או מיובאת
 
 export default React.memo(FoodScanner);

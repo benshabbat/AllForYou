@@ -3,52 +3,25 @@ import User from '../../models/User.js';
 import logger from '../../utils/logger.js';
 
 export const protect = async (req, res, next) => {
-  let token;
-
   try {
-    // Check for token in Authorization header
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-      token = req.headers.authorization.split(' ')[1];
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ message: 'No token provided' });
     }
 
-    // Check for token in cookies (if using cookie-based auth)
-    // else if (req.cookies.token) {
-    //   token = req.cookies.token;
-    // }
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    if (!token) {
-      logger.warn('No token provided for protected route');
-      return res.status(401).json({ message: 'Not authorized, no token' });
+    req.user = await User.findById(decoded.id).select('-password');
+    if (!req.user) {
+      return res.status(401).json({ message: 'User not found' });
     }
 
-    try {
-      // Verify token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-      // Find user by id
-      const user = await User.findById(decoded.id).select('-password');
-
-      if (!user) {
-        logger.warn(`User not found for token: ${token}`);
-        return res.status(401).json({ message: 'Not authorized, user not found' });
-      }
-
-      // Check if user's password has changed after token was issued
-      if (user.passwordChangedAt && decoded.iat < user.passwordChangedAt.getTime() / 1000) {
-        logger.warn(`Password changed after token issued for user: ${user._id}`);
-        return res.status(401).json({ message: 'User recently changed password! Please log in again.' });
-      }
-
-      // Add user to request object
-      req.user = user;
-      next();
-    } catch (error) {
-      logger.error(`Token verification failed: ${error.message}`);
-      return res.status(401).json({ message: 'Not authorized, token failed' });
-    }
+    next();
   } catch (error) {
-    logger.error(`Error in auth middleware: ${error.message}`);
-    res.status(500).json({ message: 'Server error in authentication' });
+    console.error('Auth middleware error:', error);
+    res.status(401).json({ message: 'Unauthorized' });
   }
 };
 
