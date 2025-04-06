@@ -5,7 +5,7 @@ import api from '../../../services/api';
 import AllergenIcon from '../allergenIcon/AllergenIcon';
 import styles from './AllergenList.module.css';
 
-const AllergenList = ({ allergens = [], showTooltips = true }) => {
+const AllergenList = ({ allergens = [], showTooltips = true, selectedAllergen, onSelect }) => {
   const areAllergenIds = allergens.length > 0 && typeof allergens[0] === 'string';
 
   const { data: allergenDetails, isLoading, error } = useQuery(
@@ -33,7 +33,7 @@ const AllergenList = ({ allergens = [], showTooltips = true }) => {
       <h4 className={styles.allergenTitle}>אלרגנים:</h4>
       <ul className={styles.allergenIcons}>
         {displayAllergens.map(allergen => (
-          <li key={allergen._id} className={styles.allergenItem}>
+          <li key={allergen._id} className={styles.allergenItem} onClick={() => onSelect(allergen._id)} style={{ fontWeight: allergen._id === selectedAllergen ? 'bold' : 'normal' }}>
             <AllergenIcon 
               allergen={allergen} 
               size="small" 
@@ -59,7 +59,9 @@ AllergenList.propTypes = {
       })
     ])
   ).isRequired,
-  showTooltips: PropTypes.bool
+  showTooltips: PropTypes.bool,
+  selectedAllergen: PropTypes.string,
+  onSelect: PropTypes.func.isRequired
 };
 
 export default React.memo(AllergenList);

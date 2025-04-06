@@ -4,15 +4,18 @@ import styles from './GeneralInfo.module.css';
 
 const GeneralInfo = ({ info }) => (
   <div className={styles.generalInfo}>
-    <h2>מידע כללי</h2>
-    {info.map((item, index) => (
-      <p key={index}>{item}</p>
-    ))}
+    <h2>{info.title}</h2>
+    <p>{info.content}</p>
+    <img src={info.icon} alt={info.title} />
   </div>
 );
 
 GeneralInfo.propTypes = {
-  info: PropTypes.arrayOf(PropTypes.string).isRequired,
+  info: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    content: PropTypes.string.isRequired,
+    icon: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 export default GeneralInfo;
