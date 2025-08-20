@@ -10,17 +10,18 @@ import {
   getSearchSuggestions,
   getPopularRecipes,
 } from '../controllers/recipeController.js';
+import { protect, optionalAuth } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/', getAllRecipes);
+router.get('/', optionalAuth, getAllRecipes);
 router.get('/suggestions', getSearchSuggestions);
-router.get('/:id', getRecipe);
-router.post('/', createRecipe);
-router.put('/:id', updateRecipe);
-router.delete('/:id', deleteRecipe);
-router.post('/:id/rate', rateRecipe);
-router.post('/:id/favorite', toggleFavorite);
 router.get('/popular', getPopularRecipes);
+router.get('/:id', optionalAuth, getRecipe);
+router.post('/', protect, createRecipe);
+router.put('/:id', protect, updateRecipe);
+router.delete('/:id', protect, deleteRecipe);
+router.post('/:id/rate', protect, rateRecipe);
+router.post('/:id/favorite', protect, toggleFavorite);
 
 export default router;

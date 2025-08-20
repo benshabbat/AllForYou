@@ -142,6 +142,12 @@ const RecipeSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
     index: true
+  },
+  // Flag to indicate if the recipe is popular
+  popular: {
+    type: Boolean,
+    default: false,
+    index: true
   }
 }, {
   timestamps: true,
