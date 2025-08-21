@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { apiUtils } from '../../utils/apiUtils';
 import {useToast} from '../../components/common/toast/Toast';
@@ -18,6 +19,7 @@ const FoodScanner = () => {
   const [isScannerActive, setIsScannerActive] = useState(false);
   const [manualCode, setManualCode] = useState('');
   const { addToast } = useToast();
+  const { user } = useSelector(state => state.auth);
   const queryClient = useQueryClient();
 
   const { data: productInfo, isLoading, error } = useQuery(
@@ -45,7 +47,10 @@ const FoodScanner = () => {
       onSuccess: (data) => {
         if (data) {
           addToast('מידע על המוצר נטען בהצלחה', 'success');
-          addToScanHistory(scannedCode, data.product_name);
+          // שמירת היסטוריית סריקה רק למשתמשים מחוברים
+          if (user) {
+            addToScanHistory(scannedCode, data.product_name);
+          }
         } else {
           addToast('מוצר לא נמצא במאגר', 'info');
         }
@@ -149,8 +154,5 @@ const FoodScanner = () => {
     </div>
   );
 };
-
-// ודא שהפונקציה 'addToScanHistory' מוגדרת או מיובאת
-addToScanHistory(); // ודא שהפונקציה מוגדרת או מיובאת
 
 export default React.memo(FoodScanner);

@@ -15,9 +15,14 @@ import styles from './RecipeCard.module.css';
 const IconWithText = ({ Icon, text }) => (
   <span className={styles.infoItem}>
     <Icon aria-hidden="true" />
-    {text}
+    {text || ''}
   </span>
 );
+
+IconWithText.propTypes = {
+  Icon: PropTypes.elementType.isRequired,
+  text: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+};
 
 const ActionButton = ({ onClick, Icon, text, ariaLabel }) => (
   <button onClick={onClick} className={styles.actionButton} aria-label={ariaLabel}>
@@ -36,14 +41,14 @@ const RecipeCard = ({ recipe, showActions = false, onDelete }) => {
   const isOwner = useMemo(() => user && user.id === recipe.createdBy, [user, recipe.createdBy]);
 
   const totalTime = useMemo(() => 
-    recipe.preparationTime + recipe.cookingTime,
+    (recipe.preparationTime || 0) + (recipe.cookingTime || 0),
   [recipe.preparationTime, recipe.cookingTime]);
 
   const renderRecipeInfo = useMemo(() => (
     <div className={styles.recipeInfo}>
-      <IconWithText Icon={FaClock} text={`${totalTime} ${UI_STRINGS.MINUTES}`} />
-      <IconWithText Icon={FaUtensils} text={translateDifficulty(recipe.difficulty)} />
-      <IconWithText Icon={FaUsers} text={`${recipe.servings} ${UI_STRINGS.SERVINGS}`} />
+      <IconWithText Icon={FaClock} text={`${totalTime || 0} ${UI_STRINGS.MINUTES}`} />
+      <IconWithText Icon={FaUtensils} text={translateDifficulty(recipe.difficulty) || 'קל'} />
+      <IconWithText Icon={FaUsers} text={`${recipe.servings || 1} ${UI_STRINGS.SERVINGS}`} />
     </div>
   ), [totalTime, recipe.difficulty, recipe.servings]);
 

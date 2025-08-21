@@ -113,18 +113,34 @@ export const getPopularRecipes = async (req, res) => {
         {
           _id: 'sample1',
           name: 'מתכון דוגמה 1',
-          description: 'מתכון טעים ובריא',
+          description: 'מתכון טעים ובריא ללא אלרגנים',
           imageUrl: 'https://via.placeholder.com/300x200',
           preparationTime: 30,
-          averageRating: 4.5
+          cookingTime: 45,
+          servings: 4,
+          difficulty: 'easy',
+          averageRating: 4.5,
+          ratings: [{ rating: 4.5, count: 10 }],
+          category: 'main',
+          allergens: [],
+          createdBy: { username: 'דוגמה' },
+          createdAt: new Date()
         },
         {
           _id: 'sample2', 
           name: 'מתכון דוגמה 2',
-          description: 'מתכון נוסף מעולה',
+          description: 'מתכון נוסף מעולה ובריא',
           imageUrl: 'https://via.placeholder.com/300x200',
-          preparationTime: 45,
-          averageRating: 4.2
+          preparationTime: 25,
+          cookingTime: 30,
+          servings: 6,
+          difficulty: 'medium',
+          averageRating: 4.2,
+          ratings: [{ rating: 4.2, count: 8 }],
+          category: 'dessert',
+          allergens: [],
+          createdBy: { username: 'דוגמה' },
+          createdAt: new Date()
         }
       ]);
     }
