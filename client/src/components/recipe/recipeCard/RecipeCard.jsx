@@ -38,7 +38,16 @@ const RecipeCard = ({ recipe, showActions = false, onDelete }) => {
     recipe.image ? `http://localhost:5000/${recipe.image}` : '/placeholder-image.jpg',
   [recipe.image]);
 
-  const isOwner = useMemo(() => user && user.id === recipe.createdBy, [user, recipe.createdBy]);
+  const isOwner = useMemo(() => {
+    if (!user || !recipe.createdBy) return false;
+    
+    // Handle both string and object types for createdBy
+    const createdById = typeof recipe.createdBy === 'object' 
+      ? recipe.createdBy._id || recipe.createdBy.id 
+      : recipe.createdBy;
+    
+    return user.id === createdById;
+  }, [user, recipe.createdBy]);
 
   const totalTime = useMemo(() => 
     (recipe.preparationTime || 0) + (recipe.cookingTime || 0),
@@ -97,7 +106,7 @@ const RecipeCard = ({ recipe, showActions = false, onDelete }) => {
 
 IconWithText.propTypes = {
   Icon: PropTypes.elementType.isRequired,
-  text: PropTypes.string.isRequired
+  text: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 };
 
 ActionButton.propTypes = {

@@ -4,12 +4,12 @@ export const RecipePropTypes = {
   _id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   image: PropTypes.string,
-  preparationTime: PropTypes.number.isRequired,
-  cookingTime: PropTypes.number.isRequired,
-  difficulty: PropTypes.string.isRequired,
-  servings: PropTypes.number.isRequired,
+  preparationTime: PropTypes.number,
+  cookingTime: PropTypes.number,
+  difficulty: PropTypes.string,
+  servings: PropTypes.number,
   averageRating: PropTypes.number,
-  description: PropTypes.string.isRequired,
+  description: PropTypes.string,
   allergens: PropTypes.arrayOf(PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.shape({
@@ -20,5 +20,12 @@ export const RecipePropTypes = {
     })
   ])),
   isFavorite: PropTypes.bool,
-  createdBy: PropTypes.string.isRequired
+  createdBy: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.shape({
+      _id: PropTypes.string,
+      id: PropTypes.string,
+      username: PropTypes.string
+    })
+  ])
 };
