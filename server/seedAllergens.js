@@ -5,10 +5,7 @@ import allergenSeedData from './allergenSeedData.js';
 
 dotenv.config();
 
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect(process.env.MONGO_URI);
 
 const seedAllergens = async () => {
   try {
