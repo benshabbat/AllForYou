@@ -83,7 +83,7 @@ const productApi = {
   createProduct: (productData) => apiCall('post', API_PATHS.PRODUCTS, productData),
 };
 
-// הוסף את הפונקציה בקובץ apiUtils.js
+// Helper functions for local storage
 export const addToScanHistory = (barcode, productName) => {
   const history = JSON.parse(localStorage.getItem('scanHistory')) || [];
   history.push({
