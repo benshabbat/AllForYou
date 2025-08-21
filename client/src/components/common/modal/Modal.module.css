@@ -4,36 +4,47 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
-  animation: fadeIn 0.3s ease-out;
+  z-index: var(--z-modal);
+  opacity: 0;
+  animation: fadeIn var(--transition-normal) ease-out forwards;
 }
 
 .modal {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, var(--surface-color), var(--surface-hover));
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--border-color);
   max-width: 500px;
   width: 90%;
   max-height: 90vh;
   overflow-y: auto;
-  animation: slideIn 0.3s ease-out;
+  opacity: 0;
+  transform: translateY(-30px) scale(0.95);
+  animation: slideIn var(--transition-normal) ease-out forwards;
 }
 
 .modalHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--border-color);
 }
 
 .modalTitle {
   font-size: 1.5rem;
-  color: #333;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-family-heading);
+  margin: 0;
 }
 
 .closeButton {
@@ -41,56 +52,113 @@
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #aaa;
-  transition: color 0.3s ease;
+  color: var(--text-tertiary);
+  transition: all var(--transition-fast);
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .closeButton:hover {
-  color: #333;
+  color: var(--text-primary);
+  background-color: var(--surface-hover);
+  transform: rotate(90deg);
 }
 
 .modalContent {
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-lg);
+  color: var(--text-secondary);
+  line-height: 1.6;
 }
 
 .modalFooter {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-color);
 }
 
 .modalButton {
-  padding: 10px 20px;
+  padding: var(--spacing-sm) var(--spacing-lg);
   border: none;
-  border-radius: 5px;
+  border-radius: var(--border-radius-md);
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-weight: 500;
+  font-size: 0.875rem;
+  font-family: var(--font-family-sans);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  min-width: 100px;
+  justify-content: center;
 }
 
 .confirmButton {
-  background-color: #4a90e2;
-  color: white;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: var(--text-inverse);
 }
 
 .confirmButton:hover {
-  background-color: #357abd;
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 .cancelButton {
-  background-color: #f0f0f0;
-  color: #333;
+  background-color: var(--surface-hover);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
 }
 
 .cancelButton:hover {
-  background-color: #e0e0e0;
+  background-color: var(--surface-color);
+  color: var(--text-primary);
+  border-color: var(--text-tertiary);
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from { 
+    opacity: 0;
+  }
+  to { 
+    opacity: 1;
+  }
 }
 
 @keyframes slideIn {
-  from { transform: translateY(-50px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from { 
+    transform: translateY(-30px) scale(0.95);
+    opacity: 0;
+  }
+  to { 
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .modal {
+    padding: var(--spacing-lg);
+    width: 95%;
+    max-height: 95vh;
+  }
+  
+  .modalTitle {
+    font-size: 1.25rem;
+  }
+  
+  .modalFooter {
+    flex-direction: column-reverse;
+    gap: var(--spacing-sm);
+  }
+  
+  .modalButton {
+    width: 100%;
+  }
 }

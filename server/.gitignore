@@ -22,6 +22,11 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# uploads folder
+uploads/
+!uploads/.gitkeep
 
-
+# logs
 error.log
+combined.log
+*.log

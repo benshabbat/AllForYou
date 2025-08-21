@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: var(--spacing-xl);
 }
 
 .fullScreenContainer {
@@ -16,15 +16,41 @@
   position: fixed;
   top: 0;
   left: 0;
-  background-color: rgba(255, 255, 255, 0.8);
-  z-index: 9999;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: var(--z-modal);
 }
 
 .spinner {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
+  position: relative;
+  border: 4px solid transparent;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: spin 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background-clip: padding-box;
+}
+
+.spinner::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  border-radius: 50%;
+  z-index: -1;
+}
+
+.spinner::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--surface-color);
+  border-radius: 50%;
 }
 
 .small {
@@ -32,9 +58,19 @@
   height: 20px;
 }
 
+.small::after {
+  width: 12px;
+  height: 12px;
+}
+
 .medium {
   width: 40px;
   height: 40px;
+}
+
+.medium::after {
+  width: 24px;
+  height: 24px;
 }
 
 .large {
@@ -42,13 +78,41 @@
   height: 60px;
 }
 
+.large::after {
+  width: 36px;
+  height: 36px;
+}
+
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% { 
+    transform: rotate(0deg);
+    border-radius: 50%;
+  }
+  50% {
+    transform: rotate(180deg);
+    border-radius: 10%;
+  }
+  100% { 
+    transform: rotate(360deg);
+    border-radius: 50%;
+  }
 }
 
 .message {
-  margin-top: 10px;
-  font-size: 16px;
-  color: #333;
+  margin-top: var(--spacing-md);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-align: center;
+  font-family: var(--font-family-sans);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
 }
