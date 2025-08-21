@@ -37,12 +37,20 @@ export const getAllergens = async (req, res) => {
 // Get allergen by ID
 export const getAllergenById = async (req, res) => {
   try {
-    const allergen = await Allergen.findById(req.params.id);
+    const { id } = req.params;
+    
+    // בדיקה שה-ID תקין
+    if (!id || id === 'null' || id === 'undefined') {
+      return res.status(400).json({ message: 'Invalid allergen ID provided' });
+    }
+
+    const allergen = await Allergen.findById(id);
     if (!allergen) {
       return res.status(404).json({ message: ERROR_MESSAGES.ALLERGEN_NOT_FOUND });
     }
     res.json(allergen);
   } catch (error) {
+    console.error('Error fetching allergen by ID:', error);
     res.status(500).json({ message: error.message });
   }
 };

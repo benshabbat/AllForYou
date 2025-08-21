@@ -104,17 +104,31 @@ export const getSearchSuggestions = async (req, res, next) => {
 // פונקציה לקבלת מתכונים פופולריים
 export const getPopularRecipes = async (req, res) => {
   try {
-    console.log('Fetching popular recipes...');
-    
     // שליפת מתכונים פופולריים ממסד הנתונים
     const recipes = await fetchPopularRecipes();
     
     if (!recipes || recipes.length === 0) {
-      console.warn('No popular recipes found.');
-      return res.status(404).json({ message: 'No popular recipes found' });
+      // החזרת נתונים לדוגמה כאשר אין מתכונים במסד הנתונים
+      return res.status(200).json([
+        {
+          _id: 'sample1',
+          name: 'מתכון דוגמה 1',
+          description: 'מתכון טעים ובריא',
+          imageUrl: 'https://via.placeholder.com/300x200',
+          preparationTime: 30,
+          averageRating: 4.5
+        },
+        {
+          _id: 'sample2', 
+          name: 'מתכון דוגמה 2',
+          description: 'מתכון נוסף מעולה',
+          imageUrl: 'https://via.placeholder.com/300x200',
+          preparationTime: 45,
+          averageRating: 4.2
+        }
+      ]);
     }
 
-    console.log('Fetched popular recipes:', recipes);
     res.status(200).json(recipes);
   } catch (error) {
     console.error('Error fetching popular recipes:', error.message);

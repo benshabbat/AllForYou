@@ -7,7 +7,14 @@ export const getDailyTip = async (req, res, next) => {
   try {
     const tip = await tipService.getDailyTip();
     if (!tip) {
-      return next(new ErrorHandler('לא נמצאו טיפים', 404));
+      // החזרת טיפ לדוגמה כאשר אין טיפים במסד הנתונים
+      return res.json({
+        _id: 'sample1',
+        title: 'טיפ יומי',
+        content: 'זכור לשתות הרבה מים בזמן הבישול ולשמור על תזונה מאוזנת!',
+        category: 'general',
+        createdAt: new Date()
+      });
     }
     res.json(tip);
   } catch (error) {

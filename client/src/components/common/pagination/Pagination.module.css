@@ -63,6 +63,10 @@
   transform: none;
 }
 
+.paginationButton:disabled::before {
+  display: none;
+}
+
 .paginationButton.active {
   background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
   color: var(--text-inverse);
@@ -107,88 +111,5 @@
   .paginationInfo {
     font-size: 0.8125rem;
     margin: 0 var(--spacing-sm);
-  }
-}
-
-.paginationButton:active {
-  transform: translateY(0);
-}
-
-.paginationButton:disabled {
-  background-color: var(--surface-hover);
-  color: var(--text-disabled);
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-  border-color: var(--border-light);
-}
-
-.paginationButton:disabled::before {
-  display: none;
-}
-
-.activePage {
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-  color: var(--text-inverse);
-  border-color: var(--primary-color);
-  font-weight: 600;
-  box-shadow: var(--shadow-sm);
-}
-
-.activePage:hover {
-  background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
-  transform: none;
-}
-
-.pageInfo {
-  margin: 0 var(--spacing-md);
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.ellipsis {
-  color: var(--text-tertiary);
-  font-weight: bold;
-  user-select: none;
-  cursor: default;
-  padding: var(--spacing-sm);
-}
-
-/* Navigation buttons */
-.navButton {
-  background: linear-gradient(135deg, var(--surface-color), var(--surface-hover));
-  font-weight: 600;
-}
-
-.navButton:hover {
-  background: linear-gradient(135deg, var(--secondary-color), var(--secondary-dark));
-}
-
-@media (max-width: 768px) {
-  .pagination {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--spacing-xs);
-  }
-
-  .paginationButton {
-    min-width: 2.25rem;
-    height: 2.25rem;
-    padding: var(--spacing-xs) var(--spacing-sm);
-    font-size: 0.8125rem;
-  }
-
-  .pageInfo {
-    width: 100%;
-    text-align: center;
-    margin: var(--spacing-sm) 0;
-    font-size: 0.8125rem;
-  }
-  
-  /* Hide some page numbers on mobile */
-  .paginationButton:not(.activePage):not(.navButton):nth-child(n+6):nth-child(-n+10) {
-    display: none;
   }
 }
