@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
@@ -10,6 +10,7 @@ import AddProductForm from '../../components/product/addProductForm/AddProductFo
 import {Loading} from '../../components/common';
 import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import styles from './FoodScanner.module.css';
+import { memo } from 'react';
 
 const { addToScanHistory } = apiUtils;
 
@@ -58,7 +59,15 @@ const FoodScanner = () => {
     }
   );
 
-  const { data: scanHistory } = useQuery('scanHistory', apiUtils?.fetchScanHistory);
+  const { data: scanHistory } = useQuery(
+    'scanHistory', 
+    apiUtils?.fetchScanHistory,
+    {
+      enabled: !!user, // Only fetch scan history if user is logged in
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: false // Don't retry on auth errors
+    }
+  );
 
   const addProductMutation = useMutation(apiUtils?.createProduct, {
     onSuccess: () => {
@@ -155,4 +164,4 @@ const FoodScanner = () => {
   );
 };
 
-export default React.memo(FoodScanner);
+export default memo(FoodScanner);

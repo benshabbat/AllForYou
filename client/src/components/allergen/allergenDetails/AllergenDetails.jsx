@@ -1,16 +1,32 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import { useQuery } from 'react-query';
 import api from '../../../services/api';
 import { FaExclamationCircle, FaBan, FaCheckCircle } from 'react-icons/fa';
 import styles from './AllergenDetails.module.css';
 
 const AllergenDetails = ({ allergenId }) => {
-  const { data: allergen, isLoading, error } = useQuery(['allergen', allergenId], () =>
-    api.get(`/allergens/${allergenId}`).then(res => res.data)
+  const { data: allergen, isLoading, error } = useQuery(
+    ['allergen', allergenId], 
+    () => api.get(`/allergens/${allergenId}`).then(res => res.data),
+    {
+      enabled: !!allergenId, // Only run query if allergenId exists
+      staleTime: 5 * 60 * 1000 // 5 minutes
+    }
   );
+
+  if (!allergenId) {
+    return (
+      <div className={styles.allergenDetails}>
+        <div className={styles.placeholder}>
+          <p>בחר אלרגן מהרשימה כדי לראות פרטים נוספים</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) return <div className={styles.loading}>טוען פרטי אלרגן...</div>;
   if (error) return <div className={styles.error}>שגיאה בטעינת פרטי אלרגן: {error.message}</div>;
+  if (!allergen) return <div className={styles.error}>אלרגן לא נמצא</div>;
 
   return (
     <div className={styles.allergenDetails}>
@@ -64,6 +80,10 @@ const AllergenDetails = ({ allergenId }) => {
       </div>
     </div>
   );
+};
+
+AllergenDetails.propTypes = {
+  allergenId: PropTypes.string,
 };
 
 export default AllergenDetails;

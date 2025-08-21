@@ -86,7 +86,7 @@ const RecipeList = () => {
       <h1 className={styles.title}>מתכונים</h1>
       <SearchBar onSearch={handleSearch} />
       <div className={styles.content}>
-        <FilterSidebar filters={filters} onFilterChange={handleFilterChange} />
+        <FilterSidebar initialFilters={filters} onFilterChange={handleFilterChange} />
         <div className={styles.recipesSection}>
           {renderSortDropdown()}
           {renderRecipeGrid()}

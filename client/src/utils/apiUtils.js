@@ -40,16 +40,64 @@ const recipeApi = {
 
 // User related functions
 const userApi = {
-  fetchUserProfile: () => apiCall('get', `${API_PATHS.USERS}/me`),
-  updateUserProfile: (userData) => apiCall('put', `${API_PATHS.USERS}/profile`, userData),
-  fetchUserRecipes: (userId) => apiCall('get', `${API_PATHS.RECIPES}/user/${userId}`),
-  updateUserAllergenPreferences: (allergens) => apiCall('put', `${API_PATHS.USERS}/allergen-preferences`, { allergens }),
-  fetchFavoriteRecipes: () => apiCall('get', `${API_PATHS.USERS}/favorites`),
+  fetchUserProfile: () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('User not authenticated');
+    }
+    return apiCall('get', `${API_PATHS.USERS}/me`);
+  },
+  updateUserProfile: (userData) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('User not authenticated');
+    }
+    return apiCall('put', `${API_PATHS.USERS}/profile`, userData);
+  },
+  fetchUserRecipes: (userId) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('User not authenticated');
+    }
+    return apiCall('get', `${API_PATHS.RECIPES}/user/${userId}`);
+  },
+  updateUserAllergenPreferences: (allergens) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('User not authenticated');
+    }
+    return apiCall('put', `${API_PATHS.USERS}/allergen-preferences`, { allergens });
+  },
+  fetchFavoriteRecipes: () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('User not authenticated');
+    }
+    return apiCall('get', `${API_PATHS.USERS}/favorites`);
+  },
   register: (userData) => apiCall('post', `${API_PATHS.USERS}/register`, userData),
   login: (userData) => apiCall('post', `${API_PATHS.USERS}/login`, userData),
-  addToScanHistory: (productCode, productName) => apiCall('post', `${API_PATHS.USERS}/scan-history`, { productCode, productName }),
-  fetchScanHistory: () => apiCall('get', `${API_PATHS.USERS}/scan-history`),
-  activityTimeline: (userId) => apiCall('get', `${API_PATHS.USERS}/${userId}/activities`),
+  addToScanHistory: (productCode, productName) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('User not authenticated');
+    }
+    return apiCall('post', `${API_PATHS.USERS}/scan-history`, { productCode, productName });
+  },
+  fetchScanHistory: () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('User not authenticated');
+    }
+    return apiCall('get', `${API_PATHS.USERS}/scan-history`);
+  },
+  activityTimeline: (userId) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('User not authenticated');
+    }
+    return apiCall('get', `${API_PATHS.USERS}/${userId}/activities`);
+  },
   
 };
 

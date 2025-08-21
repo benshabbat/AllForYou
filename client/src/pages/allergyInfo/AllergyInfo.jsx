@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback,memo } from 'react';
 import { useAllergens } from '../../hooks/useAllergens';
 import AllergenDetails from '../../components/allergen/allergenDetails/AllergenDetails';
 import { generalInfo, additionalResources } from '../../constants/allergyInfo';
@@ -26,7 +26,7 @@ const AllergyInfo = () => {
       <GeneralInfo info={generalInfo} />
       <div className={styles.content}>
         <AllergenList
-          allergens={allergens}
+          allergens={allergens || []}
           selectedAllergen={selectedAllergen}
           onSelect={handleAllergenSelect}
         />
@@ -37,4 +37,4 @@ const AllergyInfo = () => {
   );
 };
 
-export default React.memo(AllergyInfo);
+export default memo(AllergyInfo);

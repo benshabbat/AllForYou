@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -14,21 +14,16 @@ import styles from './FilterSidebar.module.css';
  * @param {Function} props.onFilterChange - Callback function when filters change
  */
 const FilterSidebar = ({ initialFilters = {}, onFilterChange }) => {
-  const [filters, setFilters] = useState({
-    ...initialFilters,
-    allergens: initialFilters.allergens || []
-  });
+  // Initialize filters with initialFilters only once on mount
+  const [filters, setFilters] = useState(() => ({
+    category: '',
+    difficulty: '',
+    allergens: [],
+    ...initialFilters
+  }));
   const [searchAllergen, setSearchAllergen] = useState('');
 
   const { data: allergens = [], isLoading, error } = useQuery('allergens', apiUtils?.fetchAllergens);
-
-  // Sync filters with initialFilters when they change
-  useEffect(() => {
-    setFilters(prevFilters => ({
-      ...prevFilters,
-      ...initialFilters
-    }));
-  }, [initialFilters]);
 
   // Handlers
   const handleInputChange = useCallback((e) => {

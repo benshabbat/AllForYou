@@ -3,6 +3,17 @@
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    min-height: 200px;
+  }
+
+  .placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 150px;
+    color: var(--text-secondary);
+    font-style: italic;
+    text-align: center;
   }
   
   .allergenDetails h2 {

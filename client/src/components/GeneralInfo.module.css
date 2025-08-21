@@ -7,6 +7,8 @@
   max-width: 800px;
   margin: var(--spacing-xl) auto;
   transition: all var(--transition-normal);
+  display: grid;
+  gap: var(--spacing-lg);
 }
 
 .generalInfo:hover {
@@ -14,14 +16,40 @@
   transform: translateY(-2px);
 }
 
-.generalInfo h2 {
-  font-size: 1.75rem;
+.infoItem {
+  padding: var(--spacing-lg);
+  background: var(--surface-color);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+  transition: all var(--transition-normal);
+}
+
+.infoItem:hover {
+  background: var(--surface-hover);
+  transform: translateY(-1px);
+}
+
+.infoItem h2 {
+  font-size: 1.25rem;
   font-weight: 700;
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
   color: var(--text-primary);
-  text-align: center;
   position: relative;
   font-family: var(--font-family-heading);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.icon {
+  color: var(--primary-color);
+  font-size: 1.25rem;
+}
+
+.infoItem p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
 }
 
 .generalInfo h2::after {
