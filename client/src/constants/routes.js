@@ -1,4 +1,3 @@
-import React from 'react';
 import Home from '../pages/home/Home.jsx';
 import RecipeList from '../pages/recipeList/RecipeList.jsx';
 import AddRecipe from '../pages/addRecipe/AddRecipe.jsx';

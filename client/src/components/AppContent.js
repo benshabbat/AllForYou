@@ -1,4 +1,4 @@
-import React, { useEffect, Suspense } from 'react';
+import { useEffect, Suspense, memo, useRef } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useQueryClient } from 'react-query';
@@ -11,11 +11,11 @@ import PrivateRoute from './PrivateRoute';
 import NotFound from './NotFound';
 import { Loading, ErrorBoundary } from './common';
 
-const AppContent = React.memo(() => {
+const AppContent = memo(() => {
   const dispatch = useDispatch();
   const { isLoading } = useAuth();
   const location = useLocation();
-  const nodeRef = React.useRef(null);
+  const nodeRef = useRef(null);
   const queryClient = useQueryClient();
 
   useEffect(() => {
