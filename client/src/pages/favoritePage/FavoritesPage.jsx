@@ -1,4 +1,3 @@
-import React from 'react';
 import { useQuery } from 'react-query';
 import { apiUtils } from '../../utils/apiUtils';
 import RecipeCard from '../../components/recipe/recipeCard/RecipeCard';

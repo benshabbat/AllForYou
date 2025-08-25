@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { FaSearch, FaUtensils, FaStar, FaBarcode, FaInfoCircle, FaHeart, FaChevronLeft, FaChevronRight } from 'react-icons/fa';

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, memo } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { apiUtils} from '../../utils/apiUtils';
@@ -131,4 +131,4 @@ const Forum = () => {
   );
 };
 
-export default React.memo(Forum);
+export default memo(Forum);
