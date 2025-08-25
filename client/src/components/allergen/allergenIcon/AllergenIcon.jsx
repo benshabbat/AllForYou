@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { memo, useId, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Tooltip } from 'react-tooltip';
 import { translateSeverity } from '../../../utils/allergenUtils';
@@ -13,7 +13,7 @@ import styles from './AllergenIcon.module.css';
  * @param {boolean} [props.showTooltip=true] - Whether to show the tooltip
  */
 const AllergenIcon = ({ allergen, size = 'medium', showTooltip = true }) => {
-  const tooltipId = React.useId();
+  const tooltipId = useId();
   
   const allergenObject = useMemo(() => {
     return typeof allergen === 'string' 
@@ -71,4 +71,4 @@ AllergenIcon.propTypes = {
   showTooltip: PropTypes.bool
 };
 
-export default React.memo(AllergenIcon);
+export default memo(AllergenIcon);

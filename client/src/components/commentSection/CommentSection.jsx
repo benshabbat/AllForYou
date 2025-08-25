@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback, memo } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -152,4 +152,4 @@ CommentSection.propTypes = {
   recipeId: PropTypes.string.isRequired
 };
 
-export default React.memo(CommentSection);
+export default memo(CommentSection);

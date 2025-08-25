@@ -1,6 +1,6 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './AdditionalResources.module.css';
+import { memo } from 'react';
 
 const AdditionalResources = ({ resources }) => (
   <section className={styles.additionalResources}>
@@ -26,4 +26,4 @@ AdditionalResources.propTypes = {
   ).isRequired,
 };
 
-export default React.memo(AdditionalResources);
+export default memo(AdditionalResources);

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, memo } from 'react';
 import { useSelector } from 'react-redux';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { apiUtils } from '../../../utils/apiUtils';
@@ -78,4 +78,4 @@ const AllergenManagement = () => {
   );
 };
 
-export default React.memo(AllergenManagement);
+export default memo(AllergenManagement);
