@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, memo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
@@ -253,4 +253,4 @@ const RecipeDetails = () => {
   );
 };
 
-export default React.memo(RecipeDetails);
+export default memo(RecipeDetails);

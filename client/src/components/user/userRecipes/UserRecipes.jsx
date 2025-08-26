@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import RecipeCard from '../../recipe/recipeCard/RecipeCard';
 import styles from './UserRecipes.module.css';

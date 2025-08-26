@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, memo } from 'react';
 import { useQuery } from 'react-query';
 import { apiUtils } from '../../utils/apiUtils';
 import RecipeCard from '../../components/recipe/recipeCard/RecipeCard';
@@ -101,4 +101,4 @@ const RecipeList = () => {
   );
 };
 
-export default React.memo(RecipeList);
+export default memo(RecipeList);

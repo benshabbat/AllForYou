@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, memo } from "react";
+import { useState, useCallback, useRef, memo, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -62,7 +62,7 @@ const AddRecipe = () => {
   });
 
   // פוקוס אוטומטי לשם המתכון בטעינה
-  React.useEffect(() => {
+  useEffect(() => {
     if (nameInputRef.current) {
       nameInputRef.current.focus();
     }

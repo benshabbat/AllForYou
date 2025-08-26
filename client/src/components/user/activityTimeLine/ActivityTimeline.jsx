@@ -1,4 +1,3 @@
-import React from 'react';
 import { useQuery } from 'react-query';
 import { FaUtensils, FaHeart, FaComment } from 'react-icons/fa';
 import { apiUtils } from '../../../utils/apiUtils';

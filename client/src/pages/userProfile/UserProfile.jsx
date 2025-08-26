@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, memo } from 'react';
 import { useSelector } from 'react-redux';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { FaEdit, FaSave, FaTimes, FaUtensils, FaStar, FaHeart } from 'react-icons/fa';
@@ -164,4 +164,4 @@ const UserProfile = () => {
   );
 };
 
-export default React.memo(UserProfile);
+export default memo(UserProfile);

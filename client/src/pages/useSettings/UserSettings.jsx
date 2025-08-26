@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import { useReducer } from 'react';
 import styles from './UserSettings.module.css';
 
 const initialState = {
