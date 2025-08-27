@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import { FaExclamationTriangle } from 'react-icons/fa';
 import styles from './AllergenWarning.module.css';

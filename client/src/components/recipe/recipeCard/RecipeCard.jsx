@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { FaHeart, FaRegHeart, FaClock, FaUtensils, FaUsers, FaEdit, FaTrash } from 'react-icons/fa';
@@ -122,4 +122,4 @@ RecipeCard.propTypes = {
   onDelete: PropTypes.func
 };
 
-export default React.memo(RecipeCard);
+export default memo(RecipeCard);

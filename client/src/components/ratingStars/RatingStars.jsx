@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, memo } from 'react';
 import PropTypes from 'prop-types';
 import styles from './RatingStars.module.css';
 
@@ -84,4 +84,4 @@ RatingStars.propTypes = {
   readOnly: PropTypes.bool
 };
 
-export default React.memo(RatingStars);
+export default memo(RatingStars);

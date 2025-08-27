@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { FaInfoCircle, FaMinus, FaPlus } from 'react-icons/fa';
 import { Tooltip } from 'react-tooltip';

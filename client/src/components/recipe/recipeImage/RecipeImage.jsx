@@ -1,6 +1,6 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './RecipeImage.module.css';
+import { memo } from 'react';
 
 const RecipeImage = ({ imageSrc, altText }) => (
   <img
@@ -19,4 +19,4 @@ RecipeImage.propTypes = {
   altText: PropTypes.string.isRequired
 };
 
-export default React.memo(RecipeImage);
+export default memo(RecipeImage);
