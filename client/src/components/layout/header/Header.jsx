@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { FaUtensils, FaBars } from "react-icons/fa";
@@ -7,6 +6,7 @@ import UserDropdown from "./UserDropdown";
 import MobileMenu from "./MobileMenu";
 import NavItems from "./NavItems";
 import styles from "./Header.module.css";
+import { memo } from "react";
 
 const Header = () => {
   const { user } = useSelector((state) => state.auth);
@@ -50,4 +50,4 @@ const Header = () => {
   );
 };
 
-export default React.memo(Header);
+export default memo(Header);

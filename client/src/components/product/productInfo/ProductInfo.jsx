@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import styles from './ProductInfo.module.css';
 
@@ -78,4 +78,4 @@ ProductInfo.propTypes = {
   }).isRequired,
 };
 
-export default React.memo(ProductInfo);
+export default memo(ProductInfo);

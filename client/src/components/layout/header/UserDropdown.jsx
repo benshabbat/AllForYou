@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { memo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../../store/auth/authSlice";
@@ -52,4 +52,4 @@ const UserDropdown = () => {
   );
 };
 
-export default React.memo(UserDropdown);
+export default memo(UserDropdown);

@@ -1,6 +1,6 @@
-import React from "react";
 import { NavLink } from "react-router-dom";
 import styles from "./NavItems.module.css";
+import { memo } from "react";
 
 const NAV_ITEMS = [
   { path: "/", label: "דף הבית" },
@@ -25,4 +25,4 @@ const NavItems = () => (
   </>
 );
 
-export default React.memo(NavItems);
+export default memo(NavItems);

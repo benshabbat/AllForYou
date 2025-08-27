@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, memo } from 'react';
 import Quagga from '@ericblade/quagga2';
 import PropTypes from 'prop-types';
 import { useMutation } from 'react-query';
@@ -122,4 +122,4 @@ BarcodeScanner.propTypes = {
   onClose: PropTypes.func.isRequired
 };
 
-export default React.memo(BarcodeScanner);
+export default memo(BarcodeScanner);

@@ -1,6 +1,6 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import styles from "./MobileMenu.module.css";
+import { memo } from "react";
 
 const MobileMenu = ({ isMenuOpen }) => {
   if (!isMenuOpen) return null;
@@ -16,4 +16,4 @@ const MobileMenu = ({ isMenuOpen }) => {
   );
 };
 
-export default React.memo(MobileMenu);
+export default memo(MobileMenu);
