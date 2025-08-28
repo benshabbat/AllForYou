@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect, memo } from 'react';
 import { useDropzone } from 'react-dropzone';
 import PropTypes from 'prop-types';
 import styles from './ImageUpload.module.css';
@@ -84,4 +84,4 @@ ImageUpload.propTypes = {
   })
 };
 
-export default React.memo(ImageUpload);
+export default memo(ImageUpload);

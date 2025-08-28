@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback, memo } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import {apiUtils } from '../../../utils/apiUtils';
 import {Loading,useToast} from '../../common';
@@ -94,4 +94,4 @@ const TopicThread = ({ topicId, onBack, isModerator, onDeleteTopic }) => {
   );
 };
 
-export default React.memo(TopicThread);
+export default memo(TopicThread);

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback, memo } from 'react';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -76,4 +76,4 @@ NewTopicForm.propTypes = {
   onCancel: PropTypes.func.isRequired,
 };
 
-export default React.memo(NewTopicForm);
+export default memo(NewTopicForm);

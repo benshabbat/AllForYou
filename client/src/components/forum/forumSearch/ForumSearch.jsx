@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styles from './ForumSearch.module.css';
 
 const ForumSearch = ({ onSearch }) => {

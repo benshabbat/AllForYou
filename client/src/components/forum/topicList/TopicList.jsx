@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './TopicList.module.css';
 
 const TopicList = ({ topics = [], onSelectTopic, isModerator, onDeleteTopic }) => {
