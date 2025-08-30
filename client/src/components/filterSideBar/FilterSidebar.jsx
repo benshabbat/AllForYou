@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, memo } from 'react';
 import { useQuery } from 'react-query';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -141,4 +141,4 @@ FilterSidebar.propTypes = {
   onFilterChange: PropTypes.func.isRequired
 };
 
-export default React.memo(FilterSidebar);
+export default memo(FilterSidebar);
