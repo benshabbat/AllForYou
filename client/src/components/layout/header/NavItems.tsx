@@ -1,8 +1,14 @@
 import { NavLink } from "react-router-dom";
-import styles from "./NavItems.module.css";
 import { memo } from "react";
+import { FC } from 'react';
+import styles from "./NavItems.module.css";
 
-const NAV_ITEMS = [
+interface NavItem {
+  path: string;
+  label: string;
+}
+
+const NAV_ITEMS: NavItem[] = [
   { path: "/", label: "דף הבית" },
   { path: "/recipes", label: "מתכונים" },
   { path: "/allergy-info", label: "מידע על אלרגיות" },
@@ -10,9 +16,9 @@ const NAV_ITEMS = [
   { path: "/forum", label: "פורום" },
 ];
 
-const NavItems = () => (
+const NavItems: FC = () => (
   <>
-    {NAV_ITEMS.map((item) => (
+    {NAV_ITEMS.map((item: NavItem) => (
       <NavLink
         key={item.path}
         to={item.path}

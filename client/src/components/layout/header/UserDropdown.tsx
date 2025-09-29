@@ -1,24 +1,42 @@
-import { memo, useState } from "react";
+import { memo, useState, FC } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../../store/auth/authSlice";
 import { FaUser, FaSignOutAlt } from "react-icons/fa";
+import { User } from "../../../types";
 import styles from "./UserDropdown.module.css";
 
-const USER_DROPDOWN_ITEMS = [
+interface DropdownItem {
+  path: string;
+  label: string;
+}
+
+interface AuthState {
+  user: User | null;
+}
+
+interface RootState {
+  auth: AuthState;
+}
+
+const USER_DROPDOWN_ITEMS: DropdownItem[] = [
   { path: "/profile", label: "פרופיל" },
   { path: "/settings", label: "הגדרות" },
 ];
 
-const UserDropdown = () => {
+const UserDropdown: FC = () => {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user } = useSelector((state: RootState) => state.auth);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
-  const handleLogout = () => {
+  const handleLogout = (): void => {
     dispatch(logout());
     setIsMenuOpen(false);
   };
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className={styles.userMenu}>
@@ -32,7 +50,7 @@ const UserDropdown = () => {
       </button>
       {isMenuOpen && (
         <div className={styles.userDropdown} role="menu">
-          {USER_DROPDOWN_ITEMS.map((item) => (
+          {USER_DROPDOWN_ITEMS.map((item: DropdownItem) => (
             <Link
               key={item.path}
               to={item.path}
