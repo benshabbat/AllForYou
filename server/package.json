@@ -37,5 +37,8 @@
     "redis": "^4.6.15",
     "url": "^0.11.3",
     "winston": "^3.13.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
