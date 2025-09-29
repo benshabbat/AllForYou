@@ -36,10 +36,7 @@ const config = {
   database: {
     uri: process.env.MONGO_URI,
     name: process.env.DB_NAME || 'allforyou',
-    options: {
-      // Removed deprecated useNewUrlParser and useUnifiedTopology options
-      // They are no longer needed in MongoDB driver v4.0.0+
-    }
+    options: {}
   },
   
   // JWT

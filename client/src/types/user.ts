@@ -1,5 +1,3 @@
-import { WithTimestamps, WithId } from './common';
-
 // User related types
 export interface User {
   _id: string;

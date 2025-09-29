@@ -9,7 +9,7 @@ const RecipeImage = ({ imageSrc, altText }) => (
     className={styles.recipeImage}
     onError={(e) => {
       e.target.onerror = null;
-      e.target.src = '/placeholder-image.jpg';
+      e.target.src = '/placeholder-image.svg';
     }}
   />
 );

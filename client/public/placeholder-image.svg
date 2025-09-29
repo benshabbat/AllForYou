@@ -1,0 +1,10 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="placeholderTitle">
+  <title id="placeholderTitle">Recipe Image Placeholder</title>
+  <rect width="100%" height="100%" fill="#f8f9fa"/>
+  <rect x="10" y="10" width="380" height="280" fill="none" stroke="#dee2e6" stroke-width="2" stroke-dasharray="5,5"/>
+  <circle cx="200" cy="120" r="30" fill="#6c757d"/>
+  <path d="M185 105 L200 90 L215 105 L210 110 L205 105 L205 135 L195 135 L195 105 Z" fill="white"/>
+  <rect x="150" y="180" width="100" height="20" rx="10" fill="#6c757d"/>
+  <text x="200" y="235" text-anchor="middle" fill="#6c757d" font-family="Arial, sans-serif" font-size="14">תמונת מתכון</text>
+  <text x="200" y="255" text-anchor="middle" fill="#adb5bd" font-family="Arial, sans-serif" font-size="12">Recipe Image</text>
+</svg>
