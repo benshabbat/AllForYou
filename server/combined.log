@@ -387,3 +387,7 @@
 {"level":"info","message":"::1 - - [29/Sep/2025:09:13:47 +0000] \"GET /placeholder-image.jpg HTTP/1.1\" 404 29 \"http://localhost:3000/\" \"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36\"","service":"allforyou-api","timestamp":"2025-09-29 12:13:47"}
 {"level":"info","message":"::1 - - [29/Sep/2025:09:13:47 +0000] \"GET /placeholder-image.jpg HTTP/1.1\" 404 29 \"http://localhost:3000/\" \"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36\"","service":"allforyou-api","timestamp":"2025-09-29 12:13:47"}
 {"level":"info","message":"Received SIGINT, shutting down gracefully...","service":"allforyou-api","timestamp":"2025-09-29 12:13:47"}
+{"level":"info","message":"🚀 Server running on port 5000 in development mode","service":"allforyou-api","timestamp":"2025-09-29 12:28:07"}
+{"level":"info","message":"✅ MongoDB connected successfully: ac-m7gdbyx-shard-00-01.peao316.mongodb.net","service":"allforyou-api","timestamp":"2025-09-29 12:28:09"}
+{"level":"info","message":"🚀 Server running on port 5000 in development mode","service":"allforyou-api","timestamp":"2025-09-29 12:28:51"}
+{"level":"info","message":"✅ MongoDB connected successfully: ac-m7gdbyx-shard-00-00.peao316.mongodb.net","service":"allforyou-api","timestamp":"2025-09-29 12:28:52"}

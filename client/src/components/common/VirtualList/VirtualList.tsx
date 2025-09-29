@@ -31,7 +31,11 @@ const DefaultEmptyComponent: React.FC = () => (
   </div>
 );
 
-function VirtualList<T>(props: VirtualListProps<T>) {
+// Export the component with imperative handle for external control
+const VirtualList = React.forwardRef<
+  { scrollToItem: (index: number) => void; scrollToTop: () => void },
+  VirtualListProps<any>
+>(function VirtualListInner<T>(props: VirtualListProps<T>, ref: React.Ref<{ scrollToItem: (index: number) => void; scrollToTop: () => void }>) {
   const {
     items,
     itemHeight,
@@ -87,6 +91,12 @@ function VirtualList<T>(props: VirtualListProps<T>) {
       containerRef.current.scrollTop = index * itemHeight;
     }
   }, [itemHeight]);
+
+  // Expose methods to parent components via ref
+  React.useImperativeHandle(ref, () => ({
+    scrollToItem,
+    scrollToTop
+  }), [scrollToItem, scrollToTop]);
 
   // Render visible items
   const visibleItems = useMemo(() => {
@@ -156,6 +166,6 @@ function VirtualList<T>(props: VirtualListProps<T>) {
       )}
     </div>
   );
-}
+});
 
 export default VirtualList;
