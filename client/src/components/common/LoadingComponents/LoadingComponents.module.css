@@ -1,0 +1,247 @@
+/* Loading Components Styles */
+
+/* Default Loading Fallback */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  min-height: 200px;
+  background: var(--surface-color, #ffffff);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--loading-bg, #e0e0e0);
+  border-top: 3px solid var(--primary-color, #007bff);
+  border-radius: 50%;
+  animation: loading-spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.loading-container span {
+  font-size: 0.9rem;
+  color: var(--text-secondary, #666);
+  font-weight: 500;
+}
+
+@keyframes loading-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Loading States for Different Components */
+
+/* Recipe List Loading */
+.recipe-list-loading {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.recipe-card-skeleton {
+  background: var(--surface-color, #ffffff);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  animation: skeleton-pulse 1.5s ease-in-out infinite alternate;
+}
+
+.recipe-card-skeleton .image-skeleton {
+  height: 200px;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-wave 1.5s infinite;
+}
+
+.recipe-card-skeleton .content-skeleton {
+  padding: 1rem;
+}
+
+.recipe-card-skeleton .title-skeleton {
+  height: 20px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  animation: skeleton-wave 1.5s infinite;
+}
+
+.recipe-card-skeleton .description-skeleton {
+  height: 16px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  margin-bottom: 0.3rem;
+  width: 80%;
+  animation: skeleton-wave 1.5s infinite;
+}
+
+.recipe-card-skeleton .meta-skeleton {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.recipe-card-skeleton .meta-item {
+  height: 14px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  width: 60px;
+  animation: skeleton-wave 1.5s infinite;
+}
+
+@keyframes skeleton-pulse {
+  0% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+@keyframes skeleton-wave {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Profile Loading */
+.profile-loading {
+  padding: 2rem;
+}
+
+.profile-header-skeleton {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.avatar-skeleton {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-wave 1.5s infinite;
+}
+
+.profile-info-skeleton .name-skeleton {
+  height: 24px;
+  width: 200px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  animation: skeleton-wave 1.5s infinite;
+}
+
+.profile-info-skeleton .bio-skeleton {
+  height: 16px;
+  width: 300px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  animation: skeleton-wave 1.5s infinite;
+}
+
+/* Forum Loading */
+.forum-loading {
+  padding: 1rem;
+}
+
+.topic-skeleton {
+  background: var(--surface-color, #ffffff);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.topic-title-skeleton {
+  height: 20px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  animation: skeleton-wave 1.5s infinite;
+}
+
+.topic-meta-skeleton {
+  display: flex;
+  gap: 1rem;
+}
+
+.topic-meta-skeleton .meta-item {
+  height: 14px;
+  width: 80px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  animation: skeleton-wave 1.5s infinite;
+}
+
+/* Dark Mode Support */
+[data-theme="dark"] .loading-container {
+  background: var(--dark-surface, #1a1a1a);
+  color: var(--dark-text, #ffffff);
+}
+
+[data-theme="dark"] .loading-spinner {
+  border-color: var(--dark-loading-bg, #333);
+  border-top-color: var(--dark-primary, #4a90e2);
+}
+
+[data-theme="dark"] .recipe-card-skeleton,
+[data-theme="dark"] .topic-skeleton {
+  background: var(--dark-surface, #1a1a1a);
+}
+
+[data-theme="dark"] .image-skeleton,
+[data-theme="dark"] .title-skeleton,
+[data-theme="dark"] .description-skeleton,
+[data-theme="dark"] .meta-item,
+[data-theme="dark"] .name-skeleton,
+[data-theme="dark"] .bio-skeleton,
+[data-theme="dark"] .topic-title-skeleton {
+  background: linear-gradient(90deg, #333 25%, #444 50%, #333 75%);
+  background-size: 200% 100%;
+}
+
+/* RTL Support */
+[dir="rtl"] .loading-container {
+  direction: rtl;
+}
+
+[dir="rtl"] .profile-header-skeleton {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .topic-meta-skeleton {
+  flex-direction: row-reverse;
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .loading-spinner {
+    border-width: 4px;
+  }
+  
+  .loading-container {
+    border: 2px solid var(--border-color, #000);
+  }
+  
+  .recipe-card-skeleton,
+  .topic-skeleton {
+    border: 1px solid var(--border-color, #000);
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .loading-spinner,
+  .recipe-card-skeleton *,
+  .profile-header-skeleton *,
+  .topic-skeleton * {
+    animation: none;
+  }
+  
+  .loading-spinner {
+    border-top-color: transparent;
+  }
+}

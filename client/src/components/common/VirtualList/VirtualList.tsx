@@ -1,18 +1,18 @@
 import React, { useState, useRef, useCallback, useMemo } from 'react';
-import { FixedSizeList as List, ListChildComponentProps } from 'react-window';
-import AutoSizer from 'react-virtualized-auto-sizer';
 import styles from './VirtualList.module.css';
 
 interface VirtualListProps<T> {
   items: T[];
   itemHeight: number;
+  containerHeight?: number;
   className?: string;
-  renderItem: (props: { item: T; index: number; style: React.CSSProperties }) => React.ReactElement;
+  renderItem: (item: T, index: number) => React.ReactElement;
   onEndReached?: () => void;
   threshold?: number;
   isLoading?: boolean;
   loadingComponent?: React.ComponentType;
   emptyComponent?: React.ComponentType;
+  overscan?: number;
 }
 
 // Default loading component
@@ -35,6 +35,7 @@ function VirtualList<T>(props: VirtualListProps<T>) {
   const {
     items,
     itemHeight,
+    containerHeight = 400,
     className = '',
     renderItem,
     onEndReached,
@@ -42,75 +43,99 @@ function VirtualList<T>(props: VirtualListProps<T>) {
     isLoading = false,
     loadingComponent: LoadingComponent = DefaultLoadingComponent,
     emptyComponent: EmptyComponent = DefaultEmptyComponent,
+    overscan = 5,
   } = props;
 
-  const listRef = useRef<List>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [scrollTop, setScrollTop] = useState(0);
 
-  // Handle infinite scroll
-  const handleItemsRendered = useCallback(
-    ({ visibleStopIndex }: { visibleStopIndex: number }) => {
-      if (
-        !isLoading &&
-        onEndReached &&
-        visibleStopIndex >= items.length * threshold
-      ) {
-        onEndReached();
-      }
-    },
-    [items.length, onEndReached, threshold, isLoading]
-  );
+  // Calculate visible range
+  const visibleRange = useMemo(() => {
+    const visibleCount = Math.ceil(containerHeight / itemHeight);
+    const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);
+    const endIndex = Math.min(items.length - 1, startIndex + visibleCount + overscan * 2);
+    
+    return { startIndex, endIndex, visibleCount };
+  }, [scrollTop, itemHeight, containerHeight, items.length, overscan]);
 
   // Handle scroll
-  const handleScroll = useCallback(
-    ({ scrollTop: newScrollTop }: { scrollTop: number }) => {
-      setScrollTop(newScrollTop);
-    },
-    []
-  );
+  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    const newScrollTop = e.currentTarget.scrollTop;
+    setScrollTop(newScrollTop);
+
+    // Check if we need to load more items
+    if (onEndReached && !isLoading) {
+      const scrollBottom = newScrollTop + containerHeight;
+      const totalHeight = items.length * itemHeight;
+      
+      if (scrollBottom >= totalHeight * threshold) {
+        onEndReached();
+      }
+    }
+  }, [onEndReached, isLoading, containerHeight, items.length, itemHeight, threshold]);
 
   // Scroll to top method
   const scrollToTop = useCallback(() => {
-    listRef.current?.scrollToItem(0);
+    if (containerRef.current) {
+      containerRef.current.scrollTop = 0;
+    }
   }, []);
 
-  // Memoize the item data to prevent unnecessary re-renders
-  const itemData = useMemo(() => ({
-    items,
-    renderItem,
-  }), [items, renderItem]);
+  // Scroll to specific item
+  const scrollToItem = useCallback((index: number) => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = index * itemHeight;
+    }
+  }, [itemHeight]);
+
+  // Render visible items
+  const visibleItems = useMemo(() => {
+    const items_to_render = [];
+    
+    for (let i = visibleRange.startIndex; i <= visibleRange.endIndex; i++) {
+      const item = items[i];
+      if (!item) continue;
+
+      const style: React.CSSProperties = {
+        position: 'absolute',
+        top: i * itemHeight,
+        left: 0,
+        right: 0,
+        height: itemHeight,
+      };
+
+      items_to_render.push(
+        <div key={i} style={style} className={styles.virtualItem}>
+          {renderItem(item, i)}
+        </div>
+      );
+    }
+    
+    return items_to_render;
+  }, [visibleRange, items, itemHeight, renderItem]);
 
   // Show empty state
   if (items.length === 0 && !isLoading) {
     return <EmptyComponent />;
   }
 
-  const ItemRenderer = ({ index, style, data }: ListChildComponentProps) => {
-    const item = data.items[index];
-    if (!item) return null;
-    
-    return data.renderItem({ item, index, style });
-  };
+  const totalHeight = items.length * itemHeight;
 
   return (
     <div className={`${styles.container} ${className}`}>
-      <AutoSizer>
-        {({ height, width }) => (
-          <List
-            ref={listRef}
-            height={height}
-            width={width}
-            itemCount={items.length}
-            itemSize={itemHeight}
-            itemData={itemData}
-            onItemsRendered={handleItemsRendered}
-            onScroll={handleScroll}
-            className={styles.list}
-          >
-            {ItemRenderer}
-          </List>
-        )}
-      </AutoSizer>
+      <div
+        ref={containerRef}
+        className={styles.viewport}
+        style={{ height: containerHeight }}
+        onScroll={handleScroll}
+      >
+        <div
+          className={styles.virtualContent}
+          style={{ height: totalHeight, position: 'relative' }}
+        >
+          {visibleItems}
+        </div>
+      </div>
       
       {/* Loading indicator */}
       {isLoading && (

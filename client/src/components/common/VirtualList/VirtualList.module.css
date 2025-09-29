@@ -1,0 +1,225 @@
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.viewport {
+  overflow: auto;
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+}
+
+.viewport::-webkit-scrollbar {
+  width: 8px;
+  background: transparent;
+}
+
+.viewport::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 8px;
+}
+
+.viewport::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.5);
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.viewport::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.8);
+}
+
+.virtualContent {
+  position: relative;
+  width: 100%;
+}
+
+.virtualItem {
+  display: flex;
+  align-items: stretch;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 2rem;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e5e7eb;
+  border-top: 2px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  color: #9ca3af;
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.8;
+}
+
+.empty p {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.loadingContainer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(255, 255, 255, 0.95));
+  padding: 1rem;
+  z-index: 10;
+}
+
+.scrollToTop {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: #3b82f6;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  transition: all 0.2s ease;
+  z-index: 20;
+}
+
+.scrollToTop:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+.scrollToTop:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .viewport::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.3);
+  }
+
+  .viewport::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(156, 163, 175, 0.6);
+  }
+
+  .loading {
+    color: #9ca3af;
+  }
+
+  .spinner {
+    border-color: #374151;
+    border-top-color: #60a5fa;
+  }
+
+  .empty {
+    color: #6b7280;
+  }
+
+  .loadingContainer {
+    background: linear-gradient(transparent, rgba(17, 24, 39, 0.95));
+  }
+}
+
+/* RTL support */
+[dir="rtl"] .scrollToTop {
+  right: auto;
+  left: 20px;
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+  .scrollToTop {
+    width: 40px;
+    height: 40px;
+    bottom: 16px;
+    right: 16px;
+    font-size: 1rem;
+  }
+
+  [dir="rtl"] .scrollToTop {
+    right: auto;
+    left: 16px;
+  }
+
+  .loading {
+    padding: 1.5rem;
+    font-size: 0.8rem;
+  }
+
+  .empty {
+    padding: 3rem 1rem;
+  }
+
+  .emptyIcon {
+    font-size: 2.5rem;
+  }
+
+  .empty p {
+    font-size: 1rem;
+  }
+}
+
+/* Performance optimizations */
+.virtualItem {
+  contain: layout style paint;
+  will-change: transform;
+}
+
+.viewport {
+  contain: layout style paint;
+}
+
+/* Smooth scrolling for modern browsers */
+@supports (scroll-behavior: smooth) {
+  .viewport {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Focus indicators for accessibility */
+.scrollToTop:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.viewport:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
+}
