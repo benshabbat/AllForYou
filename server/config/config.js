@@ -36,7 +36,10 @@ const config = {
   database: {
     uri: process.env.MONGO_URI,
     name: process.env.DB_NAME || 'allforyou',
-    options: {}
+    options: {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
   },
   
   // JWT
