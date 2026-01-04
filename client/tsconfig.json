@@ -24,6 +24,7 @@
     "exactOptionalPropertyTypes": true,
     "noImplicitReturns": true,
     "noUncheckedIndexedAccess": true,
+    "ignoreDeprecations": "6.0",
     "baseUrl": "src",
     "paths": {
       "@/*": ["*"],

@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm run install-all
+    
+    - name: Lint client code
+      run: cd client && npm run lint
+      continue-on-error: true
+    
+    - name: Check code formatting
+      run: cd client && npm run format:check
+      continue-on-error: true
+    
+    - name: Run client tests
+      run: cd client && npm test -- --passWithNoTests --coverage
+    
+    - name: Build client
+      run: cd client && npm run build
+      env:
+        CI: true
+        REACT_APP_API_URL: http://localhost:5000/api
+    
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        directory: ./client/coverage
+        flags: client
+        name: client-coverage

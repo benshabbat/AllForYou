@@ -9,9 +9,19 @@
     "build": "cd client && npm run build",
     "install-all": "npm install && cd client && npm install && cd ../server && npm install",
     "clean": "cd client && rm -rf node_modules && cd ../server && rm -rf node_modules && rm -rf node_modules",
-    "seed": "cd server && npm run seed"
+    "seed": "cd server && npm run seed",
+    "fd": "find-duplicate --ui",
+    "test": "cd client && npm test",
+    "test:coverage": "cd client && npm run test:coverage",
+    "lint": "cd client && npm run lint",
+    "lint:fix": "cd client && npm run lint:fix",
+    "format": "cd client && npm run format",
+    "format:check": "cd client && npm run format:check"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "find-duplicate-js": "^1.6.2"
   }
 }
